@@ -2,10 +2,15 @@
 
 These are my solutions to problems on 4clojure.com.  They are
 incomplete and some of them are pretty rough.  Just keeping them here
-as a record, and in case people have suggestions or find them helpful.
+as a record, and in case people have suggestions or find them helpful
+for some reason.
+
+Typically I work the problem in src/probs4clojure/core.clj and then
+copy to solved.clj when the tests pass.
 
 ## License
 
-Copyright (C) 2012 FIXME
+Comments in solutions excerpted from 4clojure.com, (C) the 4clojure team.
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Solution code (C) 2012 John Jacobsen, distributed under the Eclipse
+Public License, the same as Clojure.
