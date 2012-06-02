@@ -4,7 +4,8 @@ These are my solutions to problems on 4clojure.com.  They are
 incomplete (I only started saving solutions partway into the 'medium'
 problems) and some of them are pretty rough.  Just keeping them here
 as a record, and in case people have suggestions or find them helpful
-for some reason.
+for some reason.  But, quoting Joe Hirn, "4clojure's not a game, it's
+for learning. Is there value in cheating from my answers? Be good!"
 
 Typically I work the problem in src/probs4clojure/core.clj and then
 copy to solved.clj when the tests pass.
