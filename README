@@ -9,7 +9,9 @@ solved the problems on my own first in each case, and recommend you do
 the same.
 
 Typically I work the problem in src/probs4clojure/core.clj and then
-copy to solved.clj when the tests pass.
+copy to solved.clj when the tests pass.  Problems towards the top of
+solved.clj are more recent (they may be simpler and more idiomatic
+than the earlier solutions).
 
 ## License
 
