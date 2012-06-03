@@ -34,7 +34,7 @@
    :else (fn [m]
            (let [[op & args] expr
                  mapseq (map #((f %) m) args)
-                 opmap {'/ /, '* *, '+ +, '- -}]
+                 opmap {'/ /, '* *, '+ +, '- -}]  ;; FIXME -- maybe a cleaner way?
              (apply (opmap op) (map #((f %) m) args))))))
 
 
