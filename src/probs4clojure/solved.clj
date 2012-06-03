@@ -1,3 +1,63 @@
+;; Universal Computation Engine
+;;
+;; Difficulty:Medium
+;; Topics:functions
+;;
+;; Given a mathematical formula in prefix notation, return a function
+;; that calculates the value of the formula. The formula can contain
+;; nested calculations using the four basic mathematical operators,
+;; numeric constants, and symbols representing variables. The returned
+;; function has to accept a single parameter containing the map of
+;; variable names to their values.
+;;
+;; (= 2 ((__ '(/ a b))
+;;       '{b 8 a 16}))
+;;
+;; (= 8 ((__ '(+ a b 2))
+;;       '{a 2 b 4}))
+;;
+;; (= [6 0 -4]
+;;    (map (__ '(* (+ 2 a)
+;;                 (- 10 b)))
+;;         '[{a 1 b 8}
+;;           {b 5 a -2}
+;;           {a 2 b 11}]))
+;;
+;; (= 1 ((__ '(/ (+ x 2)
+;;               (* 3 (+ y 1))))
+;;             '{x 4 y 1}))
+
+(defn f [expr]
+  (cond
+   (number? expr) (fn [m] expr)
+   (symbol? expr) (fn [m] (m expr))
+   :else (fn [m]
+           (let [[op & args] expr
+                 mapseq (map #((f %) m) args)
+                 opmap {'/ /, '* *, '+ +, '- -}]
+             (apply (opmap op) (map #((f %) m) args))))))
+
+
+(expect ((f 'a) '{a 3}) 3)
+(expect ((f 2) '{}) 2)
+(expect ((f '(/ a b)) '{b 8 a 16}) 2)
+
+(expect 8 ((f '(+ a b 2))
+           '{a 2 b 4}))
+
+(expect 1 ((f '(/ (+ x 2)
+                  (* 3 (+ y 1))))
+           '{x 4 y 1}))
+
+(expect [6 0 -4]
+        (map (f '(* (+ 2 a)
+                    (- 10 b)))
+             '[{a 1 b 8}
+               {b 5 a -2}
+               {a 2 b 11}]))
+
+
+
 ;; Prime Sandwich
 ;;
 ;; Difficulty:Medium
