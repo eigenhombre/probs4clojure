@@ -13,6 +13,14 @@ copy to solved.clj when the tests pass.  Problems towards the top of
 solved.clj are more recent (they may be simpler and more idiomatic
 than the earlier solutions).
 
+I use 'lein autoexpect'[1] with the expectations module[2] to check
+solutions before submitting.  I'm finding that running autoexpect in a
+separate window and a REPL in the Emacs shell at the same time is a
+great way to work.
+
+[1] https://github.com/jakemcc/lein-autoexpect
+[2] https://github.com/jaycfields/expectations
+
 ## License
 
 Comments in solutions excerpted from 4clojure.com, (C) the 4clojure team.
