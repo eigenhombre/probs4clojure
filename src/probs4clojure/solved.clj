@@ -38,9 +38,11 @@
              (apply (opmap op) (map #((f %) m) args))))))
 
 
-(expect ((f 'a) '{a 3}) 3)
-(expect ((f 2) '{}) 2)
-(expect ((f '(/ a b)) '{b 8 a 16}) 2)
+(expect 3 ((f 'a) '{a 3}))
+(expect 2 ((f 2) '{}))
+
+(expect 2 ((f '(/ a b))
+           '{b 8 a 16}))
 
 (expect 8 ((f '(+ a b 2))
            '{a 2 b 4}))
