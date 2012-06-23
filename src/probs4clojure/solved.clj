@@ -1,3 +1,84 @@
+;; #131: Sum Some Set Subsets
+;;
+;; Difficulty:Medium
+;; Topics:math
+;;
+;;
+;; Given a variable number of sets of integers, create a function
+;; which returns true iff all of the sets have a non-empty subset with
+;; an equivalent summation.
+
+(defn gg [& ss]
+  "
+  Certainly there is a more elegant way to do this, but the approach is:
+  - form a set of non-empty subsets of each sequence; this is done by
+    creating a set of true or false variables indicating whether each element
+    is in the subset;
+  - sum each of these subsets;
+  - look for a nonempty intersection of sums across the sequences.
+  "
+  (letfn [(tmult [s]
+            (if (seq s)
+              (for [el s, tf [true false]] (conj el tf))
+              [[true] [false]]))
+          (subsets [s]
+            (let [v (vec s)
+                  n (count s)
+                  tfs (nth (iterate tmult []) n)
+                  sets (filter (complement empty?)
+                               (for [bits tfs]
+                                 (filter (complement nil?)
+                                         (for [i (range n)]
+                                           (if (nth bits i)
+                                             (nth v i))))))]
+              sets))
+          (sums [s]
+            (map #(apply + %) (subsets s)))
+          (intersection [a b]
+            (set (for [el b :when (contains? a el)] el)))
+          (intersections [ss]
+            (reduce intersection ss))]
+    (let [allsums (map (comp set sums) ss)
+          common (intersections allsums)]
+      (not (empty? common)))))
+
+
+(expect true  (gg #{-1 1 99}
+             #{-2 2 888}
+             #{-3 3 7777})) ; ex. all sets have a subset which sums to zero
+
+(expect false (gg #{1}
+                  #{2}
+                  #{3}
+                  #{4}))
+
+(expect true  (gg #{1}))
+
+
+(expect false (gg #{1 -3 51 9}
+             #{0}
+             #{9 2 81 33}))
+
+(expect true  (gg #{1 3 5}
+             #{9 11 4}
+             #{-3 12 3}
+             #{-3 4 -2 10}))
+
+(expect false (gg #{-1 -2 -3 -4 -5 -6}
+             #{1 2 3 4 5 6 7 8 9}))
+
+(expect true  (gg #{1 3 5 7}
+             #{2 4 6 8}))
+
+(expect true  (gg #{-1 3 -5 7 -9 11 -13 15}
+             #{1 -3 5 -7 9 -11 13 -15}
+             #{1 -1 2 -2 4 -4 8 -8}))
+
+(expect true  (gg #{-10 9 -8 7 -6 5 -4 3 -2 1}
+                          #{10 -9 8 -7 6 -5 4 -3 2 -1}))
+
+
+
 ;; The Big Divide
 ;;
 ;; Difficulty:Medium
@@ -1033,7 +1114,7 @@ empty set and x itself.
 (defn pwrset [S]
   (let [pwr2 (fn [n] (apply * (repeat n 2)))
         has-bit-set (fn [num digit]
-                      (> (bit-and num (pwr2 digit)) 0))                
+                      (> (bit-and num (pwr2 digit)) 0))
         nitems (count S)
         itemlist (apply list S)
         num_combinations (pwr2 nitems)]
