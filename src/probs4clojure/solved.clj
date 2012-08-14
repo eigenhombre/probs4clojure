@@ -1,4 +1,45 @@
 "
+#158 Decurry
+
+Difficulty:Medium
+Topics:partial-functions
+
+
+Write a function that accepts a curried function of unknown arity
+n. Return an equivalent function of n arguments.  You may wish to
+read this: http://en.wikipedia.org/wiki/Currying
+"
+
+(defn g [f]
+  (fn l [& xs]
+    (loop [f f
+           [x & xs] xs]
+      (if-not (seq? xs)
+        (f x)
+        (recur (f x) xs)))))
+
+(expect 10 ((g (fn [a]
+             (fn [b]
+               (fn [c]
+                 (fn [d]
+                   (+ a b c d))))))
+       1 2 3 4))
+
+(expect 24 ((g (fn [a]
+             (fn [b]
+               (fn [c]
+                 (fn [d]
+                   (* a b c d))))))
+       1 2 3 4))
+
+(expect 25 ((g (fn [a]
+             (fn [b]
+               (* a b))))
+       5 5))
+
+
+
+"
 #141: Tricky card games
 
 Difficulty:Medium
