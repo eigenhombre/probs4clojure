@@ -1,4 +1,92 @@
 "
+#150 Palindromic Numbers -- https://4clojure.com/problem/150
+
+Difficulty:Medium
+Topics:seqs math
+
+
+A palindromic number is a number that is the same when written
+forwards or backwards (e.g., 3, 99, 14341).
+
+Write a function which takes an integer n, as its only argument, and
+returns an increasing lazy sequence of all palindromic numbers that
+are not less than n.
+
+The most simple solution will exceed the time limit!
+
+;; UP sequence: 12 -> 1221
+;; DN sequence: 12 -> 121
+;; (inc 9)      is     10(2)  (pinc 9)      is     11: DN  magic=1
+;; (inc 10)     is     11(2)  (pinc 10)     is     11: UP  magic=1
+;; (inc 99)     is    100(3)  (pinc 99)     is    101: DN  magic=10
+;; (inc 999)    is   1000(4)  (pinc 999)    is   1001: UP  magic=10
+;; (inc 9999)   is  10000(5)  (pinc 9999)   is  10001: DN  magic=100
+;; (inc 10001)  is  10002(5)  (pinc 10001)  is  10101: DN  magic=101
+;; (inc 99999)  is 100000(6)  (pinc 99999)  is 100001: UP  magic=100
+;; (inc 100001) is 100002(6)  (pinc 100001) is 101101: UP  magic=101
+
+"
+
+(defn pseq [n]
+  (letfn [(mirror-len [n]
+            (let [nlen (count (str n))]
+              (quot (inc nlen) 2)))
+
+          (palindromic? [n]
+            (let [ml (mirror-len n)
+                  magic (seq2num (take ml (num2seq n)))]
+              (= n (tomirror magic (up? n)))))
+
+          (up? [n] (even? (count (str n))))
+
+          (num2seq [n] (into [] (str n)))
+
+          (seq2num [l] (read-string (apply str l)))
+
+          (tomirror [m up]
+            (seq2num (concat (num2seq m)
+                             (if up
+                               (reverse (num2seq m))
+                               (rest (reverse (num2seq m)))))))
+          (next-palindromic-num [n]
+            (let [nx (inc n)
+                  ml (mirror-len nx)
+                  magic (seq2num (take ml (num2seq nx)))
+                  mirror (tomirror magic (up? nx))
+                  mirror+ (tomirror (inc magic) (up? nx))]
+              (if (<= mirror n) mirror+ mirror)))]
+    (if (palindromic? n)
+      (iterate next-palindromic-num n)
+      (rest (iterate next-palindromic-num n)))))
+
+(expect (take 26 (pseq 0))
+   [0 1 2 3 4 5 6 7 8 9
+    11 22 33 44 55 66 77 88 99
+    101 111 121 131 141 151 161])
+
+(expect (take 16 (pseq 162))
+   [171 181 191 202
+    212 222 232 242
+    252 262 272 282
+    292 303 313 323])
+
+(expect (take 6 (pseq 1234550000))
+   [1234554321 1234664321 1234774321
+    1234884321 1234994321 1235005321])
+
+(expect (first (pseq (* 111111111 111111111)))
+   (* 111111111 111111111))
+
+(expect (set (take 199 (pseq 0)))
+   (set (map #(first (pseq %)) (range 0 10000))))
+
+(expect true
+   (apply < (take 6666 (pseq 9999999))))
+
+(expect (nth (pseq 0) 10101)
+   9102019)
+
+"
 #158 Decurry
 
 Difficulty:Medium
