@@ -1,4 +1,4 @@
-(use 'clojure.tools.trace)
+;(use 'clojure.tools.trace)
 (use 'clojure.pprint)
 
 (defmacro dbg [x]
