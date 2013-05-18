@@ -1,6 +1,42 @@
 (ns probs4clojure.core
   (:use expectations))
 
+
+;; Problem 53
+;; Difficulty:	Hard
+;; Topics:	seqs
+
+
+;; Given a vector of integers, find the longest consecutive sub-sequence of increasing numbers. If two sub-sequences have the same length, use the one that occurs first. An increasing sub-sequence must have a length of 2 or greater to qualify.
+	
+
+;; (= (__ [1 0 1 2 3 0 4 5]) [0 1 2 3])
+	
+
+;; (= (__ [5 6 1 3 2 7]) [5 6])
+	
+
+;; (= (__ [2 3 3 4 5]) [3 4 5])
+	
+
+;; (= (__ [7 6 5 4]) [])
+
+
+(def f
+  (fn [in]
+    (let [pairs (partition-all 2 1 in)
+          find-incs (for [[a b] pairs] [a b (= (inc a) b)])
+          find-mono (partition-by #(nth % 2) find-incs)
+          mono-only (filter #(nth (first %) 2) find-mono)
+          lengthmap (group-by count mono-only)
+          longest (if-not (seq lengthmap) 0 (apply max (keys lengthmap)))
+          best (first (lengthmap longest))]
+      (if-not best [] (cons (ffirst best) (map second best))))))
+
+(f [2 3 3 4 5])
+(f [7 6 5 4])
+
+
 ;; Problem 171
 ;; Intervals
 ;;  
