@@ -2,6 +2,65 @@
   (:use expectations))
 
 
+;; #92: Read Roman numerals
+;; Difficulty:	Hard
+;; Topics:	strings math
+
+
+;; Roman numerals are easy to recognize, but not everyone knows all
+;; the rules necessary to work with them. Write a function to parse a
+;; Roman-numeral string and return the number it represents. 
+
+;; You can assume that the input will be well-formed, in upper-case,
+;; and follow the subtractive principle. You don't need to handle any
+;; numbers greater than MMMCMXCIX (3999), the largest number
+;; representable with ordinary letters.
+	
+;; (= 14 (__ "XIV"))
+	
+;; (= 827 (__ "DCCCXXVII"))
+	
+;; (= 3999 (__ "MMMCMXCIX"))
+	
+;; (= 48 (__ "XLVIII"))
+ 
+
+(defn read-roman [goal]
+  (let [mnums (sorted-map-by >
+                             1000 "M"
+                             900  "CM"
+                             500  "D"
+                             400  "CD"
+                             100  "C"
+                             90   "XC"
+                             50   "L"
+                             40   "XL"
+                             10   "X"
+                             9    "IX"
+                             5    "V"
+                             4    "IV"
+                             1    "I")
+        s-starts-with (fn [slong sshort]
+                        (= sshort (take (count sshort) slong)))]
+    (loop [in (seq goal)
+           chain (keys mnums)
+           ret 0]
+      (if-not (seq in)
+        ret
+        (let [cnum (first chain)
+              cseq (seq (mnums cnum))
+              has-it (s-starts-with in cseq)
+              next-in (if has-it (drop (count cseq) in) in)
+              rc (rest chain)
+              next-chain (if (empty? rc) 
+                           (keys mnums) 
+                           rc)]
+          (if-not has-it
+            (recur next-in next-chain ret)
+            (recur next-in next-chain (+ ret cnum))))))))
+
+ 
+
 ;; Problem 73: Analyze a Tic-Tac-Toe Board
  
 ;; Difficulty:	Hard
