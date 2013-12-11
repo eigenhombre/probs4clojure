@@ -121,3 +121,57 @@
  (= (__ [[1 2] [3 4] [5 6]]) 3)
  (= (__ '(13)) 1)
  (= (__ '(:a :b :c)) 3))
+
+;; Problem 23:
+(solves (fn [s]
+          (let [svec (into [] s)]
+            (for [i (range (count svec) 0 -1)]
+              (get svec (dec i)))))
+ (= (__ [1 2 3 4 5]) [5 4 3 2 1])
+ (= (__ (sorted-set 5 7 2 7)) '(7 5 2))
+ (= (__ [[1 2][3 4][5 6]]) [[5 6][3 4][1 2]]))
+
+;; Problem 24:
+(solves (fn [s] (apply + s))
+ (= (__ [1 2 3]) 6)
+ (= (__ (list 0 -2 5 5)) 8)
+ (= (__ #{4 2 1}) 7)
+ (= (__ '(0 0 -1)) -1)
+ (= (__ '(1 10 3)) 14))
+
+;; Problem 25:
+(solves #(filter odd? %)
+ (= (__ #{1 2 3 4 5}) '(1 3 5))
+ (= (__ [4 2 1 6]) '(1))
+ (= (__ [2 2 4 6]) '())
+ (= (__ [1 1 1 3]) '(1 1 1 3)))
+
+;; Problem 26:
+(solves (fn [n]
+          (take n (map first (iterate (fn [[a b]] [b (+ a b)]) [1 1]))))
+ (= (__ 3) '(1 1 2))
+ (= (__ 6) '(1 1 2 3 5 8))
+ (= (__ 8) '(1 1 2 3 5 8 13 21)))
+
+;; Problem 27:
+(solves (fn [s]
+          (let [pivot (-> s count (#(/ % 2)) int)
+                rhs (take pivot s)
+                lhs (take pivot (reverse s))]
+            (= rhs lhs)))
+ (false? (__ '(1 2 3 4 5)))
+ (true? (__ "racecar"))
+ (true? (__ [:foo :bar :foo]))
+ (true? (__ '(1 1 3 3 1 1)))
+ (false? (__ '(:a :b :c))))
+
+;; Problem 28:
+(solves (fn flat [[h & t :as l]]
+          (when (seq l)
+            (if (coll? h)
+              (concat (flat h)
+                      (flat t))
+              (cons h (flat t)))))
+ (= (__ '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6))
+ (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
+ (= (__ '((((:a))))) '(:a)))
