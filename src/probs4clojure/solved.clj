@@ -2253,3 +2253,23 @@ empty set and x itself.
                      ret)))
       [1]))))
     11))
+
+
+;; Compress a sequence
+;; Difficulty:	Easy
+;; Topics:	seqs
+
+
+;; Write a function which removes consecutive duplicates from a sequence.
+;; test not run	
+
+;; (= (apply str (__ "Leeeeeerrroyyy")) "Leroy")
+;; test not run	
+
+;; (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
+;; test not run	
+
+;; (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2]))
+
+(fn [s] (->> s (partition-by identity)
+               (map first)))

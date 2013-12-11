@@ -96,6 +96,3 @@
 (= (myrange 5 10)
    [5 6 7 8 9])
 
-(time (take 50 (drop 1000000 (myrange))))
-
-(defn 
