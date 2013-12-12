@@ -4,7 +4,14 @@
 
 ;; Redoing these problems for practice now...
 
-(defmacro solves [expr & tests]
+(defmacro solves
+  "
+  Present and test a solution to a 4clojure.com problem by taking the
+  first expression, substituting it for __ in all subsequent
+  expressions, and evaluating each resulting expression for truthiness
+  (i.e., evaluating the resulting Midje fact).
+  "
+  [expr & tests]
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
     `(fact (and ~@newtests#) => truthy)))
@@ -175,3 +182,50 @@
  (= (__ '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6))
  (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
  (= (__ '((((:a))))) '(:a)))
+
+;; Problem 29:
+(solves (fn [s] (apply str (filter #(. Character isUpperCase %) s)))
+ (= (__ "HeLlO, WoRlD!") "HLOWRD")
+ (empty? (__ "nothing"))
+ (= (__ "$#A(*&987Zf") "AZ"))
+
+;; Problem 30:
+(solves #(->> %
+              (partition-by identity)
+              (map first))
+ (= (apply str (__ "Leeeeeerrroyyy")) "Leroy")
+ (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
+ (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2])))
+
+;; Problem 31:
+(solves (partial partition-by identity)
+ (= (__ [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3)))
+ (= (__ [:a :a :b :b :c]) '((:a :a) (:b :b) (:c)))
+ (= (__ [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))
+
+;; Problem 32:
+(solves (partial mapcat (fn [x] [x x]))
+ (= (__ [1 2 3]) '(1 1 2 2 3 3))
+ (= (__ [:a :a :b :b]) '(:a :a :a :a :b :b :b :b))
+ (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4]))
+ (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
+
+;; Problem 33:
+(solves (fn [s n] (mapcat #(repeat n %) s))
+ (= (__ [1 2 3] 2) '(1 1 2 2 3 3))
+ (= (__ [:a :b] 4) '(:a :a :a :a :b :b :b :b))
+ (= (__ [4 5 6] 1) '(4 5 6))
+ (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4]))
+ (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4])))
+
+;; Problem 34:
+(solves (fn [s e] (take (- e s) (iterate inc s)))
+ (= (__ 1 4) '(1 2 3))
+ (= (__ -2 2) '(-2 -1 0 1))
+ (= (__ 5 8) '(5 6 7)))
+
+;; Problem 35:
+(solves 7
+ (= __ (let [x 5] (+ 2 x)))
+ (= __ (let [x 3, y 10] (- y x)))
+ (= __ (let [x 21] (let [y 3] (/ x y)))))
