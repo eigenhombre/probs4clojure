@@ -29,7 +29,7 @@
  (= __ (.toUpperCase "hello world")))
 
 ;; Problem 4:
-(solves
+(solves  ;; solution less amenable to `solves` macro, added inline...
  (= (list :a :b :c) '(:a :b :c)))
 
 ;; Problem 5:
@@ -229,3 +229,56 @@
  (= __ (let [x 5] (+ 2 x)))
  (= __ (let [x 3, y 10] (- y x)))
  (= __ (let [x 21] (let [y 3] (/ x y)))))
+
+;; Problem 36:
+(solves [x 7, y 3, z 1]
+ (= 10 (let __ (+ x y)))
+ (= 4 (let __ (+ y z)))
+ (= 1 (let __ z)))
+
+;; Problem 37:
+(solves "ABC"
+ (= __ (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))
+
+;; Problem 38:
+(solves (fn [& s] (reduce (fn [a b] (if (> a b) a b)) s))
+ (= (__ 1 8 3 4) 8)
+ (= (__ 30 20) 30)
+ (= (__ 45 67 11) 67))
+
+;; Problem 39:
+(solves (partial mapcat vector)
+ (= (__ [1 2 3] [:a :b :c]) '(1 :a 2 :b 3 :c))
+ (= (__ [1 2] [3 4 5 6]) '(1 3 2 4))
+ (= (__ [1 2 3 4] [5]) [1 5])
+ (= (__ [30 20] [25 15]) [30 25 20 15]))
+
+;; Problem 40:
+(solves (fn [d x] (rest (mapcat (fn [xx] [d xx]) x)))
+ (= (__ 0 [1 2 3]) [1 0 2 0 3])
+ (= (apply str (__ ", " ["one" "two" "three"])) "one, two, three")
+ (= (__ :z [:a :b :c :d]) [:a :z :b :z :c :z :d]))
+
+;; Problem 41:
+(solves (fn [s n] (mapcat #(if (= (count %) n) (drop-last %) %)
+                         (partition-all n s)))
+ (= (__ [1 2 3 4 5 6 7 8] 3) [1 2 4 5 7 8])
+ (= (__ [:a :b :c :d :e :f] 2) [:a :c :e])
+ (= (__ [1 2 3 4 5 6] 4) [1 2 3 5 6]))
+
+;; Problem 42:
+(solves #(apply *' (range 1 (inc %)))
+ (= (__ 1) 1)
+ (= (__ 3) 6)
+ (= (__ 5) 120)
+ (= (__ 8) 40320))
+
+;; Problem 43:
+(solves (fn [s n]
+          (map (fn [i]
+                 (map (fn [ss] (nth ss i))
+                      (partition n s)))
+               (range n)))
+ (= (__ [1 2 3 4 5 6] 2) '((1 3 5) (2 4 6)))
+ (= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
+ (= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9))))
