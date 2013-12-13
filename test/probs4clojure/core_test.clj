@@ -282,3 +282,42 @@
  (= (__ [1 2 3 4 5 6] 2) '((1 3 5) (2 4 6)))
  (= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
  (= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9))))
+
+;; Problem 44:
+(solves (fn [pos s]
+          (map (fn [i] (nth s (mod (+ pos i) (count s))))
+               (range (count s))))
+ (= (__ 2 [1 2 3 4 5]) '(3 4 5 1 2))
+ (= (__ -2 [1 2 3 4 5]) '(4 5 1 2 3))
+ (= (__ 6 [1 2 3 4 5]) '(2 3 4 5 1))
+ (= (__ 1 '(:a :b :c)) '(:b :c :a))
+ (= (__ -4 '(:a :b :c)) '(:c :a :b)))
+
+;; Problem 45:
+(solves [1 4 7 10 13]
+ (= __ (take 5 (iterate #(+ 3 %) 1))))
+
+;; Problem 46:
+(solves (fn [f] (fn [& args] (apply f (reverse args))))
+ (= 3 ((__ nth) 2 [1 2 3 4 5]))
+ (= true ((__ >) 7 8))
+ (= 4 ((__ quot) 2 8))
+ (= [1 2 3] ((__ take) [1 2 3 4 5] 3)))
+
+;; Problem 47:
+(solves 4
+ (contains? #{4 5 6} __)
+ (contains? [1 1 1 1 1] __)
+ (contains? {4 :a 2 :b} __)
+ (not (contains? '(1 2 4) __)))
+
+;; Problem 48:
+(solves 6
+ (= __ (some #{2 7 6} [5 6 7 8]))
+ (= __ (some #(when (even? %) %) [5 6 7 8])))
+
+;; Problem 49:
+(solves (fn [n s] (list (take n s) (drop n s)))
+ (= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
+ (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
+ (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))
