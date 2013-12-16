@@ -321,3 +321,56 @@
  (= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
  (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
  (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))
+
+;; Problem 50:
+(solves #(->> %
+              (group-by type)
+              vals)
+ (= (set (__ [1 :a 2 :b 3 :c])) #{[1 2 3] [:a :b :c]})
+ (= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
+ (= (set (__ [[1 2] :a [3 4] 5 6 :b])) #{[[1 2] [3 4]] [:a :b] [5 6]}))
+
+;; Problem 51:
+(solves [1 2 3 4 5]
+        (= [1 2 [3 4 5] [1 2 3 4 5]] (let [[a b & c :as d] __] [a b c d])))
+
+;; Problem 52:
+(solves [c e]
+        (= [2 4] (let [[a b c d e f g] (range)] __)))
+
+;; Problem 53:
+(solves (fn [s] (let [deltas (map (fn [[a b]] [(- b a) a b]) (partition 2 1 s))
+                     series (partition-by first deltas)
+                     longest-length (->> series
+                                         (group-by count)
+                                         keys
+                                         (apply max))
+                     desired-sequence (->> series
+                                           (filter #(= (count %) longest-length))
+                                           first)
+                     start (second (first desired-sequence))
+                     end (int (nth (last desired-sequence) 2))]
+                 (range start (inc end))))
+ (= (__ [1 0 1 2 3 0 4 5]) [0 1 2 3])
+ (= (__ [5 6 1 3 2 7]) [5 6])
+ (= (__ [2 3 3 4 5]) [3 4 5])
+ (= (__ [7 6 5 4]) []))
+
+;; Problem 54:
+(solves (fn f [c s]
+          (lazy-seq
+           (let [nxt (take c s)]
+             (when (and (seq s) (= (count nxt) c))
+               (cons (take c s) (f c (drop c s)))))))
+ (= (__ 3 (range 9)) '((0 1 2) (3 4 5) (6 7 8)))
+ (= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
+ (= (__ 3 (range 8)) '((0 1 2) (3 4 5))))
+
+;; Problem 55:
+(solves #(->> %
+              (group-by identity)
+              (map (fn [[k v]] [k (count v)]))
+              (into {}))
+ (= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
+ (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
+ (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2}))
