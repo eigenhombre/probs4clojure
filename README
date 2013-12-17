@@ -8,15 +8,9 @@ them helpful for some reason.  Feel free to learn from them, but I
 solved the problems on my own first in each case, and recommend you do
 the same.
 
-Typically I work the problem in src/probs4clojure/core.clj and then
-copy to solved.clj when the tests pass.  Problems towards the top of
-solved.clj are more recent (they may be simpler and more idiomatic
-than the earlier solutions).
+Older solutions are in `src/probs4clojure/core.clj`; newer ones are in
+`test/probs4clojure/core_test.clj`.
 
-I use 'lein autoexpect'[1] with the expectations module[2] to check
-solutions before submitting.  I'm finding that running autoexpect in a
-separate window and a REPL in the Emacs shell at the same time is a
-great way to work.
 
 [1] https://github.com/jakemcc/lein-autoexpect
 [2] https://github.com/jaycfields/expectations
@@ -25,5 +19,5 @@ great way to work.
 
 Comments in solutions excerpted from 4clojure.com, (C) the 4clojure team.
 
-Solution code (C) 2012 John Jacobsen, distributed under the Eclipse
+Solution code (C) 2013 John Jacobsen, distributed under the Eclipse
 Public License, the same as Clojure.
