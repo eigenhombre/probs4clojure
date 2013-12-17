@@ -1,4 +1,4 @@
-## 4clojure.com problems, worked
+## 4clojure.com problems
 
 These are my (and only my) solutions to problems on 4clojure.com. They
 are still incomplete. Older solutions are in
