@@ -411,3 +411,41 @@
  (= [21 6 1] ((__ + max min) 2 3 5 1 6 4))
  (= ["HELLO" 5] ((__ #(.toUpperCase %) count) "hello"))
  (= [2 6 4] ((__ :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))
+
+;; Problem 60:
+(solves (fn reduxions
+          ([op prev s]
+             (lazy-seq
+              (if (seq s)
+                (cons prev (reduxions op (op prev (first s)) (rest s)))
+                [prev])))
+          ([op s]
+             (reduxions op (op (first s)) (rest s))))
+ (= (take 5 (__ + (range))) [0 1 3 6 10])
+ (= (__ conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]])
+ (= (last (__ * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120))
+
+;; Problem 61:
+(solves #(into {} (map vector %1 %2))
+ (= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
+ (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
+ (= (__ [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))
+
+;; Problem 62:
+(solves (fn itr [f x]
+          (lazy-seq
+           (cons x (itr f (f x)))))
+ (= (take 5 (__ #(* 2 %) 1)) [1 2 4 8 16])
+ (= (take 100 (__ inc 0)) (take 100 (range)))
+ (= (take 9 (__ #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3]))))
+
+;; Problem 63:
+(solves (fn [pred s]
+          (->> s
+               (map (fn [x] {(pred x) [x]}))
+               (apply (partial merge-with concat))))
+ (= (__ #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]})
+ (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+    {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
+ (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
+    {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
