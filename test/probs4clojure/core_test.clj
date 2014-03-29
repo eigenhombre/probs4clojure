@@ -455,10 +455,7 @@
 (solves (fn [s]
           (empty?
            (loop [s (clojure.string/replace s #"[^\(\)\{\}\[\]]" "")]
-             (let [r (-> s
-                         (clojure.string/replace "()" "")
-                         (clojure.string/replace "[]" "")
-                         (clojure.string/replace "{}" ""))]
+             (let [r (clojure.string/replace s #"\(\)|\{\}|\[\]" "")]
                (if (= r s) s (recur r))))))
   (__ "This string has no brackets.")
   (__ "class Test {
