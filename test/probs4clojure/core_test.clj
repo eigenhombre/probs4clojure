@@ -449,3 +449,26 @@
     {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
  (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
+
+
+;; Problem 177:
+(solves (fn [s]
+          (empty?
+           (loop [s (clojure.string/replace s #"[^\(\)\{\}\[\]]" "")]
+             (let [r (-> s
+                         (clojure.string/replace "()" "")
+                         (clojure.string/replace "[]" "")
+                         (clojure.string/replace "{}" ""))]
+               (if (= r s) s (recur r))))))
+  (__ "This string has no brackets.")
+  (__ "class Test {
+      public static void main(String[] args) {
+        System.out.println(\"Hello world.\");
+      }
+    }")
+  (not (__ "(start, end]"))
+  (not (__ "())"))
+  (not (__ "[ { ] } "))
+  (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
+  (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
+  (not (__ "[")))
