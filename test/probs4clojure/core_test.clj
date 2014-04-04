@@ -451,6 +451,19 @@
     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
 
 
+;; Problem 137:
+(solves (fn [n base]
+          (loop [n n, ret []]
+            (if (zero? n)
+              (if (empty? ret) [0] ret)
+              (recur (quot n base) (cons (mod n base) ret)))))
+  (= [1 2 3 4 5 0 1] (__ 1234501 10))
+  (= [0] (__ 0 11))
+  (= [1 0 0 1] (__ 9 2))
+  (= [1 0] (let [n (rand-int 100000)](__ n n)))
+  (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
+
+
 ;; Problem 177:
 (solves (fn [s]
           (empty?
