@@ -451,6 +451,43 @@
     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
 
 
+;; Problem 103
+
+;; Note: these both scale rather badly.
+;; benchmark with e.g.:
+;; (doseq [i (range 12)]
+;;    (print i "...")
+;;    (time (println (f i (range i)))))
+
+;; OLD: (fn [k s]
+;;           (set
+;;            (filter #(= (count %) k)
+;;                    (loop [n k, ret (map hash-set s)]
+;;                      (if (zero? n)
+;;                        ret
+;;                        (recur (dec n)
+;;                               (for [v ret, x s]
+;;                                 (conj v x))))))))
+
+(solves (fn [k s]
+          (set
+           (loop [k k, ss (map hash-set s)]
+             (if (<= k 1)
+               ss
+               (recur (dec k)
+                      (for [en ss, e0 s :when (not (some #{e0} en))]
+                        (conj en e0)))))))
+  (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
+  (= (__ 10 #{4 5 6}) #{})
+  (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
+  (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
+                           #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
+  (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
+  (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
+                                    #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
+
+
+
 ;; Problem 177:
 (solves (fn [s]
           (empty?
