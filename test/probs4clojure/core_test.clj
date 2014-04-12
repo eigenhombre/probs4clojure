@@ -459,6 +459,11 @@
 ;;    (print i "...")
 ;;    (time (println (f i (range i)))))
 
+;; Engelberg's math.combinatorics implementation[1] relies heavily on
+;; Knuth, but seems to have much better time complexity.
+;; [1]
+;; https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj
+;;
 ;; OLD: (fn [k s]
 ;;           (set
 ;;            (filter #(= (count %) k)
