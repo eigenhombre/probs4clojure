@@ -547,6 +547,21 @@
      {:a [3 4 5], :b [6 7], :c [8 9]}))
 
 
+;; Problem 70
+(solves
+ (fn [s]
+   (-> s
+       (clojure.string/replace #"[\.\!\,\-\_]" "")
+       (clojure.string/split #"\s+")
+       (->> (sort #(.compareToIgnoreCase %1 %2)))))
+ (= (__  "Have a nice day.")
+    ["a" "day" "Have" "nice"])
+ (= (__  "Clojure is a fun language!")
+    ["a" "Clojure" "fun" "is" "language"])
+ (= (__  "Fools fall for foolish follies.")
+    ["fall" "follies" "foolish" "Fools" "for"]))
+
+
 ;; Problem 103
 
 ;; Note: these both scale rather badly.
