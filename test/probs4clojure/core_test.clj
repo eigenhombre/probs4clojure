@@ -468,6 +468,21 @@
         (= :set (__ #{10 (rand-int 5)}))
         (= [:map :set :vector :list] (map __ [{} #{} [] ()])))
 
+;; Problem 66
+(solves (fn [a b]
+          (loop [a a, b b]
+            (cond
+             (= a b) a
+             (> a b) (recur (- a b) b)
+             :else (recur a (- b a)))))
+        (= (__ 2 4) 2)
+        (= (__ 10 5) 5)
+        (= (__ 5 7) 1)
+        (= (__ 1023 858) 33))
+
+;; Problem 67
+
+
 ;; Problem 103
 
 ;; Note: these both scale rather badly.
