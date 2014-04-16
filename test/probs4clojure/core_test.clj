@@ -481,7 +481,16 @@
         (= (__ 1023 858) 33))
 
 ;; Problem 67
-
+(solves
+  #(take %
+         (remove
+          (fn [n]
+            (some (fn [x] (= (rem n x) 0))
+                  (range 2 n)))
+          (drop 2 (range))))
+ (= (__ 2) [2 3])
+ (= (__ 5) [2 3 5 7 11])
+ (= (last (__ 100)) 541))
 
 ;; Problem 103
 
