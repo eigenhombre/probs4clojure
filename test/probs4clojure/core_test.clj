@@ -425,11 +425,13 @@
  (= (__ conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]])
  (= (last (__ * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120))
 
+
 ;; Problem 61:
 (solves #(into {} (map vector %1 %2))
  (= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
  (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
  (= (__ [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))
+
 
 ;; Problem 62:
 (solves (fn itr [f x]
@@ -438,6 +440,7 @@
  (= (take 5 (__ #(* 2 %) 1)) [1 2 4 8 16])
  (= (take 100 (__ inc 0)) (take 100 (range)))
  (= (take 9 (__ #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3]))))
+
 
 ;; Problem 63:
 (solves (fn [pred s]
@@ -450,11 +453,13 @@
  (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
 
+
 ;; Problem 64:
 (solves +
   (= 15 (reduce __ [1 2 3 4 5]))
   (=  0 (reduce __ []))
   (=  6 (reduce __ 1 [2 3])))
+
 
 ;; Problem 65
 (solves (fn [s]
@@ -468,6 +473,7 @@
         (= :set (__ #{10 (rand-int 5)}))
         (= [:map :set :vector :list] (map __ [{} #{} [] ()])))
 
+
 ;; Problem 66
 (solves (fn [a b]
           (loop [a a, b b]
@@ -480,6 +486,7 @@
         (= (__ 5 7) 1)
         (= (__ 1023 858) 33))
 
+
 ;; Problem 67
 (solves
   #(take %
@@ -491,6 +498,54 @@
  (= (__ 2) [2 3])
  (= (__ 5) [2 3 5 7 11])
  (= (last (__ 100)) 541))
+
+
+;; Problem 68
+(solves
+  [7 6 5 4 3]
+  (= __
+     (loop [x 5
+            result []]
+       (if (> x 0)
+         (recur (dec x) (conj result (+ 2 x)))
+         result))))
+
+
+;; Problem 69
+;; OLD:
+;; (fn [fun & maps]
+;;   (let [pairs (apply concat
+;;                      (for [mm maps]
+;;                        (for [[k, v] mm] [k v])))]
+;;     (loop [p pairs, ret {}]
+;;       (if (seq p)
+;;         (let [[k, v] (first p),
+;;               lookup (ret k)
+;;               insert (if lookup (fun lookup v) v)]
+;;           (recur (rest p)
+;;                  (conj ret (assoc {} k insert))))
+;;         ret))))
+
+(solves
+  (fn [op & maps]
+    (letfn [(f [op, m, o]
+              (let [km (set (keys m))
+                    ko (set (keys o))
+                    common-keys (clojure.set/intersection km ko)
+                    unique-m (clojure.set/difference km common-keys)
+                    unique-o (clojure.set/difference ko common-keys)]
+                (merge (into {} (for [k common-keys]
+                                  [k (op (m k) (o k))]))
+                       (into {} (for [k unique-m] [k (m k)]))
+                       (into {} (for [k unique-o] [k (o k)])))))]
+      (reduce (partial f op) maps)))
+  (= (__ * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5})
+     {:a 4, :b 6, :c 20})
+  (= (__ - {1 10, 2 20} {1 3, 2 10, 3 15})
+     {1 7, 2 10, 3 15})
+  (= (__ concat {:a [3], :b [6]} {:a [4 5], :c [8 9]} {:b [7]})
+     {:a [3 4 5], :b [6 7], :c [8 9]}))
+
 
 ;; Problem 103
 
