@@ -450,6 +450,23 @@
  (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
 
+;; Problem 64:
+(solves +
+  (= 15 (reduce __ [1 2 3 4 5]))
+  (=  0 (reduce __ []))
+  (=  6 (reduce __ 1 [2 3])))
+
+;; Problem 65
+(solves (fn [s]
+          (let [e (empty s)]
+            (if (identical? '() e)
+              :list
+              ({#{} :set, {} :map, [] :vector} e))))
+        (= :map (__ {:a 1, :b 2}))
+        (= :list (__ (range (rand-int 20))))
+        (= :vector (__ [1 2 3 4 5 6]))
+        (= :set (__ #{10 (rand-int 5)}))
+        (= [:map :set :vector :list] (map __ [{} #{} [] ()])))
 
 ;; Problem 103
 
