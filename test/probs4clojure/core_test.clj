@@ -562,6 +562,69 @@
     ["fall" "follies" "foolish" "Fools" "for"]))
 
 
+;; Problem 71
+(solves
+  last
+  (= (__ (sort (rest (reverse [2 5 4 1 3 6]))))
+     (-> [2 5 4 1 3 6] (reverse) (rest) (sort) (__))
+     5))
+
+
+;; Problem 72
+(solves
+  (partial reduce +)
+  (= (__ (map inc (take 3 (drop 2 [2 5 4 1 3 6]))))
+     (->> [2 5 4 1 3 6] (drop 2) (take 3) (map inc) (__))
+     11))
+
+
+;; Problem 73
+(solves
+  (fn [b]
+    (some (fn [p]
+            (if (or
+                 ;; diag:
+                 (every? #{p}
+                         (for [i (range 3)]
+                           ((b i) i)))
+                 ;; anti-diag:
+                 (every? #{p}
+                         (for [i (range 3)]
+                           ((b i) (- 2 i))))
+                 ;; across:
+                 (some (fn [i]
+                         (every? #{p} (for [j (range 3)] ((b i) j))))
+                     (range 3))
+                 ;; down:
+                 (some (fn [i]
+                         (every? #{p} (for [j (range 3)] ((b j) i))))
+                       (range 3)))
+              p))
+          [:x :o]))
+
+  (= nil (__ [[:e :e :e]
+              [:e :e :e]
+              [:e :e :e]]))
+  (= :x (__ [[:x :e :o]
+             [:x :e :e]
+             [:x :e :o]]))
+  (= :o (__ [[:e :x :e]
+             [:o :o :o]
+             [:x :e :x]]))
+  (= nil (__ [[:x :e :o]
+              [:x :x :e]
+              [:o :x :o]]))
+  (= :x (__ [[:x :e :e]
+             [:o :x :e]
+             [:o :e :x]]))
+  (= :o (__ [[:x :e :o]
+             [:x :o :e]
+             [:o :e :x]]))
+  (= nil (__ [[:x :o :x]
+              [:x :o :x]
+              [:o :x :o]])))
+
+
 ;; Problem 103
 
 ;; Note: these both scale rather badly.
