@@ -2,8 +2,9 @@
 
 These are my (and only my) solutions to problems on 4clojure.com. They
 are still incomplete. Older solutions are in
-`src/probs4clojure/core.clj`; **newer ones are in
-`test/probs4clojure/core_test.clj`.**
+`src/probs4clojure/core.clj`; **newer ones** (as well as a cute macro
+for testing against the supplied unit tests) are in
+`test/probs4clojure/core_test.clj`.
 
 Feel free to learn from these, but I solved the problems on my own
 first in each case, and recommend you do the same -- the ones you find
