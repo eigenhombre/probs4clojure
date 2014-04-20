@@ -625,6 +625,69 @@
               [:o :x :o]])))
 
 
+;; Problem 74
+(solves
+  (fn [s]
+    (letfn [(is-square [n]
+              (let [r (Math/sqrt n)
+                    r (int r)]
+                (= (* r r) n)))]
+      (-> s
+          (clojure.string/split #",")
+          (->> (map (fn [s] (Integer/parseInt s)))
+               (filter is-square)
+               (map str)
+               (clojure.string/join ",")))))
+  (= (__ "4,5,6,7,8,9") "4,9")
+  (= (__ "15,16,25,36,37") "16,25,36"))
+
+
+;; Problem 75
+(solves
+  (fn [n]
+    (if (= 1 n)
+      1
+      (letfn [(gcd [a b]
+                (loop [a a, b b]
+                  (cond
+                   (= a b) a
+                   (> a b) (recur (- a b) b)
+                   :else (recur a (- b a)))))]
+        (->> n
+             (range 1)
+             (map (partial gcd n))
+             (filter (partial = 1))
+             count))))
+  (= (__ 1) 1)
+  (= (__ 10) (count '(1 3 7 9)) 4)
+  (= (__ 40) 16)
+  (= (__ 99) 60))
+
+
+;; Problem 76
+(solves
+  (= [1 3 5 7 9 11]
+     (letfn
+         [(foo [x y] #(bar (conj x y) y))
+          (bar [x y] (if (> (last x) 10)
+                       x
+                       #(foo x (+ 2 y))))]
+       (trampoline foo [] 1))))
+
+
+;; Problem 77
+(solves
+  (fn [words]
+    (->>
+      (map (fn [w] (set (filter #(= (sort w) (sort %)) words))) words)
+      (remove #(= (count %) 1))
+      set))
+  (= (__ ["meat" "mat" "team" "mate" "eat"])
+     #{#{"meat" "team" "mate"}})
+  (= (__ ["veer" "lake" "item" "kale" "mite" "ever"])
+     #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}}))
+
+
 ;; Problem 103
 
 ;; Note: these both scale rather badly.
@@ -648,22 +711,22 @@
 ;;                               (for [v ret, x s]
 ;;                                 (conj v x))))))))
 
-(solves (fn [k s]
-          (set
-           (loop [k k, ss (map hash-set s)]
-             (if (<= k 1)
-               ss
-               (recur (dec k)
-                      (for [en ss, e0 s :when (not (some #{e0} en))]
-                        (conj en e0)))))))
-  (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
-  (= (__ 10 #{4 5 6}) #{})
-  (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
-  (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
-                           #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
-  (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
-  (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
-                                    #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
+     (solves (fn [k s]
+               (set
+                (loop [k k, ss (map hash-set s)]
+                  (if (<= k 1)
+                    ss
+                    (recur (dec k)
+                           (for [en ss, e0 s :when (not (some #{e0} en))]
+                             (conj en e0)))))))
+             (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
+             (= (__ 10 #{4 5 6}) #{})
+             (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
+             (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
+                                      #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
+             (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
+             (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
+                                                   #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
 
 
 ;; Problem 137:
