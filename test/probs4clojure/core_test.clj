@@ -688,8 +688,59 @@
      #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}}))
 
 
-;; Problem 103
+;; Problem 78
+(solves
+  (fn [f & rest]
+    (if (fn? f)
+      (recur (apply f rest) nil)
+      f))
+  (= (letfn [(triple [x] #(sub-two (* 3 x)))
+             (sub-two [x] #(stop?(- x 2)))
+             (stop? [x] (if (> x 50) x #(triple x)))]
+       (__ triple 2))
+     82)
+  (= (letfn [(my-even? [x] (if (zero? x) true #(my-odd? (dec x))))
+             (my-odd? [x] (if (zero? x) false #(my-even? (dec x))))]
+       (map (partial __ my-even?) (range 6)))
+     [true false true false true false]))
 
+
+;; Problem 79
+(solves
+  (fn [s]
+    (let [nested-paths (loop [[r & rs] (reverse s)
+                              ret []]
+                         (if-not (seq ret)
+                           (recur rs (map vector r))
+                           (if r
+                             (recur rs
+                                    (let [p (partition 2 1 ret)]
+                                      (for [[a [l1 l2]] (map vector r p)]
+                                        [(conj l1 a) (conj l2 a)])))
+                             ret)))
+          f (fn f [[r l & a]]
+              [(concat r a) (concat l a)])
+          g (fn g [x] (if-not (coll? (ffirst x))
+                      x
+                      (g (mapcat f x))))]
+      (->> nested-paths
+           g
+           (group-by (partial apply +))
+           (sort-by first)
+           ffirst)))
+  (= 7 (__ '([1]
+             [2 4]
+             [5 1 4]
+             [2 3 4 5]))) ; 1->2->1->3
+  (= 20 (__ '([3]
+              [2 4]
+              [1 9 3]
+              [9 9 2 4]
+              [4 6 6 7 8]
+              [5 7 3 5 1 4])))) ; 3->4->3->2->7->1
+
+
+;; Problem 103:
 ;; Note: these both scale rather badly.
 ;; benchmark with e.g.:
 ;; (doseq [i (range 12)]
@@ -697,7 +748,7 @@
 ;;    (time (println (f i (range i)))))
 
 ;; Engelberg's math.combinatorics implementation[1] relies heavily on
-;; Knuth, but seems to have much better time complexity.
+;; Knuth, but seems to have much better time complexity than my solutions.
 ;; [1]
 ;; https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj
 ;;
