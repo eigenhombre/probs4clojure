@@ -753,6 +753,15 @@
  (= (__ 8128) true))
 
 
+;; Problem 81:
+(solves
+  (fn [a b]
+    (set (filter #(and (a %) (b %)) (set (concat a b)))))
+  (= (__ #{0 1 2 3} #{2 3 4 5}) #{2 3})
+  (= (__ #{0 1 2} #{3 4 5}) #{})
+  (= (__ #{:a :b :c :d} #{:c :e :a :f :d}) #{:a :c :d}))
+
+
 ;; Problem 86:
 (solves
   (fn [n]
