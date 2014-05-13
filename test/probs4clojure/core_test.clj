@@ -740,8 +740,20 @@
               [5 7 3 5 1 4])))) ; 3->4->3->2->7->1
 
 
-;; Problem 86:
+;; Problem 80:
+(solves
+  (fn [n]
+    (let [subs (filter #(zero? (rem n %)) (range 1 n))
+          sum (apply + subs)]
+      (= sum n)))
+ (= (__ 6) true)
+ (= (__ 7) false)
+ (= (__ 496) true)
+ (= (__ 500) false)
+ (= (__ 8128) true))
 
+
+;; Problem 86:
 (solves
   (fn [n]
     (let [f (fn [x]
