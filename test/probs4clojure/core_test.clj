@@ -740,6 +740,29 @@
               [5 7 3 5 1 4])))) ; 3->4->3->2->7->1
 
 
+;; Problem 86:
+
+(solves
+  (fn [n]
+    (let [f (fn [x]
+              (->> x
+                   str
+                   (map #(Integer/parseInt (str %)))
+                   (map #(* % %))
+                   (apply +)))
+          s (iterate f n)]
+      (loop [seen #{}
+             [x & xs] s]
+        (cond
+         (= x 1) true
+         (seen x) false
+         :else (recur (conj seen x) xs)))))
+  (= (__ 7) true)
+  (= (__ 986543210) true)
+  (= (__ 2) false)
+  (= (__ 3) false))
+
+
 ;; Problem 103:
 ;; Note: these both scale rather badly.
 ;; benchmark with e.g.:
