@@ -1,6 +1,6 @@
 (ns probs4clojure.core-test
-  (:use midje.sweet)
-  (:require [probs4clojure.core :refer :all]))
+  (:require [midje.sweet :refer :all]
+            [probs4clojure.core :refer :all]))
 
 ;; Redoing these problems for practice now...
 
@@ -15,6 +15,14 @@
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
     `(fact (and ~@newtests#) => truthy)))
+
+
+(defmacro dbg
+  "
+  Handy little debug macro
+  "
+  [x]
+  `(println '~x "=" ~x))
 
 
 ;; Problem 1:
@@ -760,6 +768,44 @@
   (= (__ #{0 1 2 3} #{2 3 4 5}) #{2 3})
   (= (__ #{0 1 2} #{3 4 5}) #{})
   (= (__ #{:a :b :c :d} #{:c :e :a :f :d}) #{:a :c :d}))
+
+
+;; Problem 82:
+(solves
+  (fn [s]
+    (letfn [(perms [s]  ;; Find all permutations of a sequence
+              (if (= (count s) 1)
+                (list s)
+                (apply concat
+                       (for [x s]
+                         (map (partial cons x)
+                              (perms (remove #{x} s)))))))
+            (shrink-half [as bs]  ;; Remove equal leading parts
+              (loop [[a & aa :as as] as, [b & bb :as bs] bs]
+                (cond
+                 (and (nil? a) (nil? b)) [[] []]
+                 (= a b) (recur aa bb)
+                 :else [as bs])))
+            (shrink-both [as bs]  ;; Remove equal leading and trailing parts
+              (->> (shrink-half as bs)
+                   (map reverse)
+                   (apply shrink-half)))
+            (valid-delta [as bs]  ;; Deltas are valid if stripped portions
+                                  ;; do not vary by more than a character
+              (->> (shrink-both as bs)
+                   (map count)
+                   (apply max)
+                   (> 2)))
+            (found-one? [s]
+              (every? (partial apply valid-delta) s))]
+      (let [permutations-in-pairs (map (partial partition 2 1) (perms s))]
+        (boolean (some found-one? permutations-in-pairs)))))
+  (= true (__ #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}))
+  (= false (__ #{"cot" "hot" "bat" "fat"}))
+  (= false (__ #{"to" "top" "stop" "tops" "toss"}))
+  (= true (__ #{"spout" "do" "pot" "pout" "spot" "dot"}))
+  (= true (__ #{"share" "hares" "shares" "hare" "are"}))
+  (= false (__ #{"share" "hares" "hare" "are"})))
 
 
 ;; Problem 86:
