@@ -808,6 +808,19 @@
   (= false (__ #{"share" "hares" "hare" "are"})))
 
 
+;; Problem 83:
+(solves
+  (fn [& bs]
+    (boolean (and (some true? bs)
+                  (not (every? true? bs)))))
+  (= false (__ false false))
+  (= true (__ true false))
+  (= false (__ true))
+  (= true (__ false true false))
+  (= false (__ true true true))
+  (= true (__ true true true false)))
+
+
 ;; Problem 86:
 (solves
   (fn [n]
