@@ -2,6 +2,8 @@
   (:use expectations))
 
 
+;; See also test/probs4clojure/core_test.clj for more recent solutions...
+
 ;; #92: Read Roman numerals
 ;; Difficulty:	Hard
 ;; Topics:	strings math
@@ -246,93 +248,6 @@
   (let [[f x] [inc 2]] (f x)))
 
 
-"
-#150 Palindromic Numbers -- https://4clojure.com/problem/150
-
-Difficulty:Medium
-Topics:seqs math
-
-
-A palindromic number is a number that is the same when written
-forwards or backwards (e.g., 3, 99, 14341).
-
-Write a function which takes an integer n, as its only argument, and
-returns an increasing lazy sequence of all palindromic numbers that
-are not less than n.
-
-The most simple solution will exceed the time limit!
-
-;; UP sequence: 12 -> 1221
-;; DN sequence: 12 -> 121
-;; (inc 9)      is     10(2)  (pinc 9)      is     11: DN  magic=1
-;; (inc 10)     is     11(2)  (pinc 10)     is     11: UP  magic=1
-;; (inc 99)     is    100(3)  (pinc 99)     is    101: DN  magic=10
-;; (inc 999)    is   1000(4)  (pinc 999)    is   1001: UP  magic=10
-;; (inc 9999)   is  10000(5)  (pinc 9999)   is  10001: DN  magic=100
-;; (inc 10001)  is  10002(5)  (pinc 10001)  is  10101: DN  magic=101
-;; (inc 99999)  is 100000(6)  (pinc 99999)  is 100001: UP  magic=100
-;; (inc 100001) is 100002(6)  (pinc 100001) is 101101: UP  magic=101
-
-"
-
-(defn pseq [n]
-  (letfn [(mirror-len [n]
-            (let [nlen (count (str n))]
-              (quot (inc nlen) 2)))
-
-          (palindromic? [n]
-            (let [ml (mirror-len n)
-                  magic (seq2num (take ml (num2seq n)))]
-              (= n (tomirror magic (up? n)))))
-
-          (up? [n] (even? (count (str n))))
-
-          (num2seq [n] (into [] (str n)))
-
-          (seq2num [l] (read-string (apply str l)))
-
-          (tomirror [m up]
-            (seq2num (concat (num2seq m)
-                             (if up
-                               (reverse (num2seq m))
-                               (rest (reverse (num2seq m)))))))
-          (next-palindromic-num [n]
-            (let [nx (inc n)
-                  ml (mirror-len nx)
-                  magic (seq2num (take ml (num2seq nx)))
-                  mirror (tomirror magic (up? nx))
-                  mirror+ (tomirror (inc magic) (up? nx))]
-              (if (<= mirror n) mirror+ mirror)))]
-    (if (palindromic? n)
-      (iterate next-palindromic-num n)
-      (rest (iterate next-palindromic-num n)))))
-
-(expect (take 26 (pseq 0))
-   [0 1 2 3 4 5 6 7 8 9
-    11 22 33 44 55 66 77 88 99
-    101 111 121 131 141 151 161])
-
-(expect (take 16 (pseq 162))
-   [171 181 191 202
-    212 222 232 242
-    252 262 272 282
-    292 303 313 323])
-
-(expect (take 6 (pseq 1234550000))
-   [1234554321 1234664321 1234774321
-    1234884321 1234994321 1235005321])
-
-(expect (first (pseq (* 111111111 111111111)))
-   (* 111111111 111111111))
-
-(expect (set (take 199 (pseq 0)))
-   (set (map #(first (pseq %)) (range 0 10000))))
-
-(expect true
-   (apply < (take 6666 (pseq 9999999))))
-
-(expect (nth (pseq 0) 10101)
-   9102019)
 
 "
 #158 Decurry
@@ -631,59 +546,6 @@ stronger.
 
 (expect  (ff 1 [-10 [1 [2 3 [4 5 [6 7 [8]]]]]])
          '(-10 (1 (2 3 (4)))))
-
-
-;; Generating k-combinations
-;;
-;; Difficulty:Medium
-;; Topics:seqs combinatorics
-;;
-;;
-;; Given a sequence S consisting of n elements generate all
-;; k-combinations of S, i. e. generate all possible sets consisting of k
-;; distinct elements taken from S. The number of k-combinations for a
-;; sequence is equal to the binomial coefficient.
-;;
-;; (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
-;;
-;; (= (__ 10 #{4 5 6}) #{})
-;;
-;; (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
-;;
-;; (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
-;;                          #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
-;;
-;; (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
-;;
-;; (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
-;;                                       #{:a "abc"} #{:a "efg"} #{"abc" "efg"}})
-
-
-(defn choose [k s]  ;; Kind of a brute force solution, must be a better way...
-  (set
-   (filter #(= (count %) k)
-           (loop [n k, ret (map (fn [x] #{x}) s)]
-             (if (zero? n)
-               ret
-               (recur (dec n)
-                      (for [v ret, x s]
-                        (conj v x))))))))
-
-
-(expect (choose 1 #{4 5 6}) #{#{4} #{5} #{6}})
-
-(expect (choose 10 #{4 5 6}) #{})
-
-(expect (choose 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
-
-(expect (choose 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
-                         #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
-
-(expect (choose 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
-
-(expect (choose 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
-                                      #{:a "abc"} #{:a "efg"} #{"abc" "efg"}})
-
 
 
 
@@ -1627,34 +1489,6 @@ empty set and x itself.
         #{#{0 1 2 3 4}})
 
 
-;; Reimplement trampoline
-
-(def tramp
-  (fn tramp
-    [f & rest]
-    (if (fn? f)
-      (recur (apply f rest) nil)
-      f)))
-
-(expect [1 3 5 7 9 11]
-        (letfn
-            [(foo [x y] #(bar (conj x y) y))
-             (bar [x y] (if (> (last x) 10)
-                          x
-                          #(foo x (+ 2 y))))]
-          (trampoline foo [] 1)))
-
-(expect [1 3 5 7 9 11]
-        (letfn
-            [(foo [x y] #(bar (conj x y) y))
-             (bar [x y] (if (> (last x) 10)
-                          x
-                          #(foo x (+ 2 y))))]
-          (tramp foo [] 1)))
-
-(expect 1 1)
-
-
 ;; Euler's totient
 
 (def totient-f
@@ -1677,31 +1511,6 @@ empty set and x itself.
 (expect (totient-f 10) 4)
 (expect (totient-f 40) 16)
 (expect (totient-f 99) 60)
-
-
-;; Happy numbers
-
-(def is-happy
-  (fn is-happy
-    ([n] (is-happy n []))
-    ([n seen]
-       (let [digits (fn [x]
-                      (map #(Integer/parseInt (str %))
-                           (seq (str x)))),
-             sumsquares (fn [n]
-                          (let [digs (digits n)]
-                            (reduce + (map #(* % %) digs)))),
-             is-in (fn [y l] (some #(= % y) l)),
-             ss (sumsquares n)]
-         (cond
-          (= 1 ss) true
-          (is-in ss seen) false
-          :else (recur ss (conj seen ss)))))))
-
-(expect (is-happy 3) false)
-(expect (is-happy 2) false)
-(expect (is-happy 7) true)
-(expect (is-happy 986543210) true)
 
 
 ;; intoCamelCase
@@ -1730,15 +1539,6 @@ empty set and x itself.
             ret))))
      - {1 10, 2 20} {1 3, 2 10, 3 15})
 
-
-;; Anagrams
-
-(
-  (fn [words]
-    (let [is-anagram #(= (frequencies (seq %1))
-                         (frequencies (seq %2))),
-          S (set (for [w2 words] (set (for [w1 words :when (is-anagram w2 w1)] w1))))]
-      (set (for [s S :when (> (count s) 1)] s)))) ["veer" "lake" "item" "kale" "mite" "ever"])
 
 ;; Sequence reductions
 
@@ -1770,16 +1570,10 @@ empty set and x itself.
 
 
 
-; Perfect numbers
-
-((fn perfect [x] (= (apply + (for [f (range 1 x) :when (= 0 (rem x f))] f)) x)) 8128)
-
-
-
 ;  Filter Perfect Squares
 ;
 ;  Difficulty:	Medium
-;  Topics:	
+;  Topics:
 ;
 ;
 ;  Given a string of comma separated integers, write a function which
@@ -1804,291 +1598,9 @@ empty set and x itself.
 ; Answer from Repl (obvious upon inspection):
 [1 3 5 7 9 11]
 
-;  Intro to Trampoline
-;
-;  Difficulty:	Medium
-;  Topics:	recursion
-;
-;
-;  The trampoline function takes a function f and a variable number of
-;  parameters. Trampoline calls f with any parameters that were
-;  supplied. If f returns a function, trampoline calls that function
-;  with no arguments. This is repeated, until the return value is not
-;  a function, and then trampoline returns that non-function
-;  value. This is useful for implementing mutually recursive
-;  algorithms in a way that won't consume the stack.
-;
-;  (= __
-;     (letfn
-;       [(foo [x y] #(bar (conj x y) y))
-;        (bar [x y] (if (> (last x) 10)
-;                     x
-;                     #(foo x (+ 2 y))))]
-;       (trampoline foo [] 1)))
-
-
-;  Prime Numbers
-;
-;  Difficulty:	Medium
-;  Topics:	primes
-;
-;
-;  Write a function which returns the first x number of prime numbers.
-;
-;  (= (__ 2) [2 3])
-;
-;  (= (__ 5) [2 3 5 7 11])
-;
-;  (= (last (__ 100)) 541)
-
-
-
-;; This works, but for some reason 4clojure times out on the last test:
-
-((fn [m]
-     (take m
-           (letfn [(prime? [n]
-                           (empty?
-                             (take 1
-                                   (for [x (range 2 n)
-                                         :when (zero? (rem n x))]
-                                     x))))]
-                  (for [v (range 600)
-                        :when (and (> v 1) (prime? v))] v))))
-     100)
-
-;; Trying now -- loops infinitely
- ((fn [m]
-     (take m
-           (letfn [(prime? [n]
-                           (empty?
-                             (take 1
-                                   (for [x (range 2 n)
-                                         :when (zero? (rem n x))]
-                                     x))))]
-                  (lazy-seq
-                    (loop [v 2, ret []]
-                      (recur (inc v) (if (prime? v) (concat [v] ret) ret)))))))
-     100)
-
-((fn [m]
-     (take m
-           (letfn [(prime? [prev n]
-                           (empty?
-                             (take 1
-                                   (for [x (range prev n)
-                                         :when (zero? (rem n x))]
-                                     x))))]
-                  (map prime? (range)))))
-     100)
-
-;; Another try -- WORKS!!
-
-((fn [m]
-   (take m
-         (for [n (range)
-               :when (and
-                       (> n 1)
-                       (loop [x 2]
-                         (cond
-                           (= n 2) true
-                           (zero? (rem n x)) false
-                           (= x (dec n)) true
-                           :else (recur (inc x)))))] n)))
-  100)
-
 
 
 (def noprintln (fn [&rest]))
-
-;  Word Sorting
-;
-;  Difficulty:	Medium
-;  Topics:	sorting
-;
-;
-;  Write a function that splits a sentence up into a sorted list of
-;  words. Capitalization should not affect sort order and punctuation
-;  should be ignored.
-;
-;  (= (__  "Have a nice day.")
-;     ["a" "day" "Have" "nice"])
-;
-;  (= (__  "Clojure is a fun language!")
-;     ["a" "Clojure" "fun" "is" "language"])
-;
-;  (= (__  "Fools fall for foolish follies.")
-;     ["fall" "follies" "foolish" "Fools" "for"])
-
-((fn [str]
-   (sort (fn [a b] (.compareToIgnoreCase a b))
-         (re-seq #"[a-zA-Z]+" str)))
-  "Clojure is a fun language!")
-
-;  Partition a Sequence
-;
-;  Difficulty:	Medium
-;  Topics:	seqs core-functions
-;
-;
-;  Write a function which returns a sequence of lists of x items each. Lists of less than x items should not be returned.
-;
-;  (= (__ 3 (range 9)) '((0 1 2) (3 4 5) (6 7 8)))
-;
-;  (= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
-;
-;  (= (__ 3 (range 8)) '((0 1 2) (3 4 5)))
-
-(fn [n s]
-      (let [nslices (quot (count s) n)]
-        (for [slice (range nslices)]
-          (subvec (vec s) (* slice n) (+ (* slice n) n)))))
-
-
-;  Juxtaposition
-;
-;  Difficulty:	Medium
-;  Topics:	higher-order-functions core-functions
-;
-;
-;  Take a set of functions and return a new function that takes a variable
-;  number of arguments and returns a sequence containing the result of
-;  applying each function left-to-right to the argument list.
-;
-;  (= [21 6 1] ((__ + max min) 2 3 5 1 6 4))
-;
-;  (= ["HELLO" 5] ((__ #(.toUpperCase %) count) "hello"))
-;
-;  (= [2 6 4] ((__ :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10}))
-
-; Solution:
-(fn [& fargs]
-       (fn [& args]
-         (loop [f fargs,
-                ret []]
-           (if (seq f)
-             (recur (rest f) (conj ret (apply (first f) args)))
-             ret))))
-
-
-;  Function Composition
-;
-;  Difficulty:	Medium
-;  Topics:	higher-order-functions core-functions
-;
-;
-;  Write a function which allows you to create function
-;  compositions. The parameter list should take a variable number of
-;  functions, and create a function applies them from right-to-left.
-;
-;  (= [3 2 1] ((__ rest reverse) [1 2 3 4]))
-;
-;  (= 5 ((__ (partial + 3) second) [1 2 3 4]))
-;
-;  (= true ((__ zero? #(mod % 8) +) 3 5 7 9))
-;
-;  (= "HELLO" ((__ #(.toUpperCase %) #(apply str %) take) 5 "hello world"))
-
-(noprintln
-  (((fn [& funcargs]
-    (fn [& args]
-     (loop [f (rest (reverse funcargs)),
-            result (apply (last funcargs) args)]
-       (if (seq f)
-         (recur (rest f) ((first f) result))
-         result))))
-   (partial + 3) second) [1 2 3 4]))
-
-
-;; Find distinct items
-
-(println
-  ((fn [sarg]
-     (loop [s sarg,
-            ret []
-            seen {}]
-       (if (seq s)
-         (recur (rest s)
-                (if (seen (first s))
-                  ret
-                  (conj ret (first s)))
-                (assoc seen (first s) true))
-         ret)))
-  [:a :a :b :b :c :c]))
-
-
-;  (= (__ [1 2 1 3 1 2 4]) [1 2 3 4])
-;
-;  (= (__ [:a :a :b :b :c :c]) [:a :b :c])
-;
-;  (= (__ '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3]))
-;
-;  (= (__ (range 50)) (range 50))
-
-;; Count occurrences
-
-(noprintln
-  ((fn [sarg]
-     (loop [s sarg,
-            ret {}]
-       (if (seq s)
-         (do (println s ret)
-           (recur (rest s)
-                  (assoc ret
-                         (first s)
-                         (inc (get ret (first s) 0)))))
-         ret)))
-    [1 1 2 3 2 1 1]))
-
-
-;  (= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
-
-;  (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
-
-;  (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2})
-
-
-;; Split by type
-
-(noprintln
-  ((fn [l]
-     (vals (loop [in (for [x l] [x (type x)]),
-            dict {}]
-       (if (seq in)
-         (recur (rest in) (assoc dict (second (first in))
-                                 (concat (dict (second (first in)))
-                                         [(first (first in))])))
-         dict))))
-    [1 :a 2 :b 3 :c]))
-
-
-;; FAILED split by type
-(noprintln (set
-  ((fn [l]
-    (let [m (apply hash-map (apply concat (for [x l] [x (type x)]))),
-            v (set (vals m))]
-        (for [typ v]
-          (vec (for [k (keys m) :when (= (m k) typ)] k)))))
-    [1 :a 2 :b 3 :c])))
-
-(noprintln ((fn [l m]
-            (for [k (range m)]
-              (for [[i j] (map-indexed vector l) :when (zero? (rem (- i k) m))] j)))
-           (range 10) 5))
-
-
-;; Rotate sequence
-(noprintln
-  ((fn [n l]
-     (loop [nn n,
-            ret l]
-       (cond
-         (= nn 0) ret
-         (> nn 0) (recur (- nn 1)
-                        (concat (rest ret) [(first ret)]))
-         :else (recur (+ nn 1)
-                      (concat [(last ret)] (reverse (rest (reverse ret))))))))
-         -2 [1 2 3 4 5]))
 
 
 ;; Pascal's Trapezoid
@@ -2253,23 +1765,3 @@ empty set and x itself.
                      ret)))
       [1]))))
     11))
-
-
-;; Compress a sequence
-;; Difficulty:	Easy
-;; Topics:	seqs
-
-
-;; Write a function which removes consecutive duplicates from a sequence.
-;; test not run	
-
-;; (= (apply str (__ "Leeeeeerrroyyy")) "Leroy")
-;; test not run	
-
-;; (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
-;; test not run	
-
-;; (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2]))
-
-(fn [s] (->> s (partition-by identity)
-               (map first)))

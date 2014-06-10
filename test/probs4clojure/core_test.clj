@@ -896,6 +896,88 @@
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
 
 
+;; Problem 150:
+
+;; OLD solution:
+;; (fn pseq [n]
+;;   (letfn [(mirror-len [n]
+;;             (let [nlen (count (str n))]
+;;               (quot (inc nlen) 2)))
+;;
+;;           (palindromic? [n]
+;;             (let [ml (mirror-len n)
+;;                   magic (seq2num (take ml (num2seq n)))]
+;;               (= n (tomirror magic (up? n)))))
+;;
+;;           (up? [n] (even? (count (str n))))
+;;
+;;           (num2seq [n] (into [] (str n)))
+;;
+;;           (seq2num [l] (read-string (apply str l)))
+;;
+;;           (tomirror [m up]
+;;             (seq2num (concat (num2seq m)
+;;                              (if up
+;;                                (reverse (num2seq m))
+;;                                (rest (reverse (num2seq m)))))))
+;;           (next-palindromic-num [n]
+;;             (let [nx (inc n)
+;;                   ml (mirror-len nx)
+;;                   magic (seq2num (take ml (num2seq nx)))
+;;                   mirror (tomirror magic (up? nx))
+;;                   mirror+ (tomirror (inc magic) (up? nx))]
+;;               (if (<= mirror n) mirror+ mirror)))]
+;;     (if (palindromic? n)
+;;       (iterate next-palindromic-num n)
+;;       (rest (iterate next-palindromic-num n)))))
+
+(solves
+
+  (fn [n]
+    (letfn [(rl-pair [n]
+              [(quot (inc n) 2), (quot n 2)])
+
+            (recombine [s k1 k2]
+              (Long/parseLong (apply str (concat (take k1 s)
+                                                 (reverse (take k2 s))))))
+            (nearest-palindrome [x]
+              (let [sx (str x)
+                    [k1 k2] (rl-pair (count sx))]
+                (recombine sx k1 k2)))
+
+            (next-palindrome [x]
+              (let [sx (str x)
+                    n (count sx)
+                    [k1 _] (rl-pair n)
+                    x' (inc (Long/parseLong (apply str (take k1 sx))))
+                    [kk1 kk2] (rl-pair (count (str (inc x))))]
+                (recombine (str x') kk1 kk2)))]
+
+      (drop-while #(< % n) (iterate next-palindrome
+                                    (nearest-palindrome n)))))
+
+  (= (take 26 (__ 0))
+     [0 1 2 3 4 5 6 7 8 9
+      11 22 33 44 55 66 77 88 99
+      101 111 121 131 141 151 161])
+  (= (take 16 (__ 162))
+     [171 181 191 202
+      212 222 232 242
+      252 262 272 282
+      292 303 313 323])
+  (= (take 6 (__ 1234550000))
+     [1234554321 1234664321 1234774321
+      1234884321 1234994321 1235005321])
+  (= (first (__ (* 111111111 111111111)))
+     (* 111111111 111111111))
+  (= (set (take 199 (__ 0)))
+     (set (map #(first (__ %)) (range 0 10000))))
+  (= true
+     (apply < (take 6666 (__ 9999999))))
+  (= (nth (__ 0) 10101)
+     9102019))
+
+
 ;; Problem 177:
 (solves (fn [s]
           (empty?
