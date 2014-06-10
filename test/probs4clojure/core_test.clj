@@ -899,38 +899,54 @@
 ;; Problem 150:
 
 ;; OLD solution:
-;; (fn pseq [n]
-;;   (letfn [(mirror-len [n]
-;;             (let [nlen (count (str n))]
-;;               (quot (inc nlen) 2)))
-;;
-;;           (palindromic? [n]
-;;             (let [ml (mirror-len n)
-;;                   magic (seq2num (take ml (num2seq n)))]
-;;               (= n (tomirror magic (up? n)))))
-;;
-;;           (up? [n] (even? (count (str n))))
-;;
-;;           (num2seq [n] (into [] (str n)))
-;;
-;;           (seq2num [l] (read-string (apply str l)))
-;;
-;;           (tomirror [m up]
-;;             (seq2num (concat (num2seq m)
-;;                              (if up
-;;                                (reverse (num2seq m))
-;;                                (rest (reverse (num2seq m)))))))
-;;           (next-palindromic-num [n]
-;;             (let [nx (inc n)
-;;                   ml (mirror-len nx)
-;;                   magic (seq2num (take ml (num2seq nx)))
-;;                   mirror (tomirror magic (up? nx))
-;;                   mirror+ (tomirror (inc magic) (up? nx))]
-;;               (if (<= mirror n) mirror+ mirror)))]
-;;     (if (palindromic? n)
-;;       (iterate next-palindromic-num n)
-;;       (rest (iterate next-palindromic-num n)))))
+(comment
+  (fn pseq [n]
+    (letfn [(mirror-len [n]
+              (let [nlen (count (str n))]
+                (quot (inc nlen) 2)))
 
+            (palindromic? [n]
+              (let [ml (mirror-len n)
+                    magic (seq2num (take ml (num2seq n)))]
+                (= n (tomirror magic (up? n)))))
+
+            (up? [n] (even? (count (str n))))
+
+            (num2seq [n] (into [] (str n)))
+
+            (seq2num [l] (read-string (apply str l)))
+
+            (tomirror [m up]
+              (seq2num (concat (num2seq m)
+                               (if up
+                                 (reverse (num2seq m))
+                                 (rest (reverse (num2seq m)))))))
+            (next-palindromic-num [n]
+              (let [nx (inc n)
+                    ml (mirror-len nx)
+                    magic (seq2num (take ml (num2seq nx)))
+                    mirror (tomirror magic (up? nx))
+                    mirror+ (tomirror (inc magic) (up? nx))]
+                (if (<= mirror n) mirror+ mirror)))]
+      (if (palindromic? n)
+        (iterate next-palindromic-num n)
+        (rest (iterate next-palindromic-num n))))))
+
+;; My solution has three parts: (a) to calculate the
+;; `nearest-palindrome` to a given number `x` (which will be `x` if it
+;; is already a palindromic number); (b) to calculate the
+;; `next-palindrome` given an already palindromic number; and finally
+;; (c) to iterate `next-palindrome` to provide an infinite lazy
+;; sequence of palindromes larger than `n`.  Because
+;; `nearest-palindrome` can provide a result less than `x`, we use
+;; `drop-while` in the final sequence to choose only values >= `n`.
+;;
+;; For both `nearest-palindrome` and `next-palindrome`, the approach
+;; is to split the number into left and right halves based on its
+;; length in digits (the `rl-pair` function); the left half is then
+;; reflected and concatenated onto itself using `recombine` (e.g.,
+;; 1234 -> 1221).  The twist in `next-palindrome` is to increment the
+;; left half of the number before recombining.
 (solves
 
   (fn [n]
