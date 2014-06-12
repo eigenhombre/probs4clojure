@@ -895,10 +895,70 @@
   (= [1 0] (let [n (rand-int 100000)](__ n n)))
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
 
+;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>
+;;
+;; My solution has three parts: (a) to calculate the
+;; `nearest-palindrome` to a given number `x` (which will be `x` if it
+;; is already a palindromic number); (b) to calculate the
+;; `next-palindrome` given an already palindromic number; and finally
+;; (c) to iterate `next-palindrome` to provide an infinite lazy
+;; sequence of palindromes larger than `n`.  Because
+;; `nearest-palindrome` can provide a result less than `x`, we use
+;; `drop-while` in the final sequence to choose only values >= `n`.
+;;
+;; For both `nearest-palindrome` and `next-palindrome`, the approach
+;; is to split the number into left and right halves based on its
+;; length in digits (the `rl-pair` function); the left half is then
+;; reflected and concatenated onto itself using `recombine` (e.g.,
+;; 1234 -> 1221).  The twist in `next-palindrome` is to increment the
+;; left half of the number before recombining.
+(solves
 
-;; Problem 150:
+  (fn [n]
+    (letfn [(rl-pair [n]
+              [(quot (inc n) 2), (quot n 2)])
 
-;; OLD solution:
+            (recombine [s k1 k2]
+              (Long/parseLong (apply str (concat (take k1 s)
+                                                 (reverse (take k2 s))))))
+            (nearest-palindrome [x]
+              (let [sx (str x)
+                    [k1 k2] (rl-pair (count sx))]
+                (recombine sx k1 k2)))
+
+            (next-palindrome [x]
+              (let [sx (str x)
+                    [k1 _] (rl-pair (count sx))
+                    x' (inc (Long/parseLong (apply str (take k1 sx))))
+                    [kk1 kk2] (rl-pair (count (str (inc x))))]
+                (recombine (str x') kk1 kk2)))]
+
+      (drop-while #(< % n) (iterate next-palindrome
+                                    (nearest-palindrome n)))))
+
+  (= (take 26 (__ 0))
+     [0 1 2 3 4 5 6 7 8 9
+      11 22 33 44 55 66 77 88 99
+      101 111 121 131 141 151 161])
+  (= (take 16 (__ 162))
+     [171 181 191 202
+      212 222 232 242
+      252 262 272 282
+      292 303 313 323])
+  (= (take 6 (__ 1234550000))
+     [1234554321 1234664321 1234774321
+      1234884321 1234994321 1235005321])
+  (= (first (__ (* 111111111 111111111)))
+     (* 111111111 111111111))
+  (= (set (take 199 (__ 0)))
+     (set (map #(first (__ %)) (range 0 10000))))
+  (= true
+     (apply < (take 6666 (__ 9999999))))
+  (= (nth (__ 0) 10101)
+     9102019))
+
+
+;; Problem 150 (OLD solution):
 (comment
   (fn pseq [n]
     (letfn [(mirror-len [n]
@@ -932,66 +992,6 @@
         (iterate next-palindromic-num n)
         (rest (iterate next-palindromic-num n))))))
 
-;; My solution has three parts: (a) to calculate the
-;; `nearest-palindrome` to a given number `x` (which will be `x` if it
-;; is already a palindromic number); (b) to calculate the
-;; `next-palindrome` given an already palindromic number; and finally
-;; (c) to iterate `next-palindrome` to provide an infinite lazy
-;; sequence of palindromes larger than `n`.  Because
-;; `nearest-palindrome` can provide a result less than `x`, we use
-;; `drop-while` in the final sequence to choose only values >= `n`.
-;;
-;; For both `nearest-palindrome` and `next-palindrome`, the approach
-;; is to split the number into left and right halves based on its
-;; length in digits (the `rl-pair` function); the left half is then
-;; reflected and concatenated onto itself using `recombine` (e.g.,
-;; 1234 -> 1221).  The twist in `next-palindrome` is to increment the
-;; left half of the number before recombining.
-(solves
-
-  (fn [n]
-    (letfn [(rl-pair [n]
-              [(quot (inc n) 2), (quot n 2)])
-
-            (recombine [s k1 k2]
-              (Long/parseLong (apply str (concat (take k1 s)
-                                                 (reverse (take k2 s))))))
-            (nearest-palindrome [x]
-              (let [sx (str x)
-                    [k1 k2] (rl-pair (count sx))]
-                (recombine sx k1 k2)))
-
-            (next-palindrome [x]
-              (let [sx (str x)
-                    n (count sx)
-                    [k1 _] (rl-pair n)
-                    x' (inc (Long/parseLong (apply str (take k1 sx))))
-                    [kk1 kk2] (rl-pair (count (str (inc x))))]
-                (recombine (str x') kk1 kk2)))]
-
-      (drop-while #(< % n) (iterate next-palindrome
-                                    (nearest-palindrome n)))))
-
-  (= (take 26 (__ 0))
-     [0 1 2 3 4 5 6 7 8 9
-      11 22 33 44 55 66 77 88 99
-      101 111 121 131 141 151 161])
-  (= (take 16 (__ 162))
-     [171 181 191 202
-      212 222 232 242
-      252 262 272 282
-      292 303 313 323])
-  (= (take 6 (__ 1234550000))
-     [1234554321 1234664321 1234774321
-      1234884321 1234994321 1235005321])
-  (= (first (__ (* 111111111 111111111)))
-     (* 111111111 111111111))
-  (= (set (take 199 (__ 0)))
-     (set (map #(first (__ %)) (range 0 10000))))
-  (= true
-     (apply < (take 6666 (__ 9999999))))
-  (= (nth (__ 0) 10101)
-     9102019))
 
 
 ;; Problem 177:
