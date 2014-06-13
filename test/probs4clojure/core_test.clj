@@ -895,6 +895,13 @@
   (= [1 0] (let [n (rand-int 100000)](__ n n)))
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
 
+
+;; ### Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a>
+;;
+;; 
+
+
+
 ;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>
 ;;
 ;; My solution has three parts: (a) to calculate the
@@ -956,42 +963,6 @@
      (apply < (take 6666 (__ 9999999))))
   (= (nth (__ 0) 10101)
      9102019))
-
-
-;; Problem 150 (OLD solution):
-(comment
-  (fn pseq [n]
-    (letfn [(mirror-len [n]
-              (let [nlen (count (str n))]
-                (quot (inc nlen) 2)))
-
-            (palindromic? [n]
-              (let [ml (mirror-len n)
-                    magic (seq2num (take ml (num2seq n)))]
-                (= n (tomirror magic (up? n)))))
-
-            (up? [n] (even? (count (str n))))
-
-            (num2seq [n] (into [] (str n)))
-
-            (seq2num [l] (read-string (apply str l)))
-
-            (tomirror [m up]
-              (seq2num (concat (num2seq m)
-                               (if up
-                                 (reverse (num2seq m))
-                                 (rest (reverse (num2seq m)))))))
-            (next-palindromic-num [n]
-              (let [nx (inc n)
-                    ml (mirror-len nx)
-                    magic (seq2num (take ml (num2seq nx)))
-                    mirror (tomirror magic (up? nx))
-                    mirror+ (tomirror (inc magic) (up? nx))]
-                (if (<= mirror n) mirror+ mirror)))]
-      (if (palindromic? n)
-        (iterate next-palindromic-num n)
-        (rest (iterate next-palindromic-num n))))))
-
 
 
 ;; Problem 177:
