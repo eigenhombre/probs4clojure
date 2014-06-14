@@ -898,7 +898,40 @@
 
 ;; ### Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a>
 ;;
-;; 
+;; We want to provide a function which determines the winning card of
+;; a sequence of plays, defined by:
+;;
+;; 1. The highest trump, if applicable;
+;; 1. The highest card in the suit that was led, otherwise.
+;;
+;; We calculate which suit was led, and then order the cards according
+;; to their "value" in descending order, with high trumps first,
+;; followed by low trumps, followed by high cards in the leading suit,
+;; followed by low cards in the leading suit.  While `trump-cards`
+;; will be empty when nothing is trump, `suit-led-cards` cannot be,
+;; since, by assumption, at least one card was played.
+(solves
+  (fn [trump]
+    (fn [cards]
+      (let [suit-led (->> cards first :suit)
+            get-cards (fn [suit] (->> cards
+                                      (filter #(= (:suit %) suit))
+                                      (sort-by :rank)
+                                      reverse))
+            trump-cards (get-cards trump)
+            suit-led-cards (get-cards suit-led)]
+        (first (concat trump-cards suit-led-cards)))))
+
+  (let [notrump (__ nil)]
+    (and (= {:suit :club :rank 9}  (notrump [{:suit :club :rank 4}
+                                             {:suit :club :rank 9}]))
+         (= {:suit :spade :rank 2} (notrump [{:suit :spade :rank 2}
+                                             {:suit :club :rank 10}]))))
+  (= {:suit :club :rank 10} ((__ :club) [{:suit :spade :rank 2}
+                                         {:suit :club :rank 10}]))
+  (= {:suit :heart :rank 8}
+     ((__ :heart) [{:suit :heart :rank 6} {:suit :heart :rank 8}
+                   {:suit :diamond :rank 10} {:suit :heart :rank 4}])))
 
 
 
