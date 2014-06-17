@@ -2,7 +2,6 @@
   (:require [midje.sweet :refer :all]
             [probs4clojure.core :refer :all]))
 
-;; Redoing these problems for practice now...
 
 (defmacro solves
   "
@@ -821,7 +820,7 @@
   (= true (__ true true true false)))
 
 
-;; Problem 86:
+;; ### Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a>
 (solves
   (fn [n]
     (let [f (fn [x]
@@ -843,44 +842,75 @@
   (= (__ 3) false))
 
 
-;; Problem 103:
-;; Note: these both scale rather badly.
-;; benchmark with e.g.:
-;; (doseq [i (range 12)]
-;;    (print i "...")
-;;    (time (println (f i (range i)))))
+;; ### Problem 87:
+;; Doesn't exist!
 
-;; Engelberg's math.combinatorics implementation[1] relies heavily on
-;; Knuth, but seems to have much better time complexity than my solutions.
-;; [1]
-;; https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj
+;; ### Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a>
 ;;
-;; OLD: (fn [k s]
-;;           (set
-;;            (filter #(= (count %) k)
-;;                    (loop [n k, ret (map hash-set s)]
-;;                      (if (zero? n)
-;;                        ret
-;;                        (recur (dec n)
-;;                               (for [v ret, x s]
-;;                                 (conj v x))))))))
+;; The problem is simple if you use the `clojure.set` library and the
+;; `remove` function to eliminate the intersection elements from both
+;; sets before combining them.
+(solves
+  (fn [s1 s2]
+    (let [both (clojure.set/intersection s1 s2)]
+      (set (clojure.set/union (remove both s1)
+                              (remove both s2)))))
 
-     (solves (fn [k s]
-               (set
-                (loop [k k, ss (map hash-set s)]
-                  (if (<= k 1)
-                    ss
-                    (recur (dec k)
-                           (for [en ss, e0 s :when (not (some #{e0} en))]
-                             (conj en e0)))))))
-             (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
-             (= (__ 10 #{4 5 6}) #{})
-             (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
-             (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
-                                      #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
-             (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
-             (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
-                                                   #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
+  (= (__ #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7})
+  (= (__ #{:a :b :c} #{}) #{:a :b :c})
+  (= (__ #{} #{4 5 6}) #{4 5 6})
+  (= (__ #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]}))
+
+
+;; ### Problem 89: <a href="http://www.4clojure.com/problem/89">Graph Tour</a>
+;; WIP
+(let [G [[1 2] [2 3] [3 4] [4 1]]]
+  (loop [[[a b] & edges] G
+         chain []
+         ]))
+
+
+;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
+;;
+;; Note: these both scale rather badly.  Benchmark with, e.g.,:
+(comment (doseq [i (range 12)]
+           (print i "...")
+           (time (println (f i (range i))))))
+
+;; Engelberg's [math.combinatorics
+;; implementation](https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj)
+;; relies heavily on Knuth, but seems to have much better time
+;; complexity than my solutions.
+
+;; OLD:
+(comment (fn [k s]
+           (set
+            (filter #(= (count %) k)
+                    (loop [n k, ret (map hash-set s)]
+                      (if (zero? n)
+                        ret
+                        (recur (dec n)
+                               (for [v ret, x s]
+                                 (conj v x)))))))))
+;; New solution:
+(solves
+  (fn [k s]
+    (set
+     (loop [k k, ss (map hash-set s)]
+       (if (<= k 1)
+         ss
+         (recur (dec k)
+                (for [en ss, e0 s :when (not (some #{e0} en))]
+                  (conj en e0)))))))
+
+  (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
+  (= (__ 10 #{4 5 6}) #{})
+  (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
+  (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
+                           #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
+  (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
+  (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
+                                        #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
 
 
 ;; Problem 137:

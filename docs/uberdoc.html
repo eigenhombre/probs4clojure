@@ -3032,8 +3032,7 @@ net.brehaut.ClojureTools = (function (SH) {
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr><tr><td class="dep-name">expectations</td><td class="dotted"><hr /></td><td class="dep-version">1.3.3</td></tr><tr><td class="dep-name">org.clojure/tools.trace</td><td class="dotted"><hr /></td><td class="dep-version">0.7.3</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#probs4clojure.core-test">probs4clojure.core-test</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#probs4clojure.core-test" name="probs4clojure.core-test"><h1 class="project-name">probs4clojure.core-test</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns probs4clojure.core-test
   (:require [midje.sweet :refer :all]
-            [probs4clojure.core :refer :all]))</pre></td></tr><tr><td class="docs"><p>Redoing these problems for practice now...</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>  Present and test a solution to a 4clojure.com problem by taking the
+            [probs4clojure.core :refer :all]))</pre></td></tr><tr><td class="docs"><p>  Present and test a solution to a 4clojure.com problem by taking the
   first expression, substituting it for __ in all subsequent
   expressions, and evaluating each resulting expression for truthiness
   (i.e., evaluating the resulting Midje fact).</p>
@@ -3650,7 +3649,7 @@ OLD:
   (= false (__ true))
   (= true (__ false true false))
   (= false (__ true true true))
-  (= true (__ true true true false)))</pre></td></tr><tr><td class="docs"><p>Problem 86:</p>
+  (= true (__ true true true false)))</pre></td></tr><tr><td class="docs"><h3>Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a></h3>
 </td><td class="codes"><pre class="brush: clojure">(solves
   (fn [n]
     (let [f (fn [x]
@@ -3669,43 +3668,66 @@ OLD:
   (= (__ 7) true)
   (= (__ 986543210) true)
   (= (__ 2) false)
-  (= (__ 3) false))</pre></td></tr><tr><td class="docs"><p>Problem 103:
-Note: these both scale rather badly.
-benchmark with e.g.:
-(doseq [i (range 12)]
-   (print i "...")
-   (time (println (f i (range i)))))</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Engelberg's math.combinatorics implementation[1] relies heavily on
-Knuth, but seems to have much better time complexity than my solutions.
-[1]
-https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj</p>
+  (= (__ 3) false))</pre></td></tr><tr><td class="docs"><h3>Problem 87:</h3>
 
-<p>OLD: (fn [k s]
-          (set
-           (filter #(= (count %) k)
-                   (loop [n k, ret (map hash-set s)]
-                     (if (zero? n)
-                       ret
-                       (recur (dec n)
-                              (for [v ret, x s]
-                                (conj v x))))))))</p>
-</td><td class="codes"></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">     (solves (fn [k s]
-               (set
-                (loop [k k, ss (map hash-set s)]
-                  (if (&lt;= k 1)
-                    ss
-                    (recur (dec k)
-                           (for [en ss, e0 s :when (not (some #{e0} en))]
-                             (conj en e0)))))))
-             (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
-             (= (__ 10 #{4 5 6}) #{})
-             (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
-             (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
-                                      #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
-             (= (__ 4 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}})
-             (= (__ 2 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a} #{[1 2 3] &quot;abc&quot;} #{[1 2 3] &quot;efg&quot;}
-                                                   #{:a &quot;abc&quot;} #{:a &quot;efg&quot;} #{&quot;abc&quot; &quot;efg&quot;}}))</pre></td></tr><tr><td class="docs"><p>Problem 137:</p>
+<p>Doesn't exist!</p>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a></h3>
+
+<p>The problem is simple if you use the <code>clojure.set</code> library and the
+<code>remove</code> function to eliminate the intersection elements from both
+sets before combining them.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [s1 s2]
+    (let [both (clojure.set/intersection s1 s2)]
+      (set (clojure.set/union (remove both s1)
+                              (remove both s2)))))
+
+  (= (__ #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7})
+  (= (__ #{:a :b :c} #{}) #{:a :b :c})
+  (= (__ #{} #{4 5 6}) #{4 5 6})
+  (= (__ #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]}))</pre></td></tr><tr><td class="docs"><h3>Problem 89: <a href="http://www.4clojure.com/problem/89">Graph Tour</a></h3>
+
+<p>WIP</p>
+</td><td class="codes"><pre class="brush: clojure">(let [G [[1 2] [2 3] [3 4] [4 1]]]
+  (loop [[[a b] &amp; edges] G
+         chain []
+         ]))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
+
+<p>Note: these both scale rather badly.  Benchmark with, e.g.,:</p>
+</td><td class="codes"><pre class="brush: clojure">(comment (doseq [i (range 12)]
+           (print i &quot;...&quot;)
+           (time (println (f i (range i))))))</pre></td></tr><tr><td class="docs"><p>Engelberg's <a href="https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj">math.combinatorics
+implementation</a>
+relies heavily on Knuth, but seems to have much better time
+complexity than my solutions.</p>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>OLD:</p>
+</td><td class="codes"><pre class="brush: clojure">(comment (fn [k s]
+           (set
+            (filter #(= (count %) k)
+                    (loop [n k, ret (map hash-set s)]
+                      (if (zero? n)
+                        ret
+                        (recur (dec n)
+                               (for [v ret, x s]
+                                 (conj v x)))))))))</pre></td></tr><tr><td class="docs"><p>New solution:</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [k s]
+    (set
+     (loop [k k, ss (map hash-set s)]
+       (if (&lt;= k 1)
+         ss
+         (recur (dec k)
+                (for [en ss, e0 s :when (not (some #{e0} en))]
+                  (conj en e0)))))))
+
+  (= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
+  (= (__ 10 #{4 5 6}) #{})
+  (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
+  (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
+                           #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
+  (= (__ 4 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}})
+  (= (__ 2 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a} #{[1 2 3] &quot;abc&quot;} #{[1 2 3] &quot;efg&quot;}
+                                        #{:a &quot;abc&quot;} #{:a &quot;efg&quot;} #{&quot;abc&quot; &quot;efg&quot;}}))</pre></td></tr><tr><td class="docs"><p>Problem 137:</p>
 </td><td class="codes"><pre class="brush: clojure">(solves (fn [n base]
           (loop [n n, ret []]
             (if (zero? n)
