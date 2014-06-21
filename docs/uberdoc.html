@@ -3748,7 +3748,21 @@ way as well by tracking which vertices have which neighbor.</p>
         (= true (__ [[:a :b] [:a :c] [:c :b] [:a :e]
                      [:b :e] [:a :d] [:b :d] [:c :e]
                      [:d :e] [:c :f] [:d :f]]))
-        (= false (__ [[1 2] [2 3] [2 4] [2 5]])))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
+        (= false (__ [[1 2] [2 3] [2 4] [2 5]])))</pre></td></tr><tr><td class="docs"><h3>Problem 90: <a href="http://www.4clojure.com/problem/90">Cartesian Product</a></h3>
+
+<p><code>for</code> gives us the needed functionality very easily.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+ (fn [sa sb]
+   (set (for [a sa, b sb] [a b])))
+
+  (= (__ #{&quot;ace&quot; &quot;king&quot; &quot;queen&quot;} #{&quot;♠&quot; &quot;♥&quot; &quot;♦&quot; &quot;♣&quot;})
+   #{[&quot;ace&quot;   &quot;♠&quot;] [&quot;ace&quot;   &quot;♥&quot;] [&quot;ace&quot;   &quot;♦&quot;] [&quot;ace&quot;   &quot;♣&quot;]
+     [&quot;king&quot;  &quot;♠&quot;] [&quot;king&quot;  &quot;♥&quot;] [&quot;king&quot;  &quot;♦&quot;] [&quot;king&quot;  &quot;♣&quot;]
+     [&quot;queen&quot; &quot;♠&quot;] [&quot;queen&quot; &quot;♥&quot;] [&quot;queen&quot; &quot;♦&quot;] [&quot;queen&quot; &quot;♣&quot;]})
+  (= (__ #{1 2 3} #{4 5})
+   #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]})
+  (= 300 (count (__ (into #{} (range 10))
+                  (into #{} (range 30))))))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
 
 <p>Note: these both scale rather badly.  Benchmark with, e.g.,:</p>
 </td><td class="codes"><pre class="brush: clojure">(comment (doseq [i (range 12)]

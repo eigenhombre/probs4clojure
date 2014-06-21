@@ -928,6 +928,24 @@
         (= false (__ [[1 2] [2 3] [2 4] [2 5]])))
 
 
+
+;; ### Problem 90: <a href="http://www.4clojure.com/problem/90">Cartesian Product</a>
+;;
+;; `for` gives us the needed functionality very easily.
+(solves
+ (fn [sa sb]
+   (set (for [a sa, b sb] [a b])))
+
+  (= (__ #{"ace" "king" "queen"} #{"♠" "♥" "♦" "♣"})
+   #{["ace"   "♠"] ["ace"   "♥"] ["ace"   "♦"] ["ace"   "♣"]
+     ["king"  "♠"] ["king"  "♥"] ["king"  "♦"] ["king"  "♣"]
+     ["queen" "♠"] ["queen" "♥"] ["queen" "♦"] ["queen" "♣"]})
+  (= (__ #{1 2 3} #{4 5})
+   #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]})
+  (= 300 (count (__ (into #{} (range 10))
+                  (into #{} (range 30))))))
+
+
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
 ;;
 ;; Note: these both scale rather badly.  Benchmark with, e.g.,:
