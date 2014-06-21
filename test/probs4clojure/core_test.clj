@@ -863,11 +863,69 @@
 
 
 ;; ### Problem 89: <a href="http://www.4clojure.com/problem/89">Graph Tour</a>
-;; WIP
-(let [G [[1 2] [2 3] [3 4] [4 1]]]
-  (loop [[[a b] & edges] G
-         chain []
-         ]))
+;;
+;; The problem is manageable with the following graph theoretical
+;; result from [Wikipedia](http://en.wikipedia.org/wiki/Eulerian_path)
+;; that "an undirected graph has an Eulerian trail [a walk that uses
+;; each edge exactly once] if and only if no more than two vertices
+;; has an odd degree [number of edges coming out of it] and it if all
+;; its vertices... belong to a simply-connected component."
+;;
+;; The connectedness property can be obtained by doing a traversal of
+;; the graph (in this case, depth-first) and tracking whether each
+;; node was visited.  The degree of the vertices can be obtained that
+;; way as well by tracking which vertices have which neighbor.
+(solves
+  (fn [pairs]
+    (letfn [(pairs-to-neighbor-list-map [pairs]
+              (loop [[[k v] & pairs] pairs
+                     g {}]
+                (if-not k
+                  g
+                  (let [g (update-in g [k :neighbors] conj v)
+                        g (update-in g [v :neighbors] conj k)]
+                    (recur pairs g)))))
+
+            (set-explored [g i]
+              (assoc-in g [i :explored] true))
+
+            (explored [g i]
+              (get-in g [i :explored]))
+
+            (get-neighbors [g i]
+              (get-in g [i :neighbors]))
+
+            (dfs [g i]
+              (let [g (set-explored g i)
+                    js (get-neighbors g i)]
+                (loop [g g, [j & js] js]
+                  (cond
+                   (not j)        g
+                   (explored g j) (recur g js)
+                   :else          (recur (dfs g j) js)))))
+
+            (all-connected [g]
+              (let [v (first (keys g))
+                    exp (dfs g v)]
+                (every? (partial = true) (map :explored (vals exp)))))
+
+            (degree [v] (-> v :neighbors count))
+
+            (num-odd-vertices [g]
+              (count (filter (comp odd? degree) (vals g))))]
+      (let [g (pairs-to-neighbor-list-map pairs)]
+        (and (<= (num-odd-vertices g) 2)
+             (all-connected g)))))
+
+        (= true (__ [[:a :b]]))
+        (= false (__ [[:a :a] [:b :b]]))
+        (= false (__ [[:a :b] [:a :b] [:a :c] [:c :a]
+                      [:a :d] [:b :d] [:c :d]]))
+        (= true (__ [[1 2] [2 3] [3 4] [4 1]]))
+        (= true (__ [[:a :b] [:a :c] [:c :b] [:a :e]
+                     [:b :e] [:a :d] [:b :d] [:c :e]
+                     [:d :e] [:c :f] [:d :f]]))
+        (= false (__ [[1 2] [2 3] [2 4] [2 5]])))
 
 
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
