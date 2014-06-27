@@ -3762,7 +3762,70 @@ way as well by tracking which vertices have which neighbor.</p>
   (= (__ #{1 2 3} #{4 5})
    #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]})
   (= 300 (count (__ (into #{} (range 10))
-                  (into #{} (range 30))))))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
+                  (into #{} (range 30))))))</pre></td></tr><tr><td class="docs"><h3>Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a></h3>
+
+<p>We accept a vector of strings as our "board representation."  The
+problem is, essentially, For any given spot, how many neighbors do
+I have?  This is made easier by the fact that we can easily address any
+cell in the board representation with <code>get-in</code>.  For example, if <code>b</code> is the
+first board, <code>(get-in b [2 2])</code> is <code>\#</code>, <code>(get-in b [0 0])</code> is
+<code>\space</code>, and <code>(get-in b [-1 -5])</code> is <code>nil</code>.</p>
+
+<p>With the lookup method understood, the rest of the work is looping
+over all the rows and columns, then for each position count
+neighbor values by looking at the character at +/- one x or y
+value, except for the position in question.  Then the rule for
+whether the cell should live or die is trivial to apply.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [b]
+    (for [j (range (count (first b)))]
+      (let [row-chars (for [i (range (count b))]
+                        (let [nn (count
+                                  (for [ny (range (dec j) (+ 2 j))
+                                        nx (range (dec i) (+ 2 i))
+                                        :when (and (= \# (get-in b [ny nx]))
+                                                   (or (not= ny j)
+                                                       (not= nx i)))]
+                                    [ny nx (= \# (get-in b [ny nx]))]))
+                              reborn (if (= \# (get-in b [j i]))
+                                       (#{2 3} nn)
+                                       (#{3} nn))]
+                          (if reborn \# \space)))]
+        (apply str row-chars))))
+  (= (__ [&quot;      &quot;
+          &quot; ##   &quot;
+          &quot; ##   &quot;
+          &quot;   ## &quot;
+          &quot;   ## &quot;
+          &quot;      &quot;])
+     [&quot;      &quot;
+      &quot; ##   &quot;
+      &quot; #    &quot;
+      &quot;    # &quot;
+      &quot;   ## &quot;
+      &quot;      &quot;])
+  (= (__ [&quot;     &quot;
+          &quot;     &quot;
+          &quot; ### &quot;
+          &quot;     &quot;
+          &quot;     &quot;])
+     [&quot;     &quot;
+      &quot;  #  &quot;
+      &quot;  #  &quot;
+      &quot;  #  &quot;
+      &quot;     &quot;])
+  (= (__ [&quot;      &quot;
+          &quot;      &quot;
+          &quot;  ### &quot;
+          &quot; ###  &quot;
+          &quot;      &quot;
+          &quot;      &quot;])
+     [&quot;      &quot;
+      &quot;   #  &quot;
+      &quot; #  # &quot;
+      &quot; #  # &quot;
+      &quot;  #   &quot;
+      &quot;      &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
 
 <p>Note: these both scale rather badly.  Benchmark with, e.g.,:</p>
 </td><td class="codes"><pre class="brush: clojure">(comment (doseq [i (range 12)]

@@ -946,6 +946,72 @@
                   (into #{} (range 30))))))
 
 
+;; ### Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a>
+;;
+;; We accept a vector of strings as our "board representation."  The
+;; problem is, essentially, For any given spot, how many neighbors do
+;; I have?  This is made easier by the fact that we can easily address any
+;; cell in the board representation with `get-in`.  For example, if `b` is the
+;; first board, `(get-in b [2 2])` is `\#`, `(get-in b [0 0])` is
+;; `\space`, and `(get-in b [-1 -5])` is `nil`.
+;;
+;; With the lookup method understood, the rest of the work is looping
+;; over all the rows and columns, then for each position count
+;; neighbor values by looking at the character at +/- one x or y
+;; value, except for the position in question.  Then the rule for
+;; whether the cell should live or die is trivial to apply.
+(solves
+  (fn [b]
+    (for [j (range (count (first b)))]
+      (let [row-chars (for [i (range (count b))]
+                        (let [nn (count
+                                  (for [ny (range (dec j) (+ 2 j))
+                                        nx (range (dec i) (+ 2 i))
+                                        :when (and (= \# (get-in b [ny nx]))
+                                                   (or (not= ny j)
+                                                       (not= nx i)))]
+                                    [ny nx (= \# (get-in b [ny nx]))]))
+                              reborn (if (= \# (get-in b [j i]))
+                                       (#{2 3} nn)
+                                       (#{3} nn))]
+                          (if reborn \# \space)))]
+        (apply str row-chars))))
+  (= (__ ["      "
+          " ##   "
+          " ##   "
+          "   ## "
+          "   ## "
+          "      "])
+     ["      "
+      " ##   "
+      " #    "
+      "    # "
+      "   ## "
+      "      "])
+  (= (__ ["     "
+          "     "
+          " ### "
+          "     "
+          "     "])
+     ["     "
+      "  #  "
+      "  #  "
+      "  #  "
+      "     "])
+  (= (__ ["      "
+          "      "
+          "  ### "
+          " ###  "
+          "      "
+          "      "])
+     ["      "
+      "   #  "
+      " #  # "
+      " #  # "
+      "  #   "
+      "      "]))
+
+
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
 ;;
 ;; Note: these both scale rather badly.  Benchmark with, e.g.,:
