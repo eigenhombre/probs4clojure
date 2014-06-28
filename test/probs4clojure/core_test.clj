@@ -946,6 +946,62 @@
                   (into #{} (range 30))))))
 
 
+;; ### Problem 91: <a href="http://www.4clojure.com/problem/91">Graph Connectivity</a>
+;;
+;; We already determined connectedness in Problem 90.  The only
+;; required variation is to coerce the input set to a vector so the
+;; initial loop destructuring form works.
+(solves
+  (fn [pairs]
+    (letfn [(pairs-to-neighbor-list-map [pairs]
+              (loop [[[k v] & pairs] pairs
+                     g {}]
+                (if-not k
+                  g
+                  (let [g (update-in g [k :neighbors] conj v)
+                        g (update-in g [v :neighbors] conj k)]
+                    (recur pairs g)))))
+
+            (set-explored [g i]
+              (assoc-in g [i :explored] true))
+
+            (explored [g i]
+              (get-in g [i :explored]))
+
+            (get-neighbors [g i]
+              (get-in g [i :neighbors]))
+
+            (dfs [g i]
+              (let [g (set-explored g i)
+                    js (get-neighbors g i)]
+                (loop [g g, [j & js] js]
+                  (cond
+                   (not j)        g
+                   (explored g j) (recur g js)
+                   :else          (recur (dfs g j) js)))))
+
+            (all-connected [g]
+              (let [v (first (keys g))
+                    exp (dfs g v)]
+                (every? (partial = true) (map :explored (vals exp)))))]
+
+      (->> pairs
+           (into [])
+           pairs-to-neighbor-list-map
+           all-connected)))
+
+  (= true (__ #{[:a :a]}))
+  (= true (__ #{[:a :b]}))
+  (= false (__ #{[1 2] [2 3] [3 1]
+               [4 5] [5 6] [6 4]}))
+  (= true (__ #{[1 2] [2 3] [3 1]
+              [4 5] [5 6] [6 4] [3 4]}))
+  (= false (__ #{[:a :b] [:b :c] [:c :d]
+               [:x :y] [:d :a] [:b :e]}))
+  (= true (__ #{[:a :b] [:b :c] [:c :d]
+              [:x :y] [:d :a] [:b :e] [:x :a]})))
+
+
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
 ;;
 ;; Note: these both scale rather badly.  Benchmark with, e.g.,:
