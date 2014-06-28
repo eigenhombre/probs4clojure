@@ -2,6 +2,9 @@
   (:require [midje.sweet :refer :all]
             [probs4clojure.core :refer :all]))
 
+;; <script type="text/javascript"
+;;  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+;; </script>
 
 (defmacro solves
   "
@@ -820,7 +823,55 @@
   (= true (__ true true true false)))
 
 
+;; ### Problem 84: <a href="http://www.4clojure.com/problem/84">Transitive Closure</a>
+;;
+;; Abstract examples: if \\([a, b]\\) and \\([b, c]\\) are given, then
+;; \\([a, c]\\) should be added to the inputs in the result.  If
+;; \\([a, b]\\), \\([b, c]\\) and \\([c, d]\\) are given, then \\([a,
+;; c]\\), \\([b, d]\\) and \\([a, d]\\) should be added to the inputs.
+;;
+;; I took a fairly brute force approach to this.  `grow-1` is a single
+;; step forward where, for any of the pairs in the input, I find all
+;; other pairs in the input whose first element equals the second
+;; element of the original pair; `grow-1` concats these new pairs with the
+;; original collection of pairs in the input.
+;;
+;; `grow` iterates on `grow-1` until no change is found; i.e., the
+;; resulting set is maximal.
+(solves
+  (fn [s]
+    (letfn [(grow-1 [pairs]
+              (let [pairs (vec pairs)
+                    pairs' (for [[a b] pairs
+                                 [bb cc] pairs :when (= b bb)]
+                             [a cc])]
+                (set (concat pairs pairs'))))
+            (grow [pairs]
+              (let [pairs' (grow-1 pairs)]
+                (if (= pairs' pairs)
+                  (set pairs)
+                  (recur pairs'))))]
+      (grow s)))
+  (let [divides #{[8 4] [9 3] [4 2] [27 9]}]
+    (= (__ divides) #{[4 2] [8 4] [8 2] [9 3] [27 9] [27 3]}))
+  (let [more-legs
+        #{["cat" "man"] ["man" "snake"] ["spider" "cat"]}]
+    (= (__ more-legs)
+       #{["cat" "man"] ["cat" "snake"] ["man" "snake"]
+         ["spider" "cat"] ["spider" "man"] ["spider" "snake"]}))
+  (let [progeny
+        #{["father" "son"] ["uncle" "cousin"] ["son" "grandson"]}]
+    (= (__ progeny)
+     #{["father" "son"] ["father" "grandson"]
+       ["uncle" "cousin"] ["son" "grandson"]})))
+
+
 ;; ### Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a>
+;;
+;; Here `f` implements the "particular formula" described in the
+;; problem text; we iterate until the result is either 1 (happy), or a
+;; repeated value is found again (sad).  To check the latter we
+;; maintain a dictionary `seen` of previous values.
 (solves
   (fn [n]
     (let [f (fn [x]
@@ -1111,7 +1162,11 @@
                                         #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
 
 
-;; Problem 137:
+
+;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
+;;
+;; This is a simple matter of dividing modulo the base and shifting
+;; out low-order digits.  Alternatively, could do as a lazy seq.
 (solves (fn [n base]
           (loop [n n, ret []]
             (if (zero? n)
@@ -1226,21 +1281,25 @@
      9102019))
 
 
-;; Problem 177:
+;; ### Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a>
+;;
+;; After a couple of tries on this I realized that stripping out
+;; non-parenthetic characters and then successively eliminating empty,
+;; balanced pairs of parens/braces/brackets would do the trick.
 (solves (fn [s]
           (empty?
            (loop [s (clojure.string/replace s #"[^\(\)\{\}\[\]]" "")]
              (let [r (clojure.string/replace s #"\(\)|\{\}|\[\]" "")]
                (if (= r s) s (recur r))))))
-  (__ "This string has no brackets.")
-  (__ "class Test {
+        (__ "This string has no brackets.")
+        (__ "class Test {
       public static void main(String[] args) {
         System.out.println(\"Hello world.\");
       }
     }")
-  (not (__ "(start, end]"))
-  (not (__ "())"))
-  (not (__ "[ { ] } "))
-  (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
-  (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
-  (not (__ "[")))
+        (not (__ "(start, end]"))
+        (not (__ "())"))
+        (not (__ "[ { ] } "))
+        (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
+        (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
+        (not (__ "[")))

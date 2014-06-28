@@ -3032,7 +3032,10 @@ net.brehaut.ClojureTools = (function (SH) {
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.4.0</td></tr><tr><td class="dep-name">expectations</td><td class="dotted"><hr /></td><td class="dep-version">1.3.3</td></tr><tr><td class="dep-name">org.clojure/tools.trace</td><td class="dotted"><hr /></td><td class="dep-version">0.7.3</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#probs4clojure.core-test">probs4clojure.core-test</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#probs4clojure.core-test" name="probs4clojure.core-test"><h1 class="project-name">probs4clojure.core-test</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns probs4clojure.core-test
   (:require [midje.sweet :refer :all]
-            [probs4clojure.core :refer :all]))</pre></td></tr><tr><td class="docs"><p>  Present and test a solution to a 4clojure.com problem by taking the
+            [probs4clojure.core :refer :all]))</pre></td></tr><tr><td class="docs"><script type="text/javascript"
+ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>  Present and test a solution to a 4clojure.com problem by taking the
   first expression, substituting it for __ in all subsequent
   expressions, and evaluating each resulting expression for truthiness
   (i.e., evaluating the resulting Midje fact).</p>
@@ -3649,7 +3652,52 @@ OLD:
   (= false (__ true))
   (= true (__ false true false))
   (= false (__ true true true))
-  (= true (__ true true true false)))</pre></td></tr><tr><td class="docs"><h3>Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a></h3>
+  (= true (__ true true true false)))</pre></td></tr><tr><td class="docs"><h3>Problem 84: <a href="http://www.4clojure.com/problem/84">Transitive Closure</a></h3>
+
+<p>Abstract examples: if \([a, b]\) and \([b, c]\) are given, then
+\([a, c]\) should be added to the inputs in the result.  If
+\([a, b]\), \([b, c]\) and \([c, d]\) are given, then \([a,
+c]\), \([b, d]\) and \([a, d]\) should be added to the inputs.</p>
+
+<p>I took a fairly brute force approach to this.  <code>grow-1</code> is a single
+step forward where, for any of the pairs in the input, I find all
+other pairs in the input whose first element equals the second
+element of the original pair; <code>grow-1</code> concats these new pairs with the
+original collection of pairs in the input.</p>
+
+<p><code>grow</code> iterates on <code>grow-1</code> until no change is found; i.e., the
+resulting set is maximal.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [s]
+    (letfn [(grow-1 [pairs]
+              (let [pairs (vec pairs)
+                    pairs' (for [[a b] pairs
+                                 [bb cc] pairs :when (= b bb)]
+                             [a cc])]
+                (set (concat pairs pairs'))))
+            (grow [pairs]
+              (let [pairs' (grow-1 pairs)]
+                (if (= pairs' pairs)
+                  (set pairs)
+                  (recur pairs'))))]
+      (grow s)))
+  (let [divides #{[8 4] [9 3] [4 2] [27 9]}]
+    (= (__ divides) #{[4 2] [8 4] [8 2] [9 3] [27 9] [27 3]}))
+  (let [more-legs
+        #{[&quot;cat&quot; &quot;man&quot;] [&quot;man&quot; &quot;snake&quot;] [&quot;spider&quot; &quot;cat&quot;]}]
+    (= (__ more-legs)
+       #{[&quot;cat&quot; &quot;man&quot;] [&quot;cat&quot; &quot;snake&quot;] [&quot;man&quot; &quot;snake&quot;]
+         [&quot;spider&quot; &quot;cat&quot;] [&quot;spider&quot; &quot;man&quot;] [&quot;spider&quot; &quot;snake&quot;]}))
+  (let [progeny
+        #{[&quot;father&quot; &quot;son&quot;] [&quot;uncle&quot; &quot;cousin&quot;] [&quot;son&quot; &quot;grandson&quot;]}]
+    (= (__ progeny)
+     #{[&quot;father&quot; &quot;son&quot;] [&quot;father&quot; &quot;grandson&quot;]
+       [&quot;uncle&quot; &quot;cousin&quot;] [&quot;son&quot; &quot;grandson&quot;]})))</pre></td></tr><tr><td class="docs"><h3>Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a></h3>
+
+<p>Here <code>f</code> implements the "particular formula" described in the
+problem text; we iterate until the result is either 1 (happy), or a
+repeated value is found again (sad).  To check the latter we
+maintain a dictionary <code>seen</code> of previous values.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves
   (fn [n]
     (let [f (fn [x]
@@ -3762,7 +3810,6 @@ way as well by tracking which vertices have which neighbor.</p>
   (= (__ #{1 2 3} #{4 5})
    #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]})
   (= 300 (count (__ (into #{} (range 10))
-<<<<<<< HEAD
                   (into #{} (range 30))))))</pre></td></tr><tr><td class="docs"><h3>Problem 91: <a href="http://www.4clojure.com/problem/91">Graph Connectivity</a></h3>
 
 <p>We already determined connectedness in Problem 90.  The only
@@ -3816,9 +3863,7 @@ initial loop destructuring form works.</p>
   (= false (__ #{[:a :b] [:b :c] [:c :d]
                [:x :y] [:d :a] [:b :e]}))
   (= true (__ #{[:a :b] [:b :c] [:c :d]
-              [:x :y] [:d :a] [:b :e] [:x :a]})))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
-=======
-                  (into #{} (range 30))))))</pre></td></tr><tr><td class="docs"><h3>Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a></h3>
+              [:x :y] [:d :a] [:b :e] [:x :a]})))</pre></td></tr><tr><td class="docs"><h3>Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a></h3>
 
 <p>We accept a vector of strings as our "board representation."  The
 problem is, essentially, For any given spot, how many neighbors do
@@ -3882,7 +3927,6 @@ whether the cell should live or die is trivial to apply.</p>
       &quot; #  # &quot;
       &quot;  #   &quot;
       &quot;      &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
->>>>>>> 10f281188a81119a2dff9735a73c8e84fe5f10c2
 
 <p>Note: these both scale rather badly.  Benchmark with, e.g.,:</p>
 </td><td class="codes"><pre class="brush: clojure">(comment (doseq [i (range 12)]
@@ -3918,7 +3962,10 @@ complexity than my solutions.</p>
                            #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
   (= (__ 4 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}})
   (= (__ 2 #{[1 2 3] :a &quot;abc&quot; &quot;efg&quot;}) #{#{[1 2 3] :a} #{[1 2 3] &quot;abc&quot;} #{[1 2 3] &quot;efg&quot;}
-                                        #{:a &quot;abc&quot;} #{:a &quot;efg&quot;} #{&quot;abc&quot; &quot;efg&quot;}}))</pre></td></tr><tr><td class="docs"><p>Problem 137:</p>
+                                        #{:a &quot;abc&quot;} #{:a &quot;efg&quot;} #{&quot;abc&quot; &quot;efg&quot;}}))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+
+<p>This is a simple matter of dividing modulo the base and shifting
+out low-order digits.  Alternatively, could do as a lazy seq.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves (fn [n base]
           (loop [n n, ret []]
             (if (zero? n)
@@ -4025,22 +4072,26 @@ left half of the number before recombining.</p>
   (= true
      (apply &lt; (take 6666 (__ 9999999))))
   (= (nth (__ 0) 10101)
-     9102019))</pre></td></tr><tr><td class="docs"><p>Problem 177:</p>
+     9102019))</pre></td></tr><tr><td class="docs"><h3>Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a></h3>
+
+<p>After a couple of tries on this I realized that stripping out
+non-parenthetic characters and then successively eliminating empty,
+balanced pairs of parens/braces/brackets would do the trick.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves (fn [s]
           (empty?
            (loop [s (clojure.string/replace s #&quot;[^\(\)\{\}\[\]]&quot; &quot;&quot;)]
              (let [r (clojure.string/replace s #&quot;\(\)|\{\}|\[\]&quot; &quot;&quot;)]
                (if (= r s) s (recur r))))))
-  (__ &quot;This string has no brackets.&quot;)
-  (__ &quot;class Test {
+        (__ &quot;This string has no brackets.&quot;)
+        (__ &quot;class Test {
       public static void main(String[] args) {
         System.out.println(\&quot;Hello world.\&quot;);
       }
     }&quot;)
-  (not (__ &quot;(start, end]&quot;))
-  (not (__ &quot;())&quot;))
-  (not (__ &quot;[ { ] } &quot;))
-  (__ &quot;([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))&quot;)
-  (not (__ &quot;([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))&quot;))
-  (not (__ &quot;[&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+        (not (__ &quot;(start, end]&quot;))
+        (not (__ &quot;())&quot;))
+        (not (__ &quot;[ { ] } &quot;))
+        (__ &quot;([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))&quot;)
+        (not (__ &quot;([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))&quot;))
+        (not (__ &quot;[&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
        SyntaxHighlighter.all()</script></body></html>
