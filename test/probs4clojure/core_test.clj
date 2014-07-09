@@ -2,16 +2,25 @@
   (:require [midje.sweet :refer :all]
             [probs4clojure.core :refer :all]))
 
+;; ### Solutions to [4clojure.com](http://4clojure.com) problems
+;;
+;; Worked and (towards the end, at least) documented with
+;; [Marginalia](http://gdeer81.github.io/marginalia/).
+;;
+;; **Spoiler Alert** -- at least *try* to solve the problems yourself
+;; **first!!!  They are much better that way.
+
+
 ;; <script type="text/javascript"
 ;;  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 ;; </script>
 
 (defmacro solves
   "
-  Present and test a solution to a 4clojure.com problem by taking the
-  first expression, substituting it for __ in all subsequent
-  expressions, and evaluating each resulting expression for truthiness
-  (i.e., evaluating the resulting Midje fact).
+  Present and test a solution to a [4clojure.com](http://4clojure.com)
+  problem by taking the first expression, substituting it for __ in
+  all subsequent expressions, and evaluating each resulting expression
+  for truthiness (i.e., evaluating the resulting Midje fact).
   "
   [expr & tests]
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
@@ -1161,6 +1170,39 @@
   (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
                                         #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
 
+
+;; ### Problem 106: <a href="http://www.4clojure.com/problem/106">Number Maze</a>
+;;
+;; This problem is similar to searching for the shortest path through
+;; an undirected graph, a problem for which breadth-first search is
+;; well-suited.  For every "layer" in the search (each layer
+;; corresponds to a successive number of allowed operations) we
+;; calculate the next layer by applying all the allowed operations to
+;; the values in the current layer.  The layers can grow large
+;; relatively quickly, but converting the sequence to a set on each
+;; iteration reduces the size substantially for large layers.
+(solves
+  (fn [n0 n1]
+    (letfn [(apply-ops [ns]
+              (mapcat ops-on-num ns))
+            (ops-on-num [n]
+              (if (even? n)
+                [(* 2 n) (/ n 2) (+ 2 n)]
+                [(* 2 n) (+ 2 n)]))]
+
+      (loop [c 1, ns [n0]]
+        (if (some #{n1} ns)
+          c
+          (let [next-ns (apply-ops ns)]
+            (recur (inc c)
+                   (set (apply-ops ns))))))))
+
+  (= 1 (__ 1 1))   ; 1
+  (= 3 (__ 3 12))  ; 3 6 12
+  (= 3 (__ 12 3))  ; 12 6 3
+  (= 3 (__ 5 9))   ; 5 7 9
+  (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
+  (= 5 (__ 9 12))) ; 9 11 22 24 12
 
 
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
