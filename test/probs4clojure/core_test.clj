@@ -8,7 +8,7 @@
 ;; [Marginalia](http://gdeer81.github.io/marginalia/).
 ;;
 ;; **Spoiler Alert** -- at least *try* to solve the problems yourself
-;; **first!!!  They are much better that way.
+;; first!!!  They are much better that way.
 
 
 ;; <script type="text/javascript"
