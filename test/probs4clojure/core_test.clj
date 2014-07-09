@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [probs4clojure.core :refer :all]))
 
-;; ### Solutions to [4clojure.com](http://4clojure.com) problems
+;; ### Solutions to 4clojure.com problems
 ;;
 ;; Worked and (towards the end, at least) documented with
 ;; [Marginalia](http://gdeer81.github.io/marginalia/).
