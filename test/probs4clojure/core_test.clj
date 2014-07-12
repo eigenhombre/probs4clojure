@@ -1003,7 +1003,7 @@
 
 ;; ### Problem 91: <a href="http://www.4clojure.com/problem/91">Graph Connectivity</a>
 ;;
-;; We already determined connectedness in Problem 90.  The only
+;; We already determined connectedness in Problem 89.  The only
 ;; required variation is to coerce the input set to a vector so the
 ;; initial loop destructuring form works.
 (solves
