@@ -3933,7 +3933,47 @@ whether the cell should live or die is trivial to apply.</p>
       &quot; #  # &quot;
       &quot; #  # &quot;
       &quot;  #   &quot;
-      &quot;      &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
+      &quot;      &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 101: <a href="http://www.4clojure.com/problem/101">Levenshtein Distance</a></h3>
+
+<p>For this solution, we build on the simplest recursive solution
+shown in the <a href="http://en.wikipedia.org/wiki/Levenshtein_distance#Recursive">relevant Wikipedia
+article</a>.
+The caveat given there is that the recursive solution "is very
+inefficient because it recomputes the Levenshtein distance of the
+same substrings many times."</p>
+
+<p>In this sense, the algorithm shares characteristics with the
+Fibonacci sequence calculation, whose elegant but slow recursive
+solution can be dramatically sped up using memoization.
+Memoization is a bit trickier in cases such as this when <code>def</code>ing
+new vars is not allowed (as is the case with all 4Clojure
+problems).  We therefore note <a href="http://stackoverflow.com/questions/3906831/how-do-i-generate-memoized-recursive-functions-in-clojure">Rafał Dowgird's StackOverflow
+solution</a>
+for memoizing without <code>def</code>.  Memoizing this way speeds up the test
+suite from several minutes or more (I didn't bother waiting for it
+to finish) to about 25 msec on my laptop.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (let [ldist
+        (fn [mem-ldist a b]
+          (cond
+           (empty? a) (count b)
+           (empty? b) (count a)
+           :else (min (inc (mem-ldist mem-ldist (butlast a) b))
+                      (inc (mem-ldist  mem-ldist a (butlast b)))
+                      (+ (mem-ldist mem-ldist (butlast a) (butlast b))
+                         (if (= (last a) (last b)) 0 1)))))
+        mem-ldist (memoize ldist)]
+    (partial mem-ldist mem-ldist))
+
+  (= (__ &quot;kitten&quot; &quot;sitting&quot;) 3)
+  (= (__ &quot;closure&quot; &quot;clojure&quot;) (__ &quot;clojure&quot; &quot;closure&quot;) 1)
+  (= (__ &quot;xyx&quot; &quot;xyyyx&quot;) 2)
+  (= (__ &quot;&quot; &quot;123456&quot;) 6)
+  (= (__ &quot;Clojure&quot; &quot;Clojure&quot;) (__ &quot;&quot; &quot;&quot;) (__ [] []) 0)
+  (= (__ [1 2 3 4] [0 2 3 4 5]) 2)
+  (= (__ '(:a :b :c :d) '(:a :d)) 2)
+  (= (__ &quot;ttttattttctg&quot; &quot;tcaaccctaccat&quot;) 10)
+  (= (__ &quot;gaattctaatctc&quot; &quot;caaacaaaaaattt&quot;) 9))</pre></td></tr><tr><td class="docs"><h3>Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a></h3>
 
 <p>Note: these both scale rather badly.  Benchmark with, e.g.,:</p>
 </td><td class="codes"><pre class="brush: clojure">(comment (doseq [i (range 12)]

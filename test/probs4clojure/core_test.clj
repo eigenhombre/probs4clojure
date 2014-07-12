@@ -1128,6 +1128,49 @@
       "      "]))
 
 
+;; ### Problem 101: <a href="http://www.4clojure.com/problem/101">Levenshtein Distance</a>
+;;
+;; For this solution, we build on the simplest recursive solution
+;; shown in the [relevant Wikipedia
+;; article](http://en.wikipedia.org/wiki/Levenshtein_distance#Recursive).
+;; The caveat given there is that the recursive solution "is very
+;; inefficient because it recomputes the Levenshtein distance of the
+;; same substrings many times."
+;;
+;; In this sense, the algorithm shares characteristics with the
+;; Fibonacci sequence calculation, whose elegant but slow recursive
+;; solution can be dramatically sped up using memoization.
+;; Memoization is a bit trickier in cases such as this when `def`ing
+;; new vars is not allowed (as is the case with all 4Clojure
+;; problems).  We therefore note [Rafał Dowgird's StackOverflow
+;; solution](http://stackoverflow.com/questions/3906831/how-do-i-generate-memoized-recursive-functions-in-clojure)
+;; for memoizing without `def`.  Memoizing this way speeds up the test
+;; suite from several minutes or more (I didn't bother waiting for it
+;; to finish) to about 25 msec on my laptop.
+(solves
+  (let [ldist
+        (fn [mem-ldist a b]
+          (cond
+           (empty? a) (count b)
+           (empty? b) (count a)
+           :else (min (inc (mem-ldist mem-ldist (butlast a) b))
+                      (inc (mem-ldist  mem-ldist a (butlast b)))
+                      (+ (mem-ldist mem-ldist (butlast a) (butlast b))
+                         (if (= (last a) (last b)) 0 1)))))
+        mem-ldist (memoize ldist)]
+    (partial mem-ldist mem-ldist))
+
+  (= (__ "kitten" "sitting") 3)
+  (= (__ "closure" "clojure") (__ "clojure" "closure") 1)
+  (= (__ "xyx" "xyyyx") 2)
+  (= (__ "" "123456") 6)
+  (= (__ "Clojure" "Clojure") (__ "" "") (__ [] []) 0)
+  (= (__ [1 2 3 4] [0 2 3 4 5]) 2)
+  (= (__ '(:a :b :c :d) '(:a :d)) 2)
+  (= (__ "ttttattttctg" "tcaaccctaccat") 10)
+  (= (__ "gaattctaatctc" "caaacaaaaaattt") 9))
+
+
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
 ;;
 ;; Note: these both scale rather badly.  Benchmark with, e.g.,:
