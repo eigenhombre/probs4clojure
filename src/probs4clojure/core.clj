@@ -1,5 +1,4 @@
-(ns probs4clojure.core
-  (:use expectations))
+(ns probs4clojure.core)
 
 ;; ;;  Infinite Matrix
 ;;  
