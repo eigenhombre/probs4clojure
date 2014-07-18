@@ -1244,6 +1244,16 @@
   (= 5 (__ 9 12))) ; 9 11 22 24 12
 
 
+;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
+;;
+;; I found the answer to this one just by iterating `class` at the
+;; REPL, calling it successively on its own output.
+(solves
+  java.lang.Class
+  (let [x __]
+    (and (= (class x) x) x)))
+
+
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
