@@ -1247,7 +1247,8 @@
 ;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
 ;;
 ;; I found the answer to this one just by iterating `class` at the
-;; REPL, calling it successively on its own output.
+;; REPL, calling it successively on its own output.  The final `x` in
+;; the `and` form excludes `nil`, whose class is also itself.
 (solves
   java.lang.Class
   (let [x __]
