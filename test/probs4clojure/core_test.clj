@@ -41,7 +41,8 @@
  (= __ (.toUpperCase "hello world")))
 
 ;; ### Problem 4:
-;; This is the one problem not amenable to `solves` off-the-shelf, so solution is added inline.
+;; This is the one problem not amenable to `solves` off-the-shelf, so
+;; solution is added inline.
 (solves
  (= (list :a :b :c) '(:a :b :c)))
 
@@ -1242,6 +1243,65 @@
   (= 3 (__ 5 9))   ; 5 7 9
   (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
   (= 5 (__ 9 12))) ; 9 11 22 24 12
+
+
+;; ### Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a>
+;;
+;; The solution is quite similar to that for [Problem
+;; 73](http://www.4clojure.com/problem/73).  We preserve the "diag,"
+;; "ant-diag," "across" and "down" logic for determining whether
+;; three-in-a-row has been obtained.  The difference is that we now
+;; apply this logic over every \\(x, y\\) (or, rather, `[y x]`)
+;; combination, placing the desired piece (`:x` or `:o`) in the spot
+;; if it's currently empty, and returning the pair only if it makes
+;; three-in-a-row.
+(solves
+  (fn [ox bb]
+    (set
+     (for [y (range 3)
+           x (range 3)
+           :let [piece (get-in bb [y x])
+                 new-piece (if (= piece :e) ox piece)
+                 b (assoc-in bb [y x] new-piece)]
+           :when (or
+                  ;; diag:
+                  (every? #{ox}
+                          (for [i (range 3)]
+                            ((b i) i)))
+                  ;; anti-diag:
+                  (every? #{ox}
+                          (for [i (range 3)]
+                            ((b i) (- 2 i))))
+                  ;; across:
+                  (some (fn [i]
+                          (every? #{ox} (for [j (range 3)] ((b i) j))))
+                        (range 3))
+                  ;; down:
+                  (some (fn [i]
+                          (every? #{ox} (for [j (range 3)] ((b j) i))))
+                        (range 3)))]
+       [y x])))
+
+  (= (__ :x [[:o :e :e]
+             [:o :x :o]
+             [:x :x :e]])
+     #{[2 2] [0 1] [0 2]})
+  (= (__ :x [[:x :o :o]
+             [:x :x :e]
+             [:e :o :e]])
+     #{[2 2] [1 2] [2 0]})
+  (= (__ :x [[:x :e :x]
+             [:o :x :o]
+             [:e :o :e]])
+     #{[2 2] [0 1] [2 0]})
+  (= (__ :x [[:x :x :o]
+             [:e :e :e]
+             [:e :e :e]])
+     #{})
+  (= (__ :o [[:x :x :o]
+             [:o :e :o]
+             [:x :e :e]])
+     #{[2 2] [1 1]}))
 
 
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>

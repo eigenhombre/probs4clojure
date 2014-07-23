@@ -3058,7 +3058,8 @@ first!!!  They are much better that way.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves &quot;HELLO WORLD&quot;
  (= __ (.toUpperCase &quot;hello world&quot;)))</pre></td></tr><tr><td class="docs"><h3>Problem 4:</h3>
 
-<p>This is the one problem not amenable to <code>solves</code> off-the-shelf, so solution is added inline.</p>
+<p>This is the one problem not amenable to <code>solves</code> off-the-shelf, so
+solution is added inline.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves
  (= (list :a :b :c) '(:a :b :c)))</pre></td></tr><tr><td class="docs"><h3>Problem 5:</h3>
 </td><td class="codes"><pre class="brush: clojure">(solves '(1 2 3 4)
@@ -4040,7 +4041,62 @@ iteration reduces the size substantially for large layers.</p>
   (= 3 (__ 12 3))  ; 12 6 3
   (= 3 (__ 5 9))   ; 5 7 9
   (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
-  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a></h3>
+
+<p>The solution is quite similar to that for <a href="http://www.4clojure.com/problem/73">Problem
+73</a>.  We preserve the "diag,"
+"ant-diag," "across" and "down" logic for determining whether
+three-in-a-row has been obtained.  The difference is that we now
+apply this logic over every \(x, y\) (or, rather, <code>[y x]</code>)
+combination, placing the desired piece (<code>:x</code> or <code>:o</code>) in the spot
+if it's currently empty, and returning the pair only if it makes
+three-in-a-row.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [ox bb]
+    (set
+     (for [y (range 3)
+           x (range 3)
+           :let [piece (get-in bb [y x])
+                 new-piece (if (= piece :e) ox piece)
+                 b (assoc-in bb [y x] new-piece)]
+           :when (or
+                  ;; diag:
+                  (every? #{ox}
+                          (for [i (range 3)]
+                            ((b i) i)))
+                  ;; anti-diag:
+                  (every? #{ox}
+                          (for [i (range 3)]
+                            ((b i) (- 2 i))))
+                  ;; across:
+                  (some (fn [i]
+                          (every? #{ox} (for [j (range 3)] ((b i) j))))
+                        (range 3))
+                  ;; down:
+                  (some (fn [i]
+                          (every? #{ox} (for [j (range 3)] ((b j) i))))
+                        (range 3)))]
+       [y x])))
+  (= (__ :x [[:o :e :e]
+             [:o :x :o]
+             [:x :x :e]])
+     #{[2 2] [0 1] [0 2]})
+  (= (__ :x [[:x :o :o]
+             [:x :x :e]
+             [:e :o :e]])
+     #{[2 2] [1 2] [2 0]})
+  (= (__ :x [[:x :e :x]
+             [:o :x :o]
+             [:e :o :e]])
+     #{[2 2] [0 1] [2 0]})
+  (= (__ :x [[:x :x :o]
+             [:e :e :e]
+             [:e :e :e]])
+     #{})
+  (= (__ :o [[:x :x :o]
+             [:o :e :o]
+             [:x :e :e]])
+     #{[2 2] [1 1]}))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
 
 <p>This is a simple matter of dividing modulo the base and shifting
 out low-order digits.  Alternatively, could do as a lazy seq.</p>
