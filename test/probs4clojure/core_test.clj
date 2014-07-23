@@ -1306,6 +1306,17 @@
      #{[2 2] [1 1]}))
 
 
+;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
+;;
+;; I found the answer to this one just by iterating `class` at the
+;; REPL, calling it successively on its own output.  The final `x` in
+;; the `and` form excludes `nil`, whose class is also itself.
+(solves
+  java.lang.Class
+  (let [x __]
+    (and (= (class x) x) x)))
+
+
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
@@ -1357,7 +1368,10 @@
                                          {:suit :club :rank 10}]))
   (= {:suit :heart :rank 8}
      ((__ :heart) [{:suit :heart :rank 6} {:suit :heart :rank 8}
-                   {:suit :diamond :rank 10} {:suit :heart :rank 4}])))
+                   {:suit :diamond :rank 10} {:suit :heart :rank 4}]))
+  (= {:suit :diamond :rank 2}
+     ((__ :club) [{:suit :diamond :rank 2}
+                  {:suit :spade :rank 10}])))
 
 
 

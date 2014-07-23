@@ -4099,7 +4099,15 @@ three-in-a-row.</p>
   (= (__ :o [[:x :x :o]
              [:o :e :o]
              [:x :e :e]])
-     #{[2 2] [1 1]}))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+     #{[2 2] [1 1]}))</pre></td></tr><tr><td class="docs"><h3>Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a></h3>
+
+<p>I found the answer to this one just by iterating <code>class</code> at the
+REPL, calling it successively on its own output.  The final <code>x</code> in
+the <code>and</code> form excludes <code>nil</code>, whose class is also itself.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  java.lang.Class
+  (let [x __]
+    (and (= (class x) x) x)))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
 
 <p>This is a simple matter of dividing modulo the base and shifting
 out low-order digits.  Alternatively, could do as a lazy seq.</p>
@@ -4149,7 +4157,10 @@ since, by assumption, at least one card was played.</p>
                                          {:suit :club :rank 10}]))
   (= {:suit :heart :rank 8}
      ((__ :heart) [{:suit :heart :rank 6} {:suit :heart :rank 8}
-                   {:suit :diamond :rank 10} {:suit :heart :rank 4}])))</pre></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
+                   {:suit :diamond :rank 10} {:suit :heart :rank 4}]))
+  (= {:suit :diamond :rank 2}
+     ((__ :club) [{:suit :diamond :rank 2}
+                  {:suit :spade :rank 10}])))</pre></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
 
 <p>My solution has three parts: (a) to calculate the
 <code>nearest-palindrome</code> to a given number <code>x</code> (which will be <code>x</code> if it
