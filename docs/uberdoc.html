@@ -4052,31 +4052,34 @@ combination, placing the desired piece (<code>:x</code> or <code>:o</code>) in t
 if it's currently empty, and returning the pair only if it makes
 three-in-a-row.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves
-  (fn [ox bb]
+  (fn [ox current-board]
     (set
      (for [y (range 3)
            x (range 3)
-           :let [piece (get-in bb [y x])
+           :let [piece (get-in current-board [y x])
                  new-piece (if (= piece :e) ox piece)
-                 b (assoc-in bb [y x] new-piece)]
+                 new-board (assoc-in current-board [y x] new-piece)]
            :when (or
                   ;; diag:
                   (every? #{ox}
                           (for [i (range 3)]
-                            ((b i) i)))
+                            (get-in new-board [i i])))
                   ;; anti-diag:
                   (every? #{ox}
                           (for [i (range 3)]
-                            ((b i) (- 2 i))))
+                            (get-in new-board [i (- 2 i)])))
                   ;; across:
                   (some (fn [i]
-                          (every? #{ox} (for [j (range 3)] ((b i) j))))
+                          (every? #{ox} (for [j (range 3)]
+                                          (get-in new-board [i j]))))
                         (range 3))
                   ;; down:
                   (some (fn [i]
-                          (every? #{ox} (for [j (range 3)] ((b j) i))))
+                          (every? #{ox} (for [j (range 3)]
+                                          (get-in new-board [j i]))))
                         (range 3)))]
        [y x])))
+
   (= (__ :x [[:o :e :e]
              [:o :x :o]
              [:x :x :e]])
