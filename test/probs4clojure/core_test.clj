@@ -1245,6 +1245,38 @@
   (= 5 (__ 9 12))) ; 9 11 22 24 12
 
 
+;; ### Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a>
+;;
+;; The fact that `proxy` was disallowed suggested a look at
+;; `reify`, since `proxy` and `reify` are often discussed together.  A
+;; bit of research and REPL experimentation showed how to get `reify`
+;; to implement the given interface.
+(solves
+  (fn [& args]
+    (reify clojure.lang.ISeq
+      (toString [this] (clojure.string/join ", " (sort args)))
+      (seq [this] (and args (distinct args)))))
+
+  (= "1, 2, 3" (str (__ 2 1 3)))
+  (= '(2 1 3) (seq (__ 2 1 3)))
+  (= '(2 1 3) (seq (__ 2 1 3 3 1 2)))
+  (= '(1) (seq (apply __ (repeat 5 1))))
+  (= "1, 1, 1, 1, 1" (str (apply __ (repeat 5 1))))
+  (and (= nil (seq (__)))
+       (=  "" (str (__)))))
+
+;; Hats off to user `dacquiri` for the
+;; [reminder](http://pastebin.com/cS9sP764) that `distinct` removes
+;; duplicates (the `and args` is needed in case args is not supplied
+;; at all).  My original solution to the `seq` part was quite a bit uglier.
+(comment  ;; Original solution for removing duplicates:
+  (seq [this] (loop [[x & xs :as X] args
+                     ret []]
+                (if-not (seq X)
+                  (seq ret)
+                  (recur xs (if ((set ret) x) ret (conj ret x)))))))
+
+
 ;; ### Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a>
 ;;
 ;; The solution is quite similar to that for [Problem

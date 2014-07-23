@@ -4041,7 +4041,34 @@ iteration reduces the size substantially for large layers.</p>
   (= 3 (__ 12 3))  ; 12 6 3
   (= 3 (__ 5 9))   ; 5 7 9
   (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
-  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a></h3>
+  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a></h3>
+
+<p>The fact that <code>proxy</code> was disallowed suggested a look at
+<code>reify</code>, since <code>proxy</code> and <code>reify</code> are often discussed together.  A
+bit of research and REPL experimentation showed how to get <code>reify</code>
+to implement the given interface.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [&amp; args]
+    (reify clojure.lang.ISeq
+      (toString [this] (clojure.string/join &quot;, &quot; (sort args)))
+      (seq [this] (and args (distinct args)))))
+
+  (= &quot;1, 2, 3&quot; (str (__ 2 1 3)))
+  (= '(2 1 3) (seq (__ 2 1 3)))
+  (= '(2 1 3) (seq (__ 2 1 3 3 1 2)))
+  (= '(1) (seq (apply __ (repeat 5 1))))
+  (= &quot;1, 1, 1, 1, 1&quot; (str (apply __ (repeat 5 1))))
+  (and (= nil (seq (__)))
+       (=  &quot;&quot; (str (__)))))</pre></td></tr><tr><td class="docs"><p>Hats off to user <code>dacquiri</code> for the
+<a href="http://pastebin.com/cS9sP764">reminder</a> that <code>distinct</code> removes
+duplicates (the <code>and args</code> is needed in case args is not supplied
+at all).  My original solution to the <code>seq</code> part was quite a bit uglier.</p>
+</td><td class="codes"><pre class="brush: clojure">(comment  ;; Original solution for removing duplicates:
+  (seq [this] (loop [[x &amp; xs :as X] args
+                     ret []]
+                (if-not (seq X)
+                  (seq ret)
+                  (recur xs (if ((set ret) x) ret (conj ret x)))))))</pre></td></tr><tr><td class="docs"><h3>Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a></h3>
 
 <p>The solution is quite similar to that for <a href="http://www.4clojure.com/problem/73">Problem
 73</a>.  We preserve the "diag,"
