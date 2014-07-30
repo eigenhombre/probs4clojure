@@ -1124,6 +1124,39 @@
       "      "]))
 
 
+;; ### Problem 97: <a href="http://www.4clojure.com/problem/97">Pascal's Triangle</a>
+;;
+;; I solved this problem by thinking about the following series of
+;; data transformations on an arbitrary level of the problem:
+;;
+;;     [1     3     3     1]  ;; Given level
+;;       [1 3] [3 3] [3 1]    ;; Partition by pairs
+;;        [4     6     4]     ;; Map sum onto pairs
+;;          [1 4 6 4 1]       ;; Prepend and append 1s
+;;
+;; The application of the transformations gets us to the next "level"
+;; of the problem.  The code reflects this exactly, by iterating the
+;; transformations on the base case, `[1]`.
+(solves
+ (fn [n]
+   (nth (iterate (fn [s]
+                   (let [p (partition 2 1 s)
+                         added (map (partial apply +) p)]
+                     (concat [1] added [1])))
+                 [1])
+        (dec n)))
+
+ (= (__ 1) [1])
+ (= (map __ (range 1 6))
+   [     [1]
+        [1 1]
+       [1 2 1]
+      [1 3 3 1]
+     [1 4 6 4 1]])
+ (= (__ 11)
+    [1 10 45 120 210 252 210 120 45 10 1]))
+
+
 ;; ### Problem 101: <a href="http://www.4clojure.com/problem/101">Levenshtein Distance</a>
 ;;
 ;; For this solution, we build on the simplest recursive solution
@@ -1336,6 +1369,29 @@
              [:o :e :o]
              [:x :e :e]])
      #{[2 2] [1 1]}))
+
+
+;; ### Problem 120: <a href="http://www.4clojure.com/problem/120">Sum of Square Digits</a>
+;;
+;; The solution consists of building up and composing functions which:
+;; convert a character to an integer (`char-to-int`); square an
+;; integer (`square`); pull out the squares of digits of a number
+;; (`sq-digs-fn`); and apply the comparison of the sum of squares to
+;; the original number (`compare-fn`).
+(solves
+ (fn [s]
+   (let [char-to-int #(-> % str Integer/parseInt)
+         square #(* % %)
+         sq-digs-fn (fn [n] (map #(->> % char-to-int square)
+                                 (str n)))
+         compare-fn #(< % (apply + (sq-digs-fn %)))]
+     (count (filter compare-fn s))))
+
+ (= 8 (__ (range 10)))
+ (= 19 (__ (range 30)))
+ (= 50 (__ (range 100)))
+ (= 50 (__ (range 1000))))
+
 
 
 ;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
