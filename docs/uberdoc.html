@@ -4099,7 +4099,44 @@ at all).  My original solution to the <code>seq</code> part was quite a bit ugli
                      ret []]
                 (if-not (seq X)
                   (seq ret)
-                  (recur xs (if ((set ret) x) ret (conj ret x)))))))</pre></td></tr><tr><td class="docs"><h3>Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a></h3>
+                  (recur xs (if ((set ret) x) ret (conj ret x)))))))</pre></td></tr><tr><td class="docs"><h3>Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a></h3>
+</td><td class="codes"><pre class="brush: clojure">(solves
+ 1
+ (= true  (__ [&quot;M   C&quot;]))
+ (= false (__ [&quot;M # C&quot;]))
+ (= true  (__ [&quot;#######&quot;
+               &quot;#     #&quot;
+               &quot;#  #  #&quot;
+               &quot;#M # C#&quot;
+               &quot;#######&quot;]))
+ (= false (__ [&quot;########&quot;
+               &quot;#M  #  #&quot;
+               &quot;#   #  #&quot;
+               &quot;# # #  #&quot;
+               &quot;#   #  #&quot;
+               &quot;#  #   #&quot;
+               &quot;#  # # #&quot;
+               &quot;#  #   #&quot;
+               &quot;#  #  C#&quot;
+               &quot;########&quot;]))
+ (= false (__ [&quot;M     &quot;
+               &quot;      &quot;
+               &quot;      &quot;
+               &quot;      &quot;
+               &quot;    ##&quot;
+               &quot;    #C&quot;]))
+ (= true  (__ [&quot;C######&quot;
+               &quot; #     &quot;
+               &quot; #   # &quot;
+               &quot; #   #M&quot;
+               &quot;     # &quot;]))
+ (= true  (__ [&quot;C# # # #&quot;
+               &quot;        &quot;
+               &quot;# # # # &quot;
+               &quot;        &quot;
+               &quot; # # # #&quot;
+               &quot;        &quot;
+               &quot;# # # #M&quot;])))</pre></td></tr><tr><td class="docs"><h3>Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a></h3>
 
 <p>The solution is quite similar to that for <a href="http://www.4clojure.com/problem/73">Problem
 73</a>.  We preserve the "diag,"

@@ -26,7 +26,8 @@
   [expr & tests]
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
-    `(fact (and ~@newtests#) => truthy)))
+    `(doseq [f# [~@newtests#]]
+       (fact f# => truthy))))
 
 
 ;; ### Problem 1:
@@ -1308,6 +1309,78 @@
                 (if-not (seq X)
                   (seq ret)
                   (recur xs (if ((set ret) x) ret (conj ret x)))))))
+
+
+
+;; ### Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a>
+;;
+(solves
+ (fn [b]
+   (let [bm (into {} (for [r (range (count b))
+                           c (range (count (get b r)))]
+                       (let [val (get-in b [r c])]
+                         [[r c] {:val val
+                                 :explored (= val \#)}])))
+         mouse (some (fn [[k v]] (when (= (:val v) \M) k)) bm)]
+     (letfn [(explored [bm pos] (get-in bm [pos :explored]))
+             (set-explored [bm pos] (assoc-in bm [pos :explored] true))
+             (set-cheese [bm pos] (assoc-in bm [pos :cheese] true))
+             (is-valid [bm pos] (not (nil? (get-in bm [pos :val]))))
+             (is-wall [bm pos] (= (get-in bm [pos :val]) \#))
+             (get-neighbors [[r c]]
+               [[(dec r) c], [r (dec c)], [(inc r) c], [r (inc c)]])
+             (dfs [bm pos]
+               (let [bm (set-explored bm pos)
+                     neighbors (->> pos
+                                    get-neighbors
+                                    (filter (partial is-valid bm))
+                                    (remove (partial explored bm))
+                                    (remove (partial is-wall bm)))]
+                 (loop [bm bm, [p & ps] neighbors]
+                   (cond
+                    (not p) bm
+                    (= (get-in bm [p :val]) \C) (set-cheese bm p)
+                    (or (explored bm p)
+                        (= (get-in bm [p :val]) \#)) (recur bm ps)
+                        :else (recur (dfs bm p) ps)))))]
+       (true? (some (fn [[_ {cheese :cheese}]] cheese)
+                    (dfs bm mouse))))))
+
+ (= true  (__ ["M   C"]))
+ (= false (__ ["M # C"]))
+ (= true  (__ ["#######"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]))
+ (= false (__ ["########"
+               "#M  #  #"
+               "#   #  #"
+               "# # #  #"
+               "#   #  #"
+               "#  #   #"
+               "#  # # #"
+               "#  #   #"
+               "#  #  C#"
+               "########"]))
+ (= false (__ ["M     "
+               "      "
+               "      "
+               "      "
+               "    ##"
+               "    #C"]))
+ (= true  (__ ["C######"
+               " #     "
+               " #   # "
+               " #   #M"
+               "     # "]))
+ (= true  (__ ["C# # # #"
+               "        "
+               "# # # # "
+               "        "
+               " # # # #"
+               "        "
+               "# # # #M"])))
 
 
 ;; ### Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a>
