@@ -3051,7 +3051,8 @@ first!!!  They are much better that way.</p>
   [expr &amp; tests]
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
-    `(fact (and ~@newtests#) =&gt; truthy)))</pre></td></tr><tr><td class="docs"><h3>Problem 1:</h3>
+    `(doseq [f# [~@newtests#]]
+       (fact f# =&gt; truthy))))</pre></td></tr><tr><td class="docs"><h3>Problem 1:</h3>
 </td><td class="codes"><pre class="brush: clojure">(solves true (= __ true))</pre></td></tr><tr><td class="docs"><h3>Problem 2:</h3>
 </td><td class="codes"><pre class="brush: clojure">(solves 4
  (= (- 10 (* 2 3)) __))</pre></td></tr><tr><td class="docs"><h3>Problem 3:</h3>
@@ -4100,8 +4101,57 @@ at all).  My original solution to the <code>seq</code> part was quite a bit ugli
                 (if-not (seq X)
                   (seq ret)
                   (recur xs (if ((set ret) x) ret (conj ret x)))))))</pre></td></tr><tr><td class="docs"><h3>Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a></h3>
+
+<p>I treat this as another graph search problem, where connections
+between "nodes" are determined by horizontal or vertical adjacency.
+At each stage in the search, we loop through neighbors that:</p>
+
+<ol>
+<li>are "valid" positions (within bounds of the board, i.e. their
+contents are non-nil;</li>
+<li>have not been explored yet; and</li>
+<li>are not walls (<code>#</code>).</li>
+</ol>
+
+<p>At each point we check to see if we've found the cheese or run out
+of unexplored spaces to check. After the graph traversal terminates,
+we look at all the visited nodes to see if cheese has been found.
+Though the algorithm terminates as soon as cheese is found
+(<code>(set-cheese bp p)</code>), it is somewhat inefficient in that it loops
+through the visited locations again at the end.  It does, however,
+only visit "connected" parts of the maze.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves
- 1
+ (fn [board]
+   (let [bm (into {} (for [r (range (count board))
+                           c (range (count (get board r)))]
+                       (let [val (get-in board [r c])]
+                         [[r c] {:val val
+                                 :explored (= val \#)}])))
+         mouse (some (fn [[k v]] (when (= (:val v) \M) k)) bm)]
+     (letfn [(explored [bm pos] (get-in bm [pos :explored]))
+             (set-explored [bm pos] (assoc-in bm [pos :explored] true))
+             (set-cheese [bm pos] (assoc-in bm [pos :cheese] true))
+             (is-valid [bm pos] (not (nil? (get-in bm [pos :val]))))
+             (is-wall [bm pos] (= (get-in bm [pos :val]) \#))
+             (get-neighbors [[r c]]
+               [[(dec r) c], [r (dec c)], [(inc r) c], [r (inc c)]])
+             (dfs [bm pos]
+               (let [bm (set-explored bm pos)
+                     neighbors (-&gt;&gt; pos
+                                    get-neighbors
+                                    (filter (partial is-valid bm))
+                                    (remove (partial explored bm))
+                                    (remove (partial is-wall bm)))]
+                 (loop [bm bm, [p &amp; ps] neighbors]
+                   (cond
+                    (not p) bm
+                    (= (get-in bm [p :val]) \C) (set-cheese bm p)
+                    (or (explored bm p)
+                        (= (get-in bm [p :val]) \#)) (recur bm ps)
+                        :else (recur (dfs bm p) ps)))))]
+       (true? (some (fn [[_ {cheese :cheese}]] cheese)
+                    (dfs bm mouse))))))
+
  (= true  (__ [&quot;M   C&quot;]))
  (= false (__ [&quot;M # C&quot;]))
  (= true  (__ [&quot;#######&quot;

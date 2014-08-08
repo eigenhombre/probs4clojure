@@ -1311,14 +1311,29 @@
                   (recur xs (if ((set ret) x) ret (conj ret x)))))))
 
 
-
 ;; ### Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a>
 ;;
+;; I treat this as another graph search problem, where connections
+;; between "nodes" are determined by horizontal or vertical adjacency.
+;; At each stage in the search, we loop through neighbors that:
+;;
+;; 1. are "valid" positions (within bounds of the board, i.e. their
+;;    contents are non-nil;
+;; 1. have not been explored yet; and
+;; 1. are not walls (`#`).
+;;
+;; At each point we check to see if we've found the cheese or run out
+;; of unexplored spaces to check. After the graph traversal terminates,
+;; we look at all the visited nodes to see if cheese has been found.
+;; Though the algorithm terminates as soon as cheese is found
+;; (`(set-cheese bp p)`), it is somewhat inefficient in that it loops
+;; through the visited locations again at the end.  It does, however,
+;; only visit "connected" parts of the maze.
 (solves
- (fn [b]
-   (let [bm (into {} (for [r (range (count b))
-                           c (range (count (get b r)))]
-                       (let [val (get-in b [r c])]
+ (fn [board]
+   (let [bm (into {} (for [r (range (count board))
+                           c (range (count (get board r)))]
+                       (let [val (get-in board [r c])]
                          [[r c] {:val val
                                  :explored (= val \#)}])))
          mouse (some (fn [[k v]] (when (= (:val v) \M) k)) bm)]
