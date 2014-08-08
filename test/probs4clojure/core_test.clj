@@ -1223,8 +1223,8 @@
 
 ;; New solution.  Note that Mark Engelberg's [math.combinatorics
 ;; implementation](https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj)
-;; relies heavily on Knuth, and is less straightforward, but has much better time
-;; complexity than my solution.
+;; relies heavily on Knuth, and is less straightforward, but has much
+;; better time complexity than my solution.
 (solves
   (fn [k s]
     (set
@@ -1612,6 +1612,73 @@
      (apply < (take 6666 (__ 9999999))))
   (= (nth (__ 0) 10101)
      9102019))
+
+
+;; ### Problem 168: <a href="http://www.4clojure.com/problem/168">Infinite Matrix</a>
+;;
+;; This problem is all about `lazy-seq` and would probably be hard to
+;; do without it.  I originally considered a one-dimensional version
+;; of this problem as `maprange1`, a combination of `map` and `range`,
+;; each of which can be trivially implemented with `lazy-seq`.  Then I
+;; realized that the 2d version is very nearly just another
+;; implementation of the 1d case: `maprange2` slightly modifies
+;; `maprange1` by adding a second argument to the mapping function
+;; `f`.
+(solves
+ (fn mapmap
+   ([f] (mapmap f 0 0))
+   ([f s1 s2]
+      (letfn [(maprange1 [f n1]
+                (lazy-seq
+                 (cons (f n1) (maprange1 f (inc n1)))))
+              (maprange2 [f n1 n2]
+                (lazy-seq
+                 (cons (f n1 n2) (maprange2 f n1 (inc n2)))))]
+        (maprange1 (fn [n1] (maprange2 f n1 s2)) s1)))
+   ([f s1 s2 t1 t2]
+      (take t1 (map #(take t2 %) (mapmap f s1 s2)))))
+
+ (= (take 5 (map #(take 6 %) (__ str)))
+    [["00" "01" "02" "03" "04" "05"]
+     ["10" "11" "12" "13" "14" "15"]
+     ["20" "21" "22" "23" "24" "25"]
+     ["30" "31" "32" "33" "34" "35"]
+     ["40" "41" "42" "43" "44" "45"]])
+ (= (take 6 (map #(take 5 %) (__ str 3 2)))
+    [["32" "33" "34" "35" "36"]
+     ["42" "43" "44" "45" "46"]
+     ["52" "53" "54" "55" "56"]
+     ["62" "63" "64" "65" "66"]
+     ["72" "73" "74" "75" "76"]
+     ["82" "83" "84" "85" "86"]])
+ (= (__ * 3 5 5 7)
+    [[15 18 21 24 27 30 33]
+     [20 24 28 32 36 40 44]
+     [25 30 35 40 45 50 55]
+     [30 36 42 48 54 60 66]
+     [35 42 49 56 63 70 77]])
+ (= (__ #(/ % (inc %2)) 1 0 6 4)
+    [[1/1 1/2 1/3 1/4]
+     [2/1 2/2 2/3 1/2]
+     [3/1 3/2 3/3 3/4]
+     [4/1 4/2 4/3 4/4]
+     [5/1 5/2 5/3 5/4]
+     [6/1 6/2 6/3 6/4]])
+ (= (class (__ (juxt bit-or bit-xor)))
+    (class (__ (juxt quot mod) 13 21))
+    (class (lazy-seq)))
+ (= (class (nth (__ (constantly 10946)) 34))
+    (class (nth (__ (constantly 0) 5 8) 55))
+    (class (lazy-seq)))
+ (= (let [m 377 n 610 w 987
+          check (fn [f s] (every? true? (map-indexed f s)))
+          row (take w (nth (__ vector) m))
+          column (take w (map first (__ vector m n)))
+          diagonal (map-indexed #(nth %2 %) (__ vector m n w w))]
+      (and (check #(= %2 [m %]) row)
+           (check #(= %2 [(+ m %) n]) column)
+           (check #(= %2 [(+ m %) (+ n %)]) diagonal)))
+    true))
 
 
 ;; ### Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a>

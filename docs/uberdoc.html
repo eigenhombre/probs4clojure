@@ -4023,8 +4023,8 @@ to finish) to about 25 msec on my laptop.</p>
                                (for [v ret, x s]
                                  (conj v x)))))))))</pre></td></tr><tr><td class="docs"><p>New solution.  Note that Mark Engelberg's <a href="https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj">math.combinatorics
 implementation</a>
-relies heavily on Knuth, and is less straightforward, but has much better time
-complexity than my solution.</p>
+relies heavily on Knuth, and is less straightforward, but has much
+better time complexity than my solution.</p>
 </td><td class="codes"><pre class="brush: clojure">(solves
   (fn [k s]
     (set
@@ -4384,7 +4384,71 @@ left half of the number before recombining.</p>
   (= true
      (apply &lt; (take 6666 (__ 9999999))))
   (= (nth (__ 0) 10101)
-     9102019))</pre></td></tr><tr><td class="docs"><h3>Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a></h3>
+     9102019))</pre></td></tr><tr><td class="docs"><h3>Problem 168: <a href="http://www.4clojure.com/problem/168">Infinite Matrix</a></h3>
+
+<p>This problem is all about <code>lazy-seq</code> and would probably be hard to
+do without it.  I originally considered a one-dimensional version
+of this problem as <code>maprange1</code>, a combination of <code>map</code> and <code>range</code>,
+each of which can be trivially implemented with <code>lazy-seq</code>.  Then I
+realized that the 2d version is very nearly just another
+implementation of the 1d case: <code>maprange2</code> slightly modifies
+<code>maprange1</code> by adding a second argument to the mapping function
+<code>f</code>.</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+ (fn mapmap
+   ([f] (mapmap f 0 0))
+   ([f s1 s2]
+      (letfn [(maprange1 [f n1]
+                (lazy-seq
+                 (cons (f n1) (maprange1 f (inc n1)))))
+              (maprange2 [f n1 n2]
+                (lazy-seq
+                 (cons (f n1 n2) (maprange2 f n1 (inc n2)))))]
+        (maprange1 (fn [n1] (maprange2 f n1 s2)) s1)))
+   ([f s1 s2 t1 t2]
+      (take t1 (map #(take t2 %) (mapmap f s1 s2)))))
+
+ (= (take 5 (map #(take 6 %) (__ str)))
+    [[&quot;00&quot; &quot;01&quot; &quot;02&quot; &quot;03&quot; &quot;04&quot; &quot;05&quot;]
+     [&quot;10&quot; &quot;11&quot; &quot;12&quot; &quot;13&quot; &quot;14&quot; &quot;15&quot;]
+     [&quot;20&quot; &quot;21&quot; &quot;22&quot; &quot;23&quot; &quot;24&quot; &quot;25&quot;]
+     [&quot;30&quot; &quot;31&quot; &quot;32&quot; &quot;33&quot; &quot;34&quot; &quot;35&quot;]
+     [&quot;40&quot; &quot;41&quot; &quot;42&quot; &quot;43&quot; &quot;44&quot; &quot;45&quot;]])
+ (= (take 6 (map #(take 5 %) (__ str 3 2)))
+    [[&quot;32&quot; &quot;33&quot; &quot;34&quot; &quot;35&quot; &quot;36&quot;]
+     [&quot;42&quot; &quot;43&quot; &quot;44&quot; &quot;45&quot; &quot;46&quot;]
+     [&quot;52&quot; &quot;53&quot; &quot;54&quot; &quot;55&quot; &quot;56&quot;]
+     [&quot;62&quot; &quot;63&quot; &quot;64&quot; &quot;65&quot; &quot;66&quot;]
+     [&quot;72&quot; &quot;73&quot; &quot;74&quot; &quot;75&quot; &quot;76&quot;]
+     [&quot;82&quot; &quot;83&quot; &quot;84&quot; &quot;85&quot; &quot;86&quot;]])
+ (= (__ * 3 5 5 7)
+    [[15 18 21 24 27 30 33]
+     [20 24 28 32 36 40 44]
+     [25 30 35 40 45 50 55]
+     [30 36 42 48 54 60 66]
+     [35 42 49 56 63 70 77]])
+ (= (__ #(/ % (inc %2)) 1 0 6 4)
+    [[1/1 1/2 1/3 1/4]
+     [2/1 2/2 2/3 1/2]
+     [3/1 3/2 3/3 3/4]
+     [4/1 4/2 4/3 4/4]
+     [5/1 5/2 5/3 5/4]
+     [6/1 6/2 6/3 6/4]])
+ (= (class (__ (juxt bit-or bit-xor)))
+    (class (__ (juxt quot mod) 13 21))
+    (class (lazy-seq)))
+ (= (class (nth (__ (constantly 10946)) 34))
+    (class (nth (__ (constantly 0) 5 8) 55))
+    (class (lazy-seq)))
+ (= (let [m 377 n 610 w 987
+          check (fn [f s] (every? true? (map-indexed f s)))
+          row (take w (nth (__ vector) m))
+          column (take w (map first (__ vector m n)))
+          diagonal (map-indexed #(nth %2 %) (__ vector m n w w))]
+      (and (check #(= %2 [m %]) row)
+           (check #(= %2 [(+ m %) n]) column)
+           (check #(= %2 [(+ m %) (+ n %)]) diagonal)))
+    true))</pre></td></tr><tr><td class="docs"><h3>Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a></h3>
 
 <p>After a couple of tries on this I realized that stripping out
 non-parenthetic characters and then successively eliminating empty,
