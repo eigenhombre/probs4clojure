@@ -1279,6 +1279,61 @@
   (= 5 (__ 9 12))) ; 9 11 22 24 12
 
 
+;; ### Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a>
+;;
+
+((fn [word rows]
+     (let [vert-rows (if (= 1 (count rows))
+                       (map vector (first rows))
+                       (->> rows
+                            (apply interleave)
+                            (partition (count rows))))
+           all-rows (concat rows vert-rows)
+           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
+           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
+       (->> all-rows
+            (mapcat (partial partition-by #(= % \#)))
+            (remove #{[\#]})
+            (map (partial remove #{\space}))
+            (filter #(= (count %) (count word)))
+            (some #(match? % word))
+            true?)))
+ "the" ["_ # _ _ e"])
+
+
+(solves
+  (fn [word rows]
+     (let [vert-rows (if (= 1 (count rows))
+                       (map vector (first rows))
+                       (->> rows
+                            (apply interleave)
+                            (partition (count rows))))
+           all-rows (concat rows vert-rows)
+           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
+           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
+       (->> all-rows
+            (mapcat (partial partition-by #(= % \#)))
+            (remove #{[\#]})
+            (map (partial remove #{\space}))
+            (filter #(= (count %) (count word)))
+            (some #(match? % word))
+            true?)))
+  (= true  (__ "the" ["_ # _ _ e"]))
+  ;; (= false (__ "the" ["c _ _ _"
+  ;;                     "d _ # e"
+  ;;                     "r y _ _"]))
+  ;; (= true  (__ "joy" ["c _ _ _"
+  ;;                     "d _ # e"
+  ;;                     "r y _ _"]))
+  ;; (= false (__ "joy" ["c o n j"
+  ;;                     "_ _ y _"
+  ;;                     "r _ _ #"]))
+  ;; (= true  (__ "clojure" ["_ _ _ # j o y"
+  ;;                         "_ _ o _ _ _ _"
+  ;;                         "_ _ f _ # _ _"]))
+)
+
+
 ;; ### Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a>
 ;;
 ;; The fact that `proxy` was disallowed suggested a look at
