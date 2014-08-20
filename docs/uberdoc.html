@@ -4073,7 +4073,57 @@ iteration reduces the size substantially for large layers.</p>
   (= 3 (__ 12 3))  ; 12 6 3
   (= 3 (__ 5 9))   ; 5 7 9
   (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
-  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a></h3>
+  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a></h3>
+
+<p>The approach taken here is a relatively straightforward functional
+"pipeline":</p>
+
+<ol>
+<li>collect horizontal rows (<code>rows</code>) and vertical ones (<code>vert-rows</code>)
+and treat them the same by concatenating them into <code>all-rows</code>.
+Vertical rows are made from horizontal ones by <code>interleave</code>ing
+the horizontal rows and then re-<code>partition</code>ing them (only needed
+when more than one horizontal row is present);</li>
+<li>Split each of these at the <code>\#</code> symbol using <code>partition-by</code>;</li>
+<li>Remove the left-over <code>\#</code>s;</li>
+<li>Remove all spaces;</li>
+<li>Only accept sequences with the same length as the given word;</li>
+<li>Accept any sequence which "matches" the word; match either using
+underscores, or when characters are equal (<code>match-char?</code> and
+<code>match?</code>);</li>
+<li>Convert truthiness to true/false.</li>
+</ol>
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [word rows]
+     (let [vert-rows (if (empty? (rest rows))               ;; 1
+                       (map vector (first rows))
+                       (-&gt;&gt; rows
+                            (apply interleave)
+                            (partition (count rows))))
+           all-rows (concat rows vert-rows)                 ;; 1
+           match-char? #(or (= %1 \_) (= %1 %2))            ;; 6
+           match? #(every? true? (map match-char? %1 %2))]  ;; 6
+       (-&gt;&gt; all-rows
+            (mapcat (partial partition-by #(= % \#)))       ;; 2
+            (remove #{[\#]})                                ;; 3
+            (map (partial remove #{\space}))                ;; 4
+            (filter #(= (count %) (count word)))            ;; 5
+            (some #(match? % word))                         ;; 6
+            true?)))                                        ;; 7
+
+  (= true  (__ &quot;the&quot; [&quot;_ # _ _ e&quot;]))
+  (= false (__ &quot;the&quot; [&quot;c _ _ _&quot;
+                      &quot;d _ # e&quot;
+                      &quot;r y _ _&quot;]))
+  (= true  (__ &quot;joy&quot; [&quot;c _ _ _&quot;
+                      &quot;d _ # e&quot;
+                      &quot;r y _ _&quot;]))
+  (= false (__ &quot;joy&quot; [&quot;c o n j&quot;
+                      &quot;_ _ y _&quot;
+                      &quot;r _ _ #&quot;]))
+  (= true  (__ &quot;clojure&quot; [&quot;_ _ _ # j o y&quot;
+                          &quot;_ _ o _ _ _ _&quot;
+                          &quot;_ _ f _ # _ _&quot;])))</pre></td></tr><tr><td class="docs"><h3>Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a></h3>
 
 <p>The fact that <code>proxy</code> was disallowed suggested a look at
 <code>reify</code>, since <code>proxy</code> and <code>reify</code> are often discussed together.  A
