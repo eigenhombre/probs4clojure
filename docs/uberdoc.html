@@ -4073,7 +4073,56 @@ iteration reduces the size substantially for large layers.</p>
   (= 3 (__ 12 3))  ; 12 6 3
   (= 3 (__ 5 9))   ; 5 7 9
   (= 9 (__ 9 2))   ; 9 18 20 10 12 6 8 4 2
-  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a></h3>
+  (= 5 (__ 9 12))) ; 9 11 22 24 12</pre></td></tr><tr><td class="docs"><h3>Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a></h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">((fn [word rows]
+     (let [vert-rows (if (= 1 (count rows))
+                       (map vector (first rows))
+                       (-&gt;&gt; rows
+                            (apply interleave)
+                            (partition (count rows))))
+           all-rows (concat rows vert-rows)
+           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
+           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
+       (-&gt;&gt; all-rows
+            (mapcat (partial partition-by #(= % \#)))
+            (remove #{[\#]})
+            (map (partial remove #{\space}))
+            (filter #(= (count %) (count word)))
+            (some #(match? % word))
+            true?)))
+ &quot;the&quot; [&quot;_ # _ _ e&quot;])</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(solves
+  (fn [word rows]
+     (let [vert-rows (if (= 1 (count rows))
+                       (map vector (first rows))
+                       (-&gt;&gt; rows
+                            (apply interleave)
+                            (partition (count rows))))
+           all-rows (concat rows vert-rows)
+           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
+           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
+       (-&gt;&gt; all-rows
+            (mapcat (partial partition-by #(= % \#)))
+            (remove #{[\#]})
+            (map (partial remove #{\space}))
+            (filter #(= (count %) (count word)))
+            (some #(match? % word))
+            true?)))
+  (= true  (__ &quot;the&quot; [&quot;_ # _ _ e&quot;]))
+  ;; (= false (__ &quot;the&quot; [&quot;c _ _ _&quot;
+  ;;                     &quot;d _ # e&quot;
+  ;;                     &quot;r y _ _&quot;]))
+  ;; (= true  (__ &quot;joy&quot; [&quot;c _ _ _&quot;
+  ;;                     &quot;d _ # e&quot;
+  ;;                     &quot;r y _ _&quot;]))
+  ;; (= false (__ &quot;joy&quot; [&quot;c o n j&quot;
+  ;;                     &quot;_ _ y _&quot;
+  ;;                     &quot;r _ _ #&quot;]))
+  ;; (= true  (__ &quot;clojure&quot; [&quot;_ _ _ # j o y&quot;
+  ;;                         &quot;_ _ o _ _ _ _&quot;
+  ;;                         &quot;_ _ f _ # _ _&quot;]))
+)</pre></td></tr><tr><td class="docs"><h3>Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a></h3>
 
 <p>The fact that <code>proxy</code> was disallowed suggested a look at
 <code>reify</code>, since <code>proxy</code> and <code>reify</code> are often discussed together.  A
@@ -4263,7 +4312,19 @@ the original number (<code>compare-fn</code>).</p>
  (= 8 (__ (range 10)))
  (= 19 (__ (range 30)))
  (= 50 (__ (range 100)))
- (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a></h3>
+ (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 125: <a href="http://www.4clojure.com/problem/125">Gus' Quinundrum</a></h3>
+
+<p>Even if you didn't follow the hint link to Wikipedia (I did), the
+title itself is a hint that a Quine is called for.  Not much more
+to say about this solution other than that getting all the escaped
+characters to match up was the tricky bit.</p>
+
+<p>I saw a talk at, I think, Clojure/West a few years back, where Dan
+Friedman and William Byrd generated an infinite lazy sequence of
+progressively more complex quines -- very impressive!</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+ (fn [] (let [e \\ q \&quot; s &quot;(fn [] (let [e %c%c q %c%c s %c%s%c] (format s e e e q q s q)))&quot;] (format s e e e q q s q)))
+ (= (str '__) (__)))</pre></td></tr><tr><td class="docs"><h3>Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a></h3>
 
 <p>I found the answer to this one just by iterating <code>class</code> at the
 REPL, calling it successively on its own output.  The final <code>x</code> in
