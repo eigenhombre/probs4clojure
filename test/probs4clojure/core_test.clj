@@ -1281,57 +1281,53 @@
 
 ;; ### Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a>
 ;;
-
-((fn [word rows]
-     (let [vert-rows (if (= 1 (count rows))
-                       (map vector (first rows))
-                       (->> rows
-                            (apply interleave)
-                            (partition (count rows))))
-           all-rows (concat rows vert-rows)
-           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
-           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
-       (->> all-rows
-            (mapcat (partial partition-by #(= % \#)))
-            (remove #{[\#]})
-            (map (partial remove #{\space}))
-            (filter #(= (count %) (count word)))
-            (some #(match? % word))
-            true?)))
- "the" ["_ # _ _ e"])
-
-
+;; The approach taken here is a relatively straightforward functional
+;; "pipeline":
+;;
+;; 1. collect horizontal rows (`rows`) and vertical ones (`vert-rows`)
+;;    and treat them the same by concatenating them into `all-rows`.
+;;    Vertical rows are made from horizontal ones by `interleave`ing
+;;    the horizontal rows and then re-`partition`ing them (only needed
+;;    when more than one horizontal row is present);
+;; 1. Split each of these at the `\#` symbol using `partition-by`;
+;; 1. Remove the left-over `\#`s;
+;; 1. Remove all spaces;
+;; 1. Only accept sequences with the same length as the given word;
+;; 1. Accept any sequence which "matches" the word; match either using
+;;    underscores, or when characters are equal (`match-char?` and
+;;    `match?`);
+;; 1. Convert truthiness to true/false.
 (solves
   (fn [word rows]
-     (let [vert-rows (if (= 1 (count rows))
+     (let [vert-rows (if (empty? (rest rows))               ;; 1
                        (map vector (first rows))
                        (->> rows
                             (apply interleave)
                             (partition (count rows))))
-           all-rows (concat rows vert-rows)
-           match-char? (fn [ca cb] (or (= ca \_) (= ca cb)))
-           match? (fn [w1 w2] (every? true? (map match-char? w1 w2)))]
+           all-rows (concat rows vert-rows)                 ;; 1
+           match-char? #(or (= %1 \_) (= %1 %2))            ;; 6
+           match? #(every? true? (map match-char? %1 %2))]  ;; 6
        (->> all-rows
-            (mapcat (partial partition-by #(= % \#)))
-            (remove #{[\#]})
-            (map (partial remove #{\space}))
-            (filter #(= (count %) (count word)))
-            (some #(match? % word))
-            true?)))
+            (mapcat (partial partition-by #(= % \#)))       ;; 2
+            (remove #{[\#]})                                ;; 3
+            (map (partial remove #{\space}))                ;; 4
+            (filter #(= (count %) (count word)))            ;; 5
+            (some #(match? % word))                         ;; 6
+            true?)))                                        ;; 7
+
   (= true  (__ "the" ["_ # _ _ e"]))
-  ;; (= false (__ "the" ["c _ _ _"
-  ;;                     "d _ # e"
-  ;;                     "r y _ _"]))
-  ;; (= true  (__ "joy" ["c _ _ _"
-  ;;                     "d _ # e"
-  ;;                     "r y _ _"]))
-  ;; (= false (__ "joy" ["c o n j"
-  ;;                     "_ _ y _"
-  ;;                     "r _ _ #"]))
-  ;; (= true  (__ "clojure" ["_ _ _ # j o y"
-  ;;                         "_ _ o _ _ _ _"
-  ;;                         "_ _ f _ # _ _"]))
-)
+  (= false (__ "the" ["c _ _ _"
+                      "d _ # e"
+                      "r y _ _"]))
+  (= true  (__ "joy" ["c _ _ _"
+                      "d _ # e"
+                      "r y _ _"]))
+  (= false (__ "joy" ["c o n j"
+                      "_ _ y _"
+                      "r _ _ #"]))
+  (= true  (__ "clojure" ["_ _ _ # j o y"
+                          "_ _ o _ _ _ _"
+                          "_ _ f _ # _ _"])))
 
 
 ;; ### Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a>
