@@ -1544,6 +1544,96 @@
     (and (= (class x) x) x)))
 
 
+;; ### Problem 130: <a href="http://www.4clojure.com/problem/130">Tree Reparenting</a>
+;;
+;; The solution works by successively "lifting" an element upwards in
+;; the tree.  "Lifting" (`lift-kid`) means promoting the element to be
+;; lifted to the root node, and adding the original root node (minus
+;; the child) to the new root's children.  Finally the reduction
+;; applies this "lifting" successively to all nodes on the path to the
+;; desired one.  `path-fn` finds that path.
+;;
+;; I found it easiest to reason about this in small steps, making the
+;; various helper functions, e.g. to find the appropriate child node
+;; (`find-kid`), remove a child node (`remove-kid`), etc. as I went,
+;; and staring at lots of drawings of tree graphs.
+(solves
+  (fn [lift-el T]
+    (let [kids (fn [[_ & ks]] ks)
+          tree (fn [eln kids] (list* eln kids))
+          add (fn [el T] (concat T [el]))
+          name-fn (fn [[eln & _]] eln)
+          find-kid (fn [[_ & ks] el-name]
+                     (first (filter #(= el-name (name-fn %)) ks)))
+          remove-kid (fn [[eln & ks] el-name]
+                       (tree eln
+                             (remove #(= el-name (name-fn %)) ks)))
+          lift-kid (fn [T el-name]
+                     (add (remove-kid T el-name)
+                          (find-kid T el-name)))
+          path-fn (fn p [so-far goal [eln & kids]]
+                    (if (= eln goal)
+                      (conj so-far eln)
+                      (mapcat (partial p (conj so-far eln) goal) kids)))
+          path (rest (path-fn [] lift-el T))]
+      (reduce lift-kid T path)))
+
+  (= '(n)
+     (__ 'n '(n)))
+  (= '(a (t (e)))
+     (__ 'a '(t (e) (a))))
+  (= '(e (t (a)))
+     (__ 'e '(a (t (e)))))
+  (= '(a (b (c)))
+     (__ 'a '(c (b (a)))))
+  (= '(d
+       (b
+        (c)
+        (e)
+        (a
+         (f
+          (g)
+          (h)))))
+     (__ 'd '(a
+              (b
+               (c)
+               (d)
+               (e))
+              (f
+               (g)
+               (h)))))
+  (= '(c
+       (d)
+       (e)
+       (b
+        (f
+         (g)
+         (h))
+        (a
+         (i
+          (j
+           (k)
+           (l))
+          (m
+           (n)
+           (o))))))
+     (__ 'c '(a
+              (b
+               (c
+                (d)
+                (e))
+               (f
+                (g)
+                (h)))
+              (i
+               (j
+                (k)
+                (l))
+               (m
+                (n)
+                (o)))))))
+
+
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
