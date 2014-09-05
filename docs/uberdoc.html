@@ -4313,7 +4313,19 @@ the original number (<code>compare-fn</code>).</p>
  (= 8 (__ (range 10)))
  (= 19 (__ (range 30)))
  (= 50 (__ (range 100)))
- (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a></h3>
+ (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 125: <a href="http://www.4clojure.com/problem/125">Gus' Quinundrum</a></h3>
+
+<p>Even if you didn't follow the hint link to Wikipedia (I did), the
+title itself is a hint that a Quine is called for.  Not much more
+to say about this solution other than that getting all the escaped
+characters to match up was the tricky bit.</p>
+
+<p>I saw a talk at, I think, Clojure/West a few years back, where Dan
+Friedman and William Byrd generated an infinite lazy sequence of
+progressively more complex quines -- very impressive!</p>
+</td><td class="codes"><pre class="brush: clojure">(solves
+ (fn [] (let [e \\ q \&quot; s &quot;(fn [] (let [e %c%c q %c%c s %c%s%c] (format s e e e q q s q)))&quot;] (format s e e e q q s q)))
+ (= (str '__) (__)))</pre></td></tr><tr><td class="docs"><h3>Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a></h3>
 
 <p>I found the answer to this one just by iterating <code>class</code> at the
 REPL, calling it successively on its own output.  The final <code>x</code> in

@@ -1532,6 +1532,20 @@
  (= 50 (__ (range 1000))))
 
 
+;; ### Problem 125: <a href="http://www.4clojure.com/problem/125">Gus' Quinundrum</a>
+;;
+;; Even if you didn't follow the hint link to Wikipedia (I did), the
+;; title itself is a hint that a Quine is called for.  Not much more
+;; to say about this solution other than that getting all the escaped
+;; characters to match up was the tricky bit.
+;;
+;; I saw a talk at, I think, Clojure/West a few years back, where Dan
+;; Friedman and William Byrd generated an infinite lazy sequence of
+;; progressively more complex quines -- very impressive!
+(solves
+ (fn [] (let [e \\ q \" s "(fn [] (let [e %c%c q %c%c s %c%s%c] (format s e e e q q s q)))"] (format s e e e q q s q)))
+ (= (str '__) (__)))
+
 
 ;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
 ;;
