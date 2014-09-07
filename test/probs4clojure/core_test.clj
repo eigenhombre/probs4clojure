@@ -1532,6 +1532,78 @@
  (= 50 (__ (range 1000))))
 
 
+;; ### Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a>
+;;
+;; To solve this, we check every non-empty starting position (1)
+;; which causes one or more "flips" (2), as determined by the `flips`
+;; function, called for each of eight possible directions (3a,b).
+;;
+;; Given a board, starting position, player color and direction,
+;; `flips` works by iterating the direction function against the
+;; starting position and collecting the color at each resulting
+;; position (4), stopping when it runs off the board (5).
+;; `partition-by` collects sequences of like colors (including
+;; empties) (6); `flips` returns a truthy val iff the last color
+;; sequence is the played color, and the closest color sequence is the
+;; opposite color (7).
+(solves
+  (fn [board player]
+    (let [n (count board) ;; assume square board
+          ;; 8 directions:
+          no (fn [[r c]] [(dec r) c])
+          so (fn [[r c]] [(inc r) c])
+          ea (fn [[r c]] [r (inc c)])
+          we (fn [[r c]] [r (dec c)])
+          ne (comp no ea)
+          nw (comp no we)
+          se (comp so ea)
+          sw (comp so we)
+          directions [no so ea we ne nw se sw]                           ;; #3a
+          flips (fn [B [r c] color dirn]
+                  (let [places-on-path (map (juxt (partial get-in B) identity)
+                                            (rest (iterate dirn [r c]))) ;; #4
+                        pieces-on-path (take-while (comp (complement nil?)
+                                                         first)
+                                                   places-on-path)]      ;; #5
+                    (->> pieces-on-path
+                         (partition-by first)                            ;; #6
+                         (take-while #(not= (ffirst %) 'e))
+                         reverse
+                         ((fn [[[[clr-a]] ret]]
+                            (if (and (= clr-a color)                     ;; #7
+                                     (= (ffirst ret) ({'w 'b, 'b 'w} color)))
+                              (map second ret)))))))]
+      (into {} (for [row (range n)
+                     col (range n)
+                     :let [flps (set
+                                 (mapcat (partial flips board [row col] player)
+                                         directions))]                   ;; #3b
+                     :when (and (= (get-in board [row col]) 'e)          ;; #1
+                                (seq flps))]                             ;; #2
+                 [[row col] flps]))))
+
+  (= {[1 3] #{[1 2]}, [0 2] #{[1 2]}, [3 1] #{[2 1]}, [2 0] #{[2 1]}}
+     (__ '[[e e e e]
+           [e w b e]
+           [e b w e]
+           [e e e e]] 'w))
+  (= {[3 2] #{[2 2]}, [3 0] #{[2 1]}, [1 0] #{[1 1]}}
+     (__ '[[e e e e]
+           [e w b e]
+           [w w w e]
+           [e e e e]] 'b))
+  (= {[0 3] #{[1 2]}, [1 3] #{[1 2]}, [3 3] #{[2 2]}, [2 3] #{[2 2]}}
+     (__ '[[e e e e]
+           [e w b e]
+           [w w b e]
+           [e e b e]] 'w))
+  (= {[0 3] #{[2 1] [1 2]}, [1 3] #{[1 2]}, [2 3] #{[2 1] [2 2]}}
+     (__ '[[e e w e]
+           [b b w e]
+           [b w w e]
+           [b w w w]] 'b)))
+
+
 ;; ### Problem 125: <a href="http://www.4clojure.com/problem/125">Gus' Quinundrum</a>
 ;;
 ;; Even if you didn't follow the hint link to Wikipedia (I did), the
