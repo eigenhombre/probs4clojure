@@ -1777,6 +1777,10 @@
                   {:suit :spade :rank 10}])))
 
 
+;; ### Problem 144: <a href="https://www.4clojure.com/problem/144">Oscilrate<a/>
+;;
+;;
+(solves  )
 
 ;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>
 ;;
