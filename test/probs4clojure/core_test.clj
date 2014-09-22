@@ -21,7 +21,7 @@
   [4clojure.com](http://4clojure.com) problem by taking the first
   expression, substituting it for __ in all subsequent expressions,
   and evaluating each resulting expression for truthiness (i.e.,
-  evaluating the resulting Midje fact).
+  evaluating the resulting Midje facts).
   "
   [expr & tests]
   (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
@@ -1734,6 +1734,102 @@
   (= [1 0 0 1] (__ 9 2))
   (= [1 0] (let [n (rand-int 100000)](__ n n)))
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
+
+
+;; ### Problem 138: <a href="http://www.4clojure.com/problem/138">Squares Squared</a>
+;;
+;;
+;; I'm probably less proud of this one than most of the others.  In
+;; any case, had the 4Clojure format supported `defn` I'd have broken
+;; this up into several functions and documented them individually for
+;; the sake of clarity.  Instead, comments are salted throughout the
+;; code, which is longer than I'd like.
+(solves
+  (fn [n0 n1]
+    (let [turn-right {[ 1  1] [ 1 -1], [ 1 -1] [-1 -1],
+                      [-1 -1] [-1  1], [-1  1] [ 1  1]}
+          ;; The function which returns the coordinates of an
+          ;; ever-increasing spiral of `n` values:
+          spiral (fn [n]
+                   (let [pts (loop [pos [0 0], dir [-1 1], n n, ret [],
+                                    board #{pos}]
+                               (if-not (pos? n)
+                                 ret
+                                 (let [next-dir (turn-right dir)
+                                       next-pos (map + pos next-dir)
+                                       should-turn (board next-pos)]
+                                   ;; Already have been there?  If so,
+                                   ;; use existing rather than new
+                                   ;; direction.  If not, turn right.
+                                   (recur (if should-turn
+                                            (map + pos dir)
+                                            next-pos)
+                                          (if should-turn dir next-dir)
+                                          (dec n)
+                                          (conj ret pos)
+                                          (conj board pos)))))
+                         minr (->> pts (map first) (apply min))
+                         minc (->> pts (map second) (apply min))]
+                     ;; Apply offset to zero-based positions to "true"
+                     ;; rows/columns
+                     (map (fn [[r c]] [(- r minr) (- c minc)]) pts)))
+          ;; Calculate the actual values in the 'digit spiral',
+          ;; filling in the necessary number of `*` characters::
+          sqr #(*' % %)
+          s (take-while (partial >= n1) (iterate sqr n0))
+          squares (map sqr (range))
+          digs (mapcat str s)
+          square-size (->> squares
+                           (drop-while (partial > (count digs)))
+                           first)
+          stars (repeat (- square-size (count digs)) \*)
+          digs (concat digs stars)
+          ;; Figure out how big the board needs to be, based on the
+          ;; range of positions returned by the `spiral` function:
+          spir (spiral (count digs))
+          board-size (->> spir
+                          (map first)
+                          (apply (juxt max min))
+                          (apply -)
+                          inc)
+          ;; Unadorned board consisting only of spaces:
+          raw-board (->> \space
+                         (repeat board-size)
+                         (into [])
+                         (repeat board-size)
+                         (into []))]
+      ;; The final board calculation is a reduction, using `assoc-in`
+      ;; to fill the values in `digs` and coordinates returned by
+      ;; `spiral`:
+      (->> (reduce (fn [B [ch [r c]]]
+                     (assoc-in B [r c] ch))
+                   raw-board
+                   (partition 2 (interleave digs spir)))
+           (map (partial apply str)))))
+
+  (= (__ 2 2) ["2"])
+  (= (__ 2 4) [" 2 "
+               "* 4"
+               " * "])
+  (= (__ 3 81) [" 3 "
+                "1 9"
+                " 8 "])
+  (= (__ 4 20) [" 4 "
+                "* 1"
+                " 6 "])
+  (= (__ 2 256) ["  6  "
+                 " 5 * "
+                 "2 2 *"
+                 " 6 4 "
+                 "  1  "])
+  (= (__ 10 10000) ["   0   "
+                    "  1 0  "
+                    " 0 1 0 "
+                    "* 0 0 0"
+                    " * 1 * "
+                    "  * *  "
+                    "   *   "]))
+
 
 
 ;; ### Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a>
