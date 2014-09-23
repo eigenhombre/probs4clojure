@@ -2043,3 +2043,87 @@
         (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
         (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
         (not (__ "[")))
+
+
+;; ### Problem 178: <a href="http://www.4clojure.com/problem/178">Best Hand</a>
+;;
+;; In this problem, it's most straightforward to use `cond` to order
+;; the card priorities.  The common pattern in recognizing hands is to
+;; look at the frequencies of either the first or the second element
+;; in each "card" (two-character suit-and-value combo).  `freqs` does
+;; this.
+;;
+;; The only tricky bit is to check for straights; in this case, since
+;; aces can be either next to 2s or next to kings, two orders are
+;; tested for (`order1` and `order2`).  Other strategies might be used
+;; (such as aligning a sequence of cards along the output of `cycle`
+;; of a single order sequence), but this one seemed most
+;; straightforward.
+(defn best-hand [h]
+  (letfn [(straight? [s]
+            (let [order1 "A23456789TJQK"
+                  order2 "23456789TJQKA"
+                  vals (map second s)
+                  sorter (fn [order]
+                           (->> order
+                                (map-indexed (fn [a i] [i a]))
+                                (into {})))
+                  checker (fn [sorter]
+                            (->> vals
+                                 (sort-by sorter)
+                                 (reverse)
+                                 (map sorter)
+                                 (partition 2 1)
+                                 (map (partial apply -))
+                                 set
+                                 count
+                                 (= 1)))]
+              (or (checker (sorter order1))
+                  (checker (sorter order2)))))
+
+          (freqs [pos s]
+            (->> s
+                 (map pos)
+                 frequencies
+                 (map second)))
+          (flush? [s]
+            (->> s (freqs first) (some #{5})))
+          (straight-flush? [s]
+            (and (flush? s) (straight? s)))
+          (four-of-a-kind? [s]
+            (->> s (freqs second) (some #{4})))
+          (full-house? [s]
+            (->> s (freqs second) set (= #{2 3})))
+          (three-of-a-kind? [s]
+            (->> s (freqs second) (some #{3})))
+          (two-pair? [s]
+            (->> s
+                 (freqs second)
+                 frequencies
+                 (#(get % 2))
+                 (= 2)))
+          (pair? [s]
+            (->> s (freqs second) (some #{2})))]
+    (cond (straight-flush? h)  :straight-flush
+          (four-of-a-kind? h)  :four-of-a-kind
+          (full-house? h)      :full-house
+          (flush? h)           :flush
+          (straight? h)        :straight
+          (three-of-a-kind? h) :three-of-a-kind
+          (two-pair? h)        :two-pair
+          (pair? h)            :pair
+          :else                :high-card)))
+
+(solves
+  best-hand
+  (= :high-card (__ ["HA" "D2" "H3" "C9" "DJ"]))
+  (= :pair (__ ["HA" "HQ" "SJ" "DA" "HT"]))
+  (= :two-pair (__ ["HA" "DA" "HQ" "SQ" "HT"]))
+  (= :three-of-a-kind (__ ["HA" "DA" "CA" "HJ" "HT"]))
+  (= :straight (__ ["HA" "DK" "HQ" "HJ" "HT"]))
+  (= :straight (__ ["HA" "H2" "S3" "D4" "C5"]))
+  (= :flush (__ ["HA" "HK" "H2" "H4" "HT"]))
+  (= :full-house (__ ["HA" "DA" "CA" "HJ" "DJ"]))
+  (= :four-of-a-kind (__ ["HA" "DA" "CA" "SA" "DJ"]))
+  (= :straight-flush (__ ["HA" "HK" "HQ" "HJ" "HT"])))
+
