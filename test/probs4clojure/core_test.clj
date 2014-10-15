@@ -1,6 +1,7 @@
 (ns probs4clojure.core-test
   (:require [midje.sweet :refer :all]
-            [probs4clojure.core :refer :all]))
+            [probs4clojure.core :refer :all]
+            [taoensso.timbre :as timbre]))
 
 ;; ### Solutions to 4clojure.com problems
 ;;
@@ -14,6 +15,10 @@
 ;; <script type="text/javascript"
 ;;  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 ;; </script>
+
+
+(timbre/refer-timbre)
+
 
 (defmacro solves
   "
@@ -1628,6 +1633,120 @@
   java.lang.Class
   (let [x __]
     (and (= (class x) x) x)))
+
+
+;; ### Problem 127: <a href="http://www.4clojure.com/problem/127">Love Triangles</a>
+;;
+(solves
+ (fn [coll]
+   (letfn [(to-bin-str [n] (Integer/toBinaryString n))
+
+           (max-bits-in-coll [coll]
+             (->> coll (map (comp count to-bin-str)) (apply max)))
+
+           (as-bit-strings [coll]
+             (let [mb (max-bits-in-coll coll)]
+               (->> coll
+                    (mapv (fn [n]
+                            (let [as-bin (to-bin-str n)
+                                  num-zeros (- mb (count as-bin))]
+                              (apply str (concat (repeat num-zeros \0)
+                                                 as-bin))))))))
+
+           (board-size [strings]
+             [(count strings), (-> strings first count)])
+
+           (square-offsets [square-size]
+             (for [r (range square-size), c (range square-size)]
+               [r c]))
+
+           (gen-triangles-for-square [pts sqsiz]
+             (let [triangle-filter-functions
+                   [(fn [[r c]] (<= r c))
+                    (fn [[r c]] (>= r c))
+                    (fn [[r c]] (>= (- (dec sqsiz) c) r))
+                    (fn [[r c]] (<= (- (dec sqsiz) r) c))
+                    (fn [[r c]] (and (<= (- sqsiz r) c)
+                                     (<= r c)))
+                    (fn [[r c]] (and (<= (- sqsiz r) c)
+                                     (>= r c)))
+                    (fn [[r c]] (and (> (- sqsiz c) r)
+                                     (<= r c)))
+                    (fn [[r c]] (and (> (- sqsiz c) r)
+                                     (>= r c)))]]
+               (remove #(< (count %) 3)
+                       (for [f triangle-filter-functions]
+                         (filter f pts)))))
+
+           (valid-triangle [bs t]
+             (every? (fn [pt] (= \1 (get-in bs pt))) t))
+
+           (valid-triangle-counts [bs [nr nc] sqsiz]
+             (let [pts (square-offsets sqsiz)
+                   moved-triangles (for [r (range -2 sqsiz)
+                                         c (range -2 sqsiz)
+                                         t (gen-triangles-for-square
+                                            pts sqsiz)]
+                                     ;; Translate the triangles by the
+                                     ;; starting position:
+                                     (for [[dr dc] t]
+                                       [(+ r dr)
+                                        (+ c dc)]))
+                   valid-triangles (filter (partial valid-triangle bs)
+                                           moved-triangles)]
+               (map count valid-triangles)))]
+
+     (let [bs (as-bit-strings coll)
+           [nr nc] (board-size bs)
+           sizes (mapcat (partial valid-triangle-counts bs [nr nc])
+                         (range 2 (inc (max nr nc))))]
+       (when (seq sizes)
+         (reduce max sizes)))))
+
+
+ (= 10 (__ [15 15 15 15 15]))
+                                        ; 1111      1111
+                                        ; 1111      *111
+                                        ; 1111  ->  **11
+                                        ; 1111      ***1
+                                        ; 1111      ****
+ (= 15 (__ [1 3 7 15 31]))
+                                        ; 00001      0000*
+                                        ; 00011      000**
+                                        ; 00111  ->  00***
+                                        ; 01111      0****
+                                        ; 11111      *****
+ (= 3 (__ [3 3]))
+                                        ; 11      *1
+                                        ; 11  ->  **
+ (= 4 (__ [7 3]))
+                                        ; 111      ***
+                                        ; 011  ->  0*1
+ (= 6 (__ [17 22 6 14 22]))
+                                        ; 10001      10001
+                                        ; 10110      101*0
+                                        ; 00110  ->  00**0
+                                        ; 01110      0***0
+                                        ; 10110      10110
+ (= 9 (__ [18 7 14 14 6 3]))
+                                        ; 10010      10010
+                                        ; 00111      001*0
+                                        ; 01110      01**0
+                                        ; 01110  ->  0***0
+                                        ; 00110      00**0
+                                        ; 00011      000*1
+ (= nil (__ [21 10 21 10]))
+                                        ; 10101      10101
+                                        ; 01010      01010
+                                        ; 10101  ->  10101
+                                        ; 01010      01010
+ (= nil (__ [0 31 0 31 0]))
+                                        ; 00000      00000
+                                        ; 11111      11111
+                                        ; 00000  ->  00000
+                                        ; 11111      11111
+                                        ; 00000      00000
+ )
 
 
 ;; ### Problem 130: <a href="http://www.4clojure.com/problem/130">Tree Reparenting</a>
