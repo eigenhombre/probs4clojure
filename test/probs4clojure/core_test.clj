@@ -1637,72 +1637,112 @@
 
 ;; ### Problem 127: <a href="http://www.4clojure.com/problem/127">Love Triangles</a>
 ;;
+;; I had to take a couple runs at this one.
+;;
+;; The easiest part is converting the numeric values to bit patterns
+;; (`as-bit-strings`).  Once those are in hand (a series of character
+;; string rows), we use `get-in` as is done in several other problems
+;; to get the character value of a particular row and column.
+;;
+;; The strategy is then:
+;;
+;; 1. Scan across each point, finding the largest triangle which can
+;;    be made starting at that point.
+;; 2. There are eight possible triangles which can "grow" in colinear
+;;    sets of points from a given point.  Triangles are "grown" until
+;;    one or more of the colinear points has a value other than `\1`.
+;; 3. The largest triangle is chosen, and its size used as the triangle
+;;    size for that point.
+;;
+;; Unlike many of my solutions to other problems, I find this solution
+;; much easier to read and understand than it was to come up with in
+;; the first place!
 (solves
- (fn [coll]
-   (letfn [(to-bin-str [n] (Integer/toBinaryString n))
+ (fn f [input-vec]
+   (let [to-bin-str (fn [n] (Integer/toBinaryString n))
 
-           (max-bits-in-coll [coll]
-             (->> coll (map (comp count to-bin-str)) (apply max)))
+         max-bits-in-coll
+         (fn [coll]
+           (->> coll (map (comp count to-bin-str)) (apply max)))
 
-           (as-bit-strings [coll]
-             (let [mb (max-bits-in-coll coll)]
-               (->> coll
-                    (mapv (fn [n]
-                            (let [as-bin (to-bin-str n)
-                                  num-zeros (- mb (count as-bin))]
-                              (apply str (concat (repeat num-zeros \0)
-                                                 as-bin))))))))
+         board-size (fn [strings]
+                      [(count strings), (-> strings first count)])
 
-           (board-size [strings]
-             [(count strings), (-> strings first count)])
+         as-bit-strings
+         (fn [coll]
+           (let [mb (max-bits-in-coll coll)]
+             (->> coll
+                  (mapv (fn [n]
+                          (let [as-bin (to-bin-str n)
+                                num-zeros (- mb (count as-bin))]
+                            (apply str (concat (repeat num-zeros \0)
+                                               as-bin))))))))
+         bd (as-bit-strings input-vec)
 
-           (square-offsets [square-size]
-             (for [r (range square-size), c (range square-size)]
-               [r c]))
+         [nr nc] (board-size bd)
 
-           (gen-triangles-for-square [pts sqsiz]
-             (let [triangle-filter-functions
-                   [(fn [[r c]] (<= r c))
-                    (fn [[r c]] (>= r c))
-                    (fn [[r c]] (>= (- (dec sqsiz) c) r))
-                    (fn [[r c]] (<= (- (dec sqsiz) r) c))
-                    (fn [[r c]] (and (<= (- sqsiz r) c)
-                                     (<= r c)))
-                    (fn [[r c]] (and (<= (- sqsiz r) c)
-                                     (>= r c)))
-                    (fn [[r c]] (and (> (- sqsiz c) r)
-                                     (<= r c)))
-                    (fn [[r c]] (and (> (- sqsiz c) r)
-                                     (>= r c)))]]
-               (remove #(< (count %) 3)
-                       (for [f triangle-filter-functions]
-                         (filter f pts)))))
+         top-left-triangle-edge (fn [[r c] delta]
+                                  (for [cursor (range 0 (inc delta))]
+                                    [(- (+ cursor r) delta)
+                                     (+ c cursor)]))
+         bottom-left-triangle-edge (fn [[r c] delta]
+                                     (for [cursor (range 0 (inc delta))]
+                                       [(- (+ delta r) cursor)
+                                        (+ c cursor)]))
+         top-right-triangle-edge (fn [[r c] delta]
+                                   (for [cursor (range 0 (inc delta))]
+                                     [(- (+ cursor r) delta)
+                                      (- c cursor)]))
+         bottom-right-triangle-edge (fn [[r c] delta]
+                                      (for [cursor (range 0 (inc delta))]
+                                        [(- (+ delta r) cursor)
+                                         (- c cursor)]))
+         east-double-triangle-edge (fn [[r c] delta]
+                                     (for [cursor (range (- delta)
+                                                         (inc delta))]
+                                       [(+ r cursor)
+                                        (+ c delta)]))
+         west-double-triangle-edge (fn [[r c] delta]
+                                     (for [cursor (range (- delta)
+                                                         (inc delta))]
+                                       [(+ r cursor)
+                                        (- c delta)]))
+         north-double-triangle-edge (fn [[r c] delta]
+                                      (for [cursor (range (- delta)
+                                                          (inc delta))]
+                                        [(- r delta)
+                                         (+ c cursor)]))
+         south-double-triangle-edge (fn [[r c] delta]
+                                      (for [cursor (range (- delta)
+                                                          (inc delta))]
+                                        [(+ r delta)
+                                         (+ c cursor)]))
 
-           (valid-triangle [bs t]
-             (every? (fn [pt] (= \1 (get-in bs pt))) t))
+         good-edge (fn [edge-points]
+                     (every? #(= \1 (get-in bd %)) edge-points))
 
-           (valid-triangle-counts [bs [nr nc] sqsiz]
-             (let [pts (square-offsets sqsiz)
-                   moved-triangles (for [r (range -2 sqsiz)
-                                         c (range -2 sqsiz)
-                                         t (gen-triangles-for-square
-                                            pts sqsiz)]
-                                     ;; Translate the triangles by the
-                                     ;; starting position:
-                                     (for [[dr dc] t]
-                                       [(+ r dr)
-                                        (+ c dc)]))
-                   valid-triangles (filter (partial valid-triangle bs)
-                                           moved-triangles)]
-               (map count valid-triangles)))]
-
-     (let [bs (as-bit-strings coll)
-           [nr nc] (board-size bs)
-           sizes (mapcat (partial valid-triangle-counts bs [nr nc])
-                         (range 2 (inc (max nr nc))))]
-       (when (seq sizes)
-         (reduce max sizes)))))
-
+         best-score-for-triangles-at-point
+         (fn [[r c]]
+           (reduce max
+                   (for [f [top-left-triangle-edge
+                            bottom-left-triangle-edge
+                            top-right-triangle-edge
+                            bottom-right-triangle-edge
+                            east-double-triangle-edge
+                            west-double-triangle-edge
+                            north-double-triangle-edge
+                            south-double-triangle-edge]]
+                     (->> (range)
+                          (map (partial f [r c]))
+                          (take-while good-edge)
+                          (map count)
+                          (reduce +)))))]
+     (let [ans
+           (reduce max
+                   (for [r (range nr)
+                         c (range nc)]
+                     (best-score-for-triangles-at-point [r c])))]
+       (when (>= ans 3) ans))))
 
  (= 10 (__ [15 15 15 15 15]))
                                         ; 1111      1111
@@ -1740,13 +1780,13 @@
                                         ; 01010      01010
                                         ; 10101  ->  10101
                                         ; 01010      01010
- (= nil (__ [0 31 0 31 0]))
+ (= nil (__ [0 31 0 31 0])))
                                         ; 00000      00000
                                         ; 11111      11111
                                         ; 00000  ->  00000
                                         ; 11111      11111
                                         ; 00000      00000
- )
+
 
 
 ;; ### Problem 130: <a href="http://www.4clojure.com/problem/130">Tree Reparenting</a>
