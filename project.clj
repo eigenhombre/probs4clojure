@@ -6,6 +6,6 @@
   :aliases {"autotest" ["midje" ":autotest"]
             "doc" ["marg" "test"]}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [expectations "1.3.3"]
-                 [com.taoensso/timbre "3.3.1"]]
-  :profiles {:dev {:dependencies [[midje "1.5.1"]]}})
+                 [expectations "1.3.3"]]
+  :profiles {:dev {:dependencies [[midje "1.6.3"]]
+                   :plugins [[lein-midje "3.1.3"]]}})

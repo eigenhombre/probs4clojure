@@ -1,7 +1,6 @@
 (ns probs4clojure.core-test
   (:require [midje.sweet :refer :all]
-            [probs4clojure.core :refer :all]
-            [taoensso.timbre :as timbre]))
+            [probs4clojure.core :refer :all]))
 
 ;; ### Solutions to 4clojure.com problems
 ;;
@@ -15,9 +14,6 @@
 ;; <script type="text/javascript"
 ;;  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 ;; </script>
-
-
-(timbre/refer-timbre)
 
 
 (defmacro solves
@@ -329,7 +325,7 @@
  (contains? #{4 5 6} __)
  (contains? [1 1 1 1 1] __)
  (contains? {4 :a 2 :b} __)
- (not (contains? '(1 2 4) __)))
+ #_(not (contains? '(1 2 4) __)))  ;; Lists not supported in 1.6.
 
 ;; ### Problem 48:
 (solves 6
@@ -2380,3 +2376,41 @@
   (= :full-house (__ ["HA" "DA" "CA" "HJ" "DJ"]))
   (= :four-of-a-kind (__ ["HA" "DA" "CA" "SA" "DJ"]))
   (= :straight-flush (__ ["HA" "HK" "HQ" "HJ" "HT"])))
+
+
+;; ### Problem 195: <a href="http://www.4clojure.com/problem/195">Parentheses... Again</a>
+;;
+;; I first tried to solve this problem by generating all combinations
+;; of \\(2n\\) parentheses and selecting only those that balanced.
+;; This passed the tests, but, not surprisingly, exceeded the time limit.
+;;
+;; The required insight was to realize (again: c.f.
+;; [Problem #177](http://www.4clojure.com/problem/177)) that one definition of a
+;; balanced set of parentheses is one in which can be built up
+;; _by inserting balanced pairs of parens_ at any point.  All that's required
+;; then to build up strings of matching parentheses, of length \\(n+2\\),
+;; from a set of length \\(n\\), is to insert `()` at every point in each
+;; string from that set, then removing duplicates using the `set` function.
+;;
+;; In other words, if on Iteration 1 I have `()`, in Iteration 2 I
+;; will have `()()` (inserting in position 0), `(())` (inserting in
+;; position 1), and again `()()` (inserting in position 2).  The given
+;; solution just encodes that, building the collections up over a sequence of
+;; iterations.
+(solves
+ (fn [n]
+   (letfn [(splice-parens-in [s n]
+             (str (subs s 0 n)
+                  "()"
+                  (subs s n (count s))))
+           (splice-parens-at-all-positions [s]
+             (set (map (partial splice-parens-in s) (range (inc (count s))))))]
+     (nth (iterate (comp set (partial mapcat splice-parens-at-all-positions))
+                   #{""})
+          n)))
+ (= [#{""} #{"()"} #{"()()" "(())"}] (map (fn [n] (__ n)) [0 1 2]))
+ (= #{"((()))" "()()()" "()(())" "(())()" "(()())"} (__ 3))
+ (= 16796 (count (__ 10)))
+ (= (nth (sort (filter #(.contains ^String % "(()()()())")
+                       (__ 9))) 6) "(((()()()())(())))")
+ (= (nth (sort (__ 12)) 5000) "(((((()()()()()))))(()))"))
