@@ -1224,6 +1224,31 @@
      false))
 
 
+;; ### Problem 96: <a href="http://www.4clojure.com/problem/96">Beauty is Symmetry</a>
+;;
+;; The solution is to make a transpose function which recursively
+;; swaps the left and right parts of the tree.
+(solves
+  (fn [[v l r :as t]]
+    (let [trans (fn tr [[v l r :as tt]]
+                  (when tt
+                    [v (tr r) (tr l)]))]
+      (= l (trans r))))
+
+  (= (__ '(:a (:b nil nil) (:b nil nil))) true)
+  (= (__ '(:a (:b nil nil) nil)) false)
+  (= (__ '(:a (:b nil nil) (:c nil nil))) false)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [6 nil nil] [5 nil nil]]] nil]])
+     true)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [5 nil nil] [6 nil nil]]] nil]])
+     false)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [6 nil nil] nil]] nil]])
+     false))
+
+
 ;; ### Problem 97: <a href="http://www.4clojure.com/problem/97">Pascal's Triangle</a>
 ;;
 ;; I solved this problem by thinking about the following series of
