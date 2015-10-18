@@ -916,7 +916,7 @@
        ["uncle" "cousin"] ["son" "grandson"]})))
 
 
-;; ### Problem 85:
+;; ### Problem 85: <a href="http://www.4clojure.com/problem/85">Power Set</a>
 ;; The problem has a recursive solution, which becomes clearer when one realizes
 ;; that, for every subset in the power set, any given object is
 ;; either in that subset or not, and that both options (object
@@ -1194,6 +1194,34 @@
       " #  # "
       "  #   "
       "      "]))
+
+
+;; ### Problem 95: <a href="http://www.4clojure.com/problem/95">To Tree, or not to Tree</a>
+;;
+;; Solve recursively, with base cases to catch the wrong shape at any
+;; given node.
+(solves
+  (fn treep [s]
+    (or (nil? s)
+        (and (coll? s)
+             (= (count s) 3)
+             (treep (nth s 1))
+             (treep (nth s 2)))))
+
+  (= (__ '(:a (:b nil nil) nil))
+     true)
+  (= (__ '(:a (:b nil nil)))
+     false)
+  (= (__ [1 nil [2 [3 nil nil] [4 nil nil]]])
+     true)
+  (= (__ [1 [2 nil nil] [3 nil nil] [4 nil nil]])
+     false)
+  (= (__ [1 [2 [3 [4 nil nil] nil] nil] nil])
+     true)
+  (= (__ [1 [2 [3 [4 false nil] nil] nil] nil])
+     false)
+  (= (__ '(:a nil ()))
+     false))
 
 
 ;; ### Problem 97: <a href="http://www.4clojure.com/problem/97">Pascal's Triangle</a>

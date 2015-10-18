@@ -9,7 +9,7 @@
   [4clojure.com](http://4clojure.com) problem by taking the first
   expression, substituting it for __ in all subsequent expressions,
   and evaluating each resulting expression for truthiness (i.e.,
-  evaluating the resulting Midje facts).
+  evaluating the resulting Speclj assertions).
   "
   [expr & tests]
   (let [replacef# (fn [t] (postwalk-replace {'__ expr} t))
