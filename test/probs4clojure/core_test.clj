@@ -916,6 +916,32 @@
        ["uncle" "cousin"] ["son" "grandson"]})))
 
 
+;; ### Problem 85:
+;; The problem has a recursive solution, which becomes clearer when one realizes
+;; that, for every subset in the power set, any given object is
+;; either in that subset or not, and that both options (object
+;; in, and object not in) are included for each subset.
+;; In other words, for a given
+;; \\(x\\) in a set \\(S\\), if \\(Q\\) is the power set of \\(S\\) when
+;; \\(x\\) is removed, and \\(Q' = \\{\\{x\\} \cup q\\)
+;; for all \\(q \in Q\\}\\), then \\(P\\), the power set of \\(S\\), is
+;; \\(Q \cup Q'\\).
+(solves
+  (fn pwr [xs]
+    (let [[x & more :as xs] (vec xs)]
+      (if-not (seq xs)
+        #{#{}}
+        (->> (pwr more)
+             (concat (map #(conj % x) (pwr more)))
+             set))))
+
+  (= (__ #{1 :a}) #{#{1 :a} #{:a} #{} #{1}})
+  (= (__ #{}) #{#{}})
+  (= (__ #{1 2 3})
+     #{#{} #{1} #{2} #{3} #{1 2} #{1 3} #{2 3} #{1 2 3}})
+  (= (count (__ (into #{} (range 10)))) 1024))
+
+
 ;; ### Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a>
 ;;
 ;; Here `f` implements the "particular formula" described in the
@@ -945,6 +971,7 @@
 
 ;; ### Problem 87:
 ;; Doesn't exist!
+
 
 ;; ### Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a>
 ;;

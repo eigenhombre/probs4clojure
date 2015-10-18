@@ -7,6 +7,7 @@
   :plugins [[speclj "3.3.0"]]
   :test-paths ["test"]
   :dependencies [[org.clojure/clojure "1.7.0"]]
-  :profiles {:dev {:dependencies [[speclj "3.3.0"]]}
+  :profiles {:dev {:dependencies [[speclj "3.3.0"]]
+                   :plugins [[michaelblume/lein-marginalia "0.9.0"]]}
              :uberjar {:aot :all}})
 
