@@ -15,6 +15,8 @@
   (let [replacef# (fn [t] (postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
     `(describe ~(str expr)
-       (it "..."
-         (doseq [f# [~@newtests#]]
-           (should f#))))))
+       ~@(for [t# newtests#
+               :let [should# `(should ~t#)
+                     shouldstr# (str t#)]]
+           `(it ~(str "should " shouldstr#)
+              ~should#)))))
