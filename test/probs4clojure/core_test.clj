@@ -1,6 +1,5 @@
 (ns probs4clojure.core-test
-  (:require [midje.sweet :refer :all]
-            [probs4clojure.core :refer :all]))
+  (:require [probs4clojure.test-util :refer [solves]]))
 
 ;; ### Solutions to 4clojure.com problems
 ;;
@@ -16,31 +15,19 @@
 ;; </script>
 
 
-(defmacro solves
-  "
-  The `solves` macro presents and tests a solution to a
-  [4clojure.com](http://4clojure.com) problem by taking the first
-  expression, substituting it for __ in all subsequent expressions,
-  and evaluating each resulting expression for truthiness (i.e.,
-  evaluating the resulting Midje facts).
-  "
-  [expr & tests]
-  (let [replacef# (fn [t] (clojure.walk/postwalk-replace {'__ expr} t))
-        newtests# (map replacef# tests)]
-    `(doseq [f# [~@newtests#]]
-       (fact f# => truthy))))
-
-
 ;; ### Problem 1:
 (solves true (= __ true))
+
 
 ;; ### Problem 2:
 (solves 4
  (= (- 10 (* 2 3)) __))
 
+
 ;; ### Problem 3:
 (solves "HELLO WORLD"
  (= __ (.toUpperCase "hello world")))
+
 
 ;; ### Problem 4:
 ;; This is the one problem not amenable to `solves` off-the-shelf, so
@@ -48,37 +35,45 @@
 (solves
  (= (list :a :b :c) '(:a :b :c)))
 
+
 ;; ### Problem 5:
 (solves '(1 2 3 4)
  (= __ (conj '(2 3 4) 1))
  (= __ (conj '(3 4) 2 1)))
 
+
 ;; ### Problem 6:
 (solves [:a :b :c]
  (= (list :a :b :c) (vec '(:a :b :c)) (vector :a :b :c)))
+
 
 ;; ### Problem 7:
 (solves [1 2 3 4]
  (= __ (conj [1 2 3] 4))
  (= __ (conj [1 2] 3 4)))
 
+
 ;; ### Problem 8:
 (solves #{:a :b :c :d}
  (= __ (set '(:a :a :b :c :c :c :c :d :d)))
  (= __ (clojure.set/union #{:a :b :c} #{:b :c :d})))
 
+
 ;; ### Problem 9:
 (solves 2
  (= #{1 2 3 4} (conj #{1 4 3} __)))
+
 
 ;; ### Problem 10:
 (solves 20
  (= __ ((hash-map :a 10, :b 20, :c 30) :b))
  (= __ (:b {:a 10, :b 20, :c 30})))
 
+
 ;; ### Problem 11:
 (solves [:b 2]
  (= {:a 1, :b 2, :c 3} (conj {:a 1} __ [:c 3])))
+
 
 ;; ### Problem 12:
 (solves 3
@@ -86,9 +81,11 @@
  (= __ (second [2 3 4]))
  (= __ (last (list 1 2 3))))
 
+
 ;; ### Problem 13:
 (solves [20 30 40]
  (= __ (rest [10 20 30 40])))
+
 
 ;; ### Problem 14:
 (solves 8
@@ -97,6 +94,7 @@
  (= __ (#(+ % 5) 3))
  (= __ ((partial + 5) 3)))
 
+
 ;; ### Problem 15:
 (solves #(* 2 %)
  (= (__ 2) 4)
@@ -104,19 +102,23 @@
  (= (__ 11) 22)
  (= (__ 7) 14))
 
+
 ;; ### Problem 16:
 (solves #(format "Hello, %s!" %)
  (= (__ "Dave") "Hello, Dave!")
  (= (__ "Jenn") "Hello, Jenn!")
  (= (__ "Rhea") "Hello, Rhea!"))
 
+
 ;; ### Problem 17:
 (solves [6 7 8]
         (= __ (map #(+ % 5) '(1 2 3))))
 
+
 ;; ### Problem 18:
 (solves [6 7]
  (= __ (filter #(> % 5) '(3 4 5 6 7))))
+
 
 ;; ### Problem 19:
 (solves #(first (reverse %))
@@ -124,11 +126,13 @@
  (= (__ '(5 4 3)) 3)
  (= (__ ["b" "c" "d"]) "d"))
 
+
 ;; ### Problem 20:
 (solves #(second (reverse %))
  (= (__ (list 1 2 3 4 5)) 4)
  (= (__ ["a" "b" "c"]) "b")
  (= (__ [[1 2] [3 4]]) [1 2]))
+
 
 ;; ### Problem 21:
 (solves (fn [s n] (first (drop n s)))
@@ -137,6 +141,7 @@
  (= (__ [1 2 3 4] 1) 2)
  (= (__ '([1 2] [3 4] [5 6]) 2) [5 6]))
 
+
 ;; ### Problem 22:
 (solves #(apply + (map (fn [_] 1) %))
  (= (__ '(1 2 3 3 1)) 5)
@@ -144,6 +149,7 @@
  (= (__ [[1 2] [3 4] [5 6]]) 3)
  (= (__ '(13)) 1)
  (= (__ '(:a :b :c)) 3))
+
 
 ;; ### Problem 23:
 (solves (fn [s]
@@ -154,6 +160,7 @@
  (= (__ (sorted-set 5 7 2 7)) '(7 5 2))
  (= (__ [[1 2][3 4][5 6]]) [[5 6][3 4][1 2]]))
 
+
 ;; ### Problem 24:
 (solves (fn [s] (apply + s))
  (= (__ [1 2 3]) 6)
@@ -162,6 +169,7 @@
  (= (__ '(0 0 -1)) -1)
  (= (__ '(1 10 3)) 14))
 
+
 ;; ### Problem 25:
 (solves #(filter odd? %)
  (= (__ #{1 2 3 4 5}) '(1 3 5))
@@ -169,12 +177,14 @@
  (= (__ [2 2 4 6]) '())
  (= (__ [1 1 1 3]) '(1 1 1 3)))
 
+
 ;; ### Problem 26:
 (solves (fn [n]
           (take n (map first (iterate (fn [[a b]] [b (+ a b)]) [1 1]))))
  (= (__ 3) '(1 1 2))
  (= (__ 6) '(1 1 2 3 5 8))
  (= (__ 8) '(1 1 2 3 5 8 13 21)))
+
 
 ;; ### Problem 27:
 (solves (fn [s]
@@ -188,6 +198,7 @@
  (true? (__ '(1 1 3 3 1 1)))
  (false? (__ '(:a :b :c))))
 
+
 ;; ### Problem 28:
 (solves (fn flat [[h & t :as l]]
           (when (seq l)
@@ -199,11 +210,13 @@
  (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
  (= (__ '((((:a))))) '(:a)))
 
+
 ;; ### Problem 29:
 (solves (fn [s] (apply str (filter #(. Character isUpperCase %) s)))
  (= (__ "HeLlO, WoRlD!") "HLOWRD")
  (empty? (__ "nothing"))
  (= (__ "$#A(*&987Zf") "AZ"))
+
 
 ;; ### Problem 30:
 (solves #(->> %
@@ -213,11 +226,13 @@
  (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
  (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2])))
 
+
 ;; ### Problem 31:
 (solves (partial partition-by identity)
  (= (__ [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3)))
  (= (__ [:a :a :b :b :c]) '((:a :a) (:b :b) (:c)))
  (= (__ [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))
+
 
 ;; ### Problem 32:
 (solves (partial mapcat (fn [x] [x x]))
@@ -225,6 +240,7 @@
  (= (__ [:a :a :b :b]) '(:a :a :a :a :b :b :b :b))
  (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4]))
  (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
+
 
 ;; ### Problem 33:
 (solves (fn [s n] (mapcat #(repeat n %) s))
@@ -234,11 +250,13 @@
  (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4]))
  (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4])))
 
+
 ;; ### Problem 34:
 (solves (fn [s e] (take (- e s) (iterate inc s)))
  (= (__ 1 4) '(1 2 3))
  (= (__ -2 2) '(-2 -1 0 1))
  (= (__ 5 8) '(5 6 7)))
+
 
 ;; ### Problem 35:
 (solves 7
@@ -246,21 +264,25 @@
  (= __ (let [x 3, y 10] (- y x)))
  (= __ (let [x 21] (let [y 3] (/ x y)))))
 
+
 ;; ### Problem 36:
 (solves [x 7, y 3, z 1]
  (= 10 (let __ (+ x y)))
  (= 4 (let __ (+ y z)))
  (= 1 (let __ z)))
 
+
 ;; ### Problem 37:
 (solves "ABC"
  (= __ (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))
+
 
 ;; ### Problem 38:
 (solves (fn [& s] (reduce (fn [a b] (if (> a b) a b)) s))
  (= (__ 1 8 3 4) 8)
  (= (__ 30 20) 30)
  (= (__ 45 67 11) 67))
+
 
 ;; ### Problem 39:
 (solves (partial mapcat vector)
@@ -269,11 +291,13 @@
  (= (__ [1 2 3 4] [5]) [1 5])
  (= (__ [30 20] [25 15]) [30 25 20 15]))
 
+
 ;; ### Problem 40:
 (solves (fn [d x] (rest (mapcat (fn [xx] [d xx]) x)))
  (= (__ 0 [1 2 3]) [1 0 2 0 3])
  (= (apply str (__ ", " ["one" "two" "three"])) "one, two, three")
  (= (__ :z [:a :b :c :d]) [:a :z :b :z :c :z :d]))
+
 
 ;; ### Problem 41:
 (solves (fn [s n] (mapcat #(if (= (count %) n) (drop-last %) %)
@@ -282,12 +306,14 @@
  (= (__ [:a :b :c :d :e :f] 2) [:a :c :e])
  (= (__ [1 2 3 4 5 6] 4) [1 2 3 5 6]))
 
+
 ;; ### Problem 42:
 (solves #(apply *' (range 1 (inc %)))
  (= (__ 1) 1)
  (= (__ 3) 6)
  (= (__ 5) 120)
  (= (__ 8) 40320))
+
 
 ;; ### Problem 43:
 (solves (fn [s n]
@@ -299,6 +325,7 @@
  (= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
  (= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9))))
 
+
 ;; ### Problem 44:
 (solves (fn [pos s]
           (map (fn [i] (nth s (mod (+ pos i) (count s))))
@@ -309,9 +336,11 @@
  (= (__ 1 '(:a :b :c)) '(:b :c :a))
  (= (__ -4 '(:a :b :c)) '(:c :a :b)))
 
+
 ;; ### Problem 45:
 (solves [1 4 7 10 13]
  (= __ (take 5 (iterate #(+ 3 %) 1))))
+
 
 ;; ### Problem 46:
 (solves (fn [f] (fn [& args] (apply f (reverse args))))
@@ -319,6 +348,7 @@
  (= true ((__ >) 7 8))
  (= 4 ((__ quot) 2 8))
  (= [1 2 3] ((__ take) [1 2 3 4 5] 3)))
+
 
 ;; ### Problem 47:
 (solves 4
@@ -332,11 +362,13 @@
  (= __ (some #{2 7 6} [5 6 7 8]))
  (= __ (some #(when (even? %) %) [5 6 7 8])))
 
+
 ;; ### Problem 49:
 (solves (fn [n s] (list (take n s) (drop n s)))
  (= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
  (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
  (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))
+
 
 ;; ### Problem 50:
 (solves #(->> %
@@ -346,13 +378,16 @@
  (= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
  (= (set (__ [[1 2] :a [3 4] 5 6 :b])) #{[[1 2] [3 4]] [:a :b] [5 6]}))
 
+
 ;; ### Problem 51:
 (solves [1 2 3 4 5]
         (= [1 2 [3 4 5] [1 2 3 4 5]] (let [[a b & c :as d] __] [a b c d])))
 
+
 ;; ### Problem 52:
 (solves [c e]
         (= [2 4] (let [[a b c d e f g] (range)] __)))
+
 
 ;; ### Problem 53:
 (solves (fn [s] (let [deltas (map (fn [[a b]] [(- b a) a b]) (partition 2 1 s))
@@ -362,7 +397,8 @@
                                          keys
                                          (apply max))
                      desired-sequence (->> series
-                                           (filter #(= (count %) longest-length))
+                                           (filter #(= (count %)
+                                                       longest-length))
                                            first)
                      start (second (first desired-sequence))
                      end (int (nth (last desired-sequence) 2))]
@@ -371,6 +407,7 @@
  (= (__ [5 6 1 3 2 7]) [5 6])
  (= (__ [2 3 3 4 5]) [3 4 5])
  (= (__ [7 6 5 4]) []))
+
 
 ;; ### Problem 54:
 (solves (fn f [c s]
@@ -382,6 +419,7 @@
  (= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
  (= (__ 3 (range 8)) '((0 1 2) (3 4 5))))
 
+
 ;; ### Problem 55:
 (solves #(->> %
               (group-by identity)
@@ -390,6 +428,7 @@
  (= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
  (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
  (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2}))
+
 
 ;; ### Problem 56:
 (solves (fn [s]
@@ -406,9 +445,11 @@
  (= (__ '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3]))
  (= (__ (range 50)) (range 50)))
 
+
 ;; ### Problem 57:
 (solves [5 4 3 2 1]
         (= __ ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))
+
 
 ;; ### Problem 58:
 (solves (fn outer [f & fs]
@@ -420,6 +461,7 @@
  (= true ((__ zero? #(mod % 8) +) 3 5 7 9))
  (= "HELLO" ((__ #(.toUpperCase %) #(apply str %) take) 5 "hello world")))
 
+
 ;; ### Problem 59:
 (solves (fn [& fns]
           (fn [& xs]
@@ -427,6 +469,7 @@
  (= [21 6 1] ((__ + max min) 2 3 5 1 6 4))
  (= ["HELLO" 5] ((__ #(.toUpperCase %) count) "hello"))
  (= [2 6 4] ((__ :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))
+
 
 ;; ### Problem 60:
 (solves (fn reduxions
@@ -541,6 +584,7 @@
                    (recur (rest p)
                           (conj ret (assoc {} k insert))))
                  ret)))))
+
 
 ;; New solution:
 (solves
@@ -873,6 +917,32 @@
        ["uncle" "cousin"] ["son" "grandson"]})))
 
 
+;; ### Problem 85: <a href="http://www.4clojure.com/problem/85">Power Set</a>
+;; The problem has a recursive solution, which becomes clearer when one realizes
+;; that, for every subset in the power set, any given object is
+;; either in that subset or not, and that both options (object
+;; in, and object not in) are included for each subset.
+;; In other words, for a given
+;; \\(x\\) in a set \\(S\\), if \\(Q\\) is the power set of \\(S\\) when
+;; \\(x\\) is removed, and \\(Q' = \\{\\{x\\} \cup q\\)
+;; for all \\(q \in Q\\}\\), then \\(P\\), the power set of \\(S\\), is
+;; \\(Q \cup Q'\\).
+(solves
+  (fn pwr [xs]
+    (let [[x & more :as xs] (vec xs)]
+      (if-not (seq xs)
+        #{#{}}
+        (->> (pwr more)
+             (concat (map #(conj % x) (pwr more)))
+             set))))
+
+  (= (__ #{1 :a}) #{#{1 :a} #{:a} #{} #{1}})
+  (= (__ #{}) #{#{}})
+  (= (__ #{1 2 3})
+     #{#{} #{1} #{2} #{3} #{1 2} #{1 3} #{2 3} #{1 2 3}})
+  (= (count (__ (into #{} (range 10)))) 1024))
+
+
 ;; ### Problem 86: <a href="http://www.4clojure.com/problem/86">Happy Numbers</a>
 ;;
 ;; Here `f` implements the "particular formula" described in the
@@ -902,6 +972,7 @@
 
 ;; ### Problem 87:
 ;; Doesn't exist!
+
 
 ;; ### Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a>
 ;;
@@ -1060,6 +1131,43 @@
               [:x :y] [:d :a] [:b :e] [:x :a]})))
 
 
+;; ### Problem 92: <a href="http://www.4clojure.com/problem/92">Read Roman Numerals</a>
+;;
+;; We find the allowed number patterns with their numerical values,
+;; searching for the subtractive patterns (e.g. IV) first to keep them
+;; distinct from the non-subptractive ones (e.g. VII).  We thread the
+;; current string and an accumulator value through each of the
+;; possible patterns, taking the final accumulator value at the end.
+(solves
+  (fn [s]
+    (let [pn
+          (fn [[s acc] pat incr]
+            (loop [s s, acc acc]
+              (if-not (re-find pat s)
+                [s acc]
+                (recur (clojure.string/replace-first s pat "") (+ acc incr)))))]
+      (-> [s 0]
+          (pn #"CM" 900)
+          (pn #"CD" 400)
+          (pn #"XC" 90)
+          (pn #"XL" 40)
+          (pn #"IX" 9)
+          (pn #"IV" 4)
+          (pn #"M" 1000)
+          (pn #"D" 500)
+          (pn #"C" 100)
+          (pn #"L" 50)
+          (pn #"X" 10)
+          (pn #"V" 5)
+          (pn #"I" 1)
+          last)))
+
+  (= 14 (__ "XIV"))
+  (= 3999 (__ "MMMCMXCIX"))
+  (= 827 (__ "DCCCXXVII"))
+  (= 48 (__ "XLVIII")))
+
+
 ;; ### Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a>
 ;;
 ;; We accept a vector of strings as our "board representation."  The
@@ -1124,6 +1232,59 @@
       " #  # "
       "  #   "
       "      "]))
+
+
+;; ### Problem 95: <a href="http://www.4clojure.com/problem/95">To Tree, or not to Tree</a>
+;;
+;; Solve recursively, with base cases to catch the wrong shape at any
+;; given node.
+(solves
+  (fn treep [s]
+    (or (nil? s)
+        (and (coll? s)
+             (= (count s) 3)
+             (treep (nth s 1))
+             (treep (nth s 2)))))
+
+  (= (__ '(:a (:b nil nil) nil))
+     true)
+  (= (__ '(:a (:b nil nil)))
+     false)
+  (= (__ [1 nil [2 [3 nil nil] [4 nil nil]]])
+     true)
+  (= (__ [1 [2 nil nil] [3 nil nil] [4 nil nil]])
+     false)
+  (= (__ [1 [2 [3 [4 nil nil] nil] nil] nil])
+     true)
+  (= (__ [1 [2 [3 [4 false nil] nil] nil] nil])
+     false)
+  (= (__ '(:a nil ()))
+     false))
+
+
+;; ### Problem 96: <a href="http://www.4clojure.com/problem/96">Beauty is Symmetry</a>
+;;
+;; The solution is to make a transpose function which recursively
+;; swaps the left and right parts of the tree.
+(solves
+  (fn [[v l r :as t]]
+    (let [trans (fn tr [[v l r :as tt]]
+                  (when tt
+                    [v (tr r) (tr l)]))]
+      (= l (trans r))))
+
+  (= (__ '(:a (:b nil nil) (:b nil nil))) true)
+  (= (__ '(:a (:b nil nil) nil)) false)
+  (= (__ '(:a (:b nil nil) (:c nil nil))) false)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [6 nil nil] [5 nil nil]]] nil]])
+     true)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [5 nil nil] [6 nil nil]]] nil]])
+     false)
+  (= (__ [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+          [2 [3 nil [4 [6 nil nil] nil]] nil]])
+     false))
 
 
 ;; ### Problem 97: <a href="http://www.4clojure.com/problem/97">Pascal's Triangle</a>
@@ -1221,6 +1382,7 @@
                         (recur (dec n)
                                (for [v ret, x s]
                                  (conj v x)))))))))
+
 
 ;; New solution.  Note that Mark Engelberg's [math.combinatorics
 ;; implementation](https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj)
@@ -1368,6 +1530,7 @@
   (= "1, 1, 1, 1, 1" (str (apply __ (repeat 5 1))))
   (and (= nil (seq (__)))
        (=  "" (str (__)))))
+
 
 ;; Hats off to user `dacquiri` for the
 ;; [reminder](http://pastebin.com/cS9sP764) that `distinct` removes
@@ -2428,6 +2591,7 @@
           (two-pair? h)        :two-pair
           (pair? h)            :pair
           :else                :high-card)))
+
 
 (solves
   best-hand
