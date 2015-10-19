@@ -397,7 +397,8 @@
                                          keys
                                          (apply max))
                      desired-sequence (->> series
-                                           (filter #(= (count %) longest-length))
+                                           (filter #(= (count %)
+                                                       longest-length))
                                            first)
                      start (second (first desired-sequence))
                      end (int (nth (last desired-sequence) 2))]
@@ -1128,6 +1129,43 @@
                [:x :y] [:d :a] [:b :e]}))
   (= true (__ #{[:a :b] [:b :c] [:c :d]
               [:x :y] [:d :a] [:b :e] [:x :a]})))
+
+
+;; ### Problem 92: <a href="http://www.4clojure.com/problem/92">Read Roman Numerals</a>
+;;
+;; We find the allowed number patterns with their numerical values,
+;; searching for the subtractive patterns (e.g. IV) first to keep them
+;; distinct from the non-subptractive ones (e.g. VII).  We thread the
+;; current string and an accumulator value through each of the
+;; possible patterns, taking the final accumulator value at the end.
+(solves
+  (fn [s]
+    (let [pn
+          (fn [[s acc] pat incr]
+            (loop [s s, acc acc]
+              (if-not (re-find pat s)
+                [s acc]
+                (recur (clojure.string/replace-first s pat "") (+ acc incr)))))]
+      (-> [s 0]
+          (pn #"CM" 900)
+          (pn #"CD" 400)
+          (pn #"XC" 90)
+          (pn #"XL" 40)
+          (pn #"IX" 9)
+          (pn #"IV" 4)
+          (pn #"M" 1000)
+          (pn #"D" 500)
+          (pn #"C" 100)
+          (pn #"L" 50)
+          (pn #"X" 10)
+          (pn #"V" 5)
+          (pn #"I" 1)
+          last)))
+
+  (= 14 (__ "XIV"))
+  (= 3999 (__ "MMMCMXCIX"))
+  (= 827 (__ "DCCCXXVII"))
+  (= 48 (__ "XLVIII")))
 
 
 ;; ### Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a>
