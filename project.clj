@@ -3,7 +3,10 @@
   :url "https://github.com/eigenhombre/probs4clojure"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :aliases {"autotest" ["spec" "--format=progress" "-r" "v"]}
+  :aliases {"autotest" ["spec" "--format=progress" "-r" "v"]
+            "doc" ["marg"
+                   "test/probs4clojure/core_test.clj"
+                   "test/probs4clojure/test_util.clj"]}
   :plugins [[speclj "3.3.0"]]
   :test-paths ["test"]
   :dependencies [[org.clojure/clojure "1.7.0"]]

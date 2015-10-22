@@ -1168,6 +1168,27 @@
   (= 48 (__ "XLVIII")))
 
 
+;; ### Problem 93: <a href="http://www.4clojure.com/problem/93">Partially Flatten a Sequence</a>
+;;
+;; I solved this by writing a simple, recursive `flatten` first, and
+;; then adding the extra check `(coll? (first x))`.
+(solves
+  (fn flat [s]
+    (cond
+      (not (coll? s)) s
+      :else
+      (let [[x & xs] s]
+        (if (and (coll? x) (coll? (first x)))
+          (concat (flat x) (flat xs))
+          (cons x (flat xs))))))
+
+  (= (__ [["Do"] ["Nothing"]])
+     [["Do"] ["Nothing"]])
+  (= (__ [[[[:a :b]]] [[:c :d]] [:e :f]])
+     [[:a :b] [:c :d] [:e :f]])
+  (= (__ '((1 2)((3 4)((((5 6)))))))
+     '((1 2)(3 4)(5 6))))
+
 ;; ### Problem 94: <a href="http://www.4clojure.com/problem/94">Game of Life</a>
 ;;
 ;; We accept a vector of strings as our "board representation."  The
