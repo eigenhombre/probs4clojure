@@ -2311,6 +2311,53 @@
      9102019))
 
 
+;; ### Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a>
+
+;; Here's my original solution.  It works and probably performs OK.
+(fn g [f]
+  (fn l [& xs]
+    (loop [f f
+           [x & xs] xs]
+      (if-not (seq? xs)
+        (f x)
+        (recur (f x) xs)))))
+
+;; I also tried to do this without `recur`.  I thought `iterate` would
+;; make things more elegant and would lead me to a solution in [point
+;; free style](http://en.wikipedia.org/wiki/Tacit_programming).  This
+;; implementation repeatedly transform a pair of values, the first of
+;; which is the (progressively uncurried) function and the second is
+;; the list of values remaining.  When this second list is empty, the
+;; function in the first slot has been replaced by the final value.
+;; Though almost point-free, it isn't quite... nor is it any clearer
+;; than my original, IMO.
+(solves
+ (fn [f]
+   (fn [& args]
+     (->> [f args]
+          (iterate (juxt #((comp (first %) first second) %)
+                         (comp rest second)))
+          (drop-while (comp seq second))
+          ffirst)))
+
+ (= 10 ((__ (fn [a]
+              (fn [b]
+                (fn [c]
+                  (fn [d]
+                    (+ a b c d))))))
+        1 2 3 4))
+ (= 24 ((__ (fn [a]
+              (fn [b]
+                (fn [c]
+                  (fn [d]
+                    (* a b c d))))))
+        1 2 3 4))
+ (= 25 ((__ (fn [a]
+              (fn [b]
+                (* a b))))
+        5 5)))
+
+
 ;; ### Problem 164: <a href="http://www.4clojure.com/problem/164">Language of a DFA</a>
 ;;
 ;; My first attempt at this was (I realized, too late) a recursive
