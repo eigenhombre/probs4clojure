@@ -1174,9 +1174,8 @@
 ;; then adding the extra check `(coll? (first x))`.
 (solves
   (fn flat [s]
-    (cond
-      (not (coll? s)) s
-      :else
+    (if-not (coll? s)
+      s
       (let [[x & xs] s]
         (if (and (coll? x) (coll? (first x)))
           (concat (flat x) (flat xs))
