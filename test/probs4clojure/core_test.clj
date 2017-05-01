@@ -836,9 +836,9 @@
             (shrink-half [as bs]  ;; Remove equal leading parts
               (loop [[a & aa :as as] as, [b & bb :as bs] bs]
                 (cond
-                 (and (nil? a) (nil? b)) [[] []]
-                 (= a b) (recur aa bb)
-                 :else [as bs])))
+                  (and (nil? a) (nil? b)) [[] []]
+                  (= a b) (recur aa bb)
+                  :else [as bs])))
             (shrink-both [as bs]  ;; Remove equal leading and trailing parts
               (->> (shrink-half as bs)
                    (map reverse)
@@ -1366,7 +1366,7 @@
            (empty? a) (count b)
            (empty? b) (count a)
            :else (min (inc (mem-ldist mem-ldist (butlast a) b))
-                      (inc (mem-ldist  mem-ldist a (butlast b)))
+                      (inc (mem-ldist mem-ldist a (butlast b)))
                       (+ (mem-ldist mem-ldist (butlast a) (butlast b))
                          (if (= (last a) (last b)) 0 1)))))
         mem-ldist (memoize ldist)]
