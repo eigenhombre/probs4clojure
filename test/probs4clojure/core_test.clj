@@ -94,174 +94,174 @@
   (= __ ((partial + 5) 3)))
 
 
-;; ### Problem 15:
-(solves #(* 2 %)
- (= (__ 2) 4)
- (= (__ 3) 6)
- (= (__ 11) 22)
- (= (__ 7) 14))
+(problem 15
+  #(* 2 %)
+  (= (__ 2) 4)
+  (= (__ 3) 6)
+  (= (__ 11) 22)
+  (= (__ 7) 14))
 
 
-;; ### Problem 16:
-(solves #(format "Hello, %s!" %)
- (= (__ "Dave") "Hello, Dave!")
- (= (__ "Jenn") "Hello, Jenn!")
- (= (__ "Rhea") "Hello, Rhea!"))
+(problem 16
+  #(format "Hello, %s!" %)
+  (= (__ "Dave") "Hello, Dave!")
+  (= (__ "Jenn") "Hello, Jenn!")
+  (= (__ "Rhea") "Hello, Rhea!"))
 
 
-;; ### Problem 17:
-(solves [6 7 8]
-        (= __ (map #(+ % 5) '(1 2 3))))
+(problem 17
+  [6 7 8]
+  (= __ (map #(+ % 5) '(1 2 3))))
 
 
-;; ### Problem 18:
-(solves [6 7]
- (= __ (filter #(> % 5) '(3 4 5 6 7))))
+(problem 18
+  [6 7]
+  (= __ (filter #(> % 5) '(3 4 5 6 7))))
 
 
-;; ### Problem 19:
-(solves #(first (reverse %))
- (= (__ [1 2 3 4 5]) 5)
- (= (__ '(5 4 3)) 3)
- (= (__ ["b" "c" "d"]) "d"))
+(problem 19
+  #(first (reverse %))
+  (= (__ [1 2 3 4 5]) 5)
+  (= (__ '(5 4 3)) 3)
+  (= (__ ["b" "c" "d"]) "d"))
 
 
-;; ### Problem 20:
-(solves #(second (reverse %))
- (= (__ (list 1 2 3 4 5)) 4)
- (= (__ ["a" "b" "c"]) "b")
- (= (__ [[1 2] [3 4]]) [1 2]))
+(problem 20
+  #(second (reverse %))
+  (= (__ (list 1 2 3 4 5)) 4)
+  (= (__ ["a" "b" "c"]) "b")
+  (= (__ [[1 2] [3 4]]) [1 2]))
 
 
-;; ### Problem 21:
-(solves (fn [s n] (first (drop n s)))
- (= (__ '(4 5 6 7) 2) 6)
- (= (__ [:a :b :c] 0) :a)
- (= (__ [1 2 3 4] 1) 2)
- (= (__ '([1 2] [3 4] [5 6]) 2) [5 6]))
+(problem 21
+  (fn [s n] (first (drop n s)))
+  (= (__ '(4 5 6 7) 2) 6)
+  (= (__ [:a :b :c] 0) :a)
+  (= (__ [1 2 3 4] 1) 2)
+  (= (__ '([1 2] [3 4] [5 6]) 2) [5 6]))
 
 
-;; ### Problem 22:
-(solves #(apply + (map (fn [_] 1) %))
- (= (__ '(1 2 3 3 1)) 5)
- (= (__ "Hello World") 11)
- (= (__ [[1 2] [3 4] [5 6]]) 3)
- (= (__ '(13)) 1)
- (= (__ '(:a :b :c)) 3))
+(problem 22
+  #(apply + (map (fn [_] 1) %))
+  (= (__ '(1 2 3 3 1)) 5)
+  (= (__ "Hello World") 11)
+  (= (__ [[1 2] [3 4] [5 6]]) 3)
+  (= (__ '(13)) 1)
+  (= (__ '(:a :b :c)) 3))
 
 
-;; ### Problem 23:
-(solves (fn [s]
-          (let [svec (into [] s)]
-            (for [i (range (count svec) 0 -1)]
-              (get svec (dec i)))))
- (= (__ [1 2 3 4 5]) [5 4 3 2 1])
- (= (__ (sorted-set 5 7 2 7)) '(7 5 2))
- (= (__ [[1 2][3 4][5 6]]) [[5 6][3 4][1 2]]))
+(problem 23
+  (fn [s]
+    (let [svec (into [] s)]
+      (for [i (range (count svec) 0 -1)]
+        (get svec (dec i)))))
+  (= (__ [1 2 3 4 5]) [5 4 3 2 1])
+  (= (__ (sorted-set 5 7 2 7)) '(7 5 2))
+  (= (__ [[1 2][3 4][5 6]]) [[5 6][3 4][1 2]]))
 
 
-;; ### Problem 24:
-(solves (fn [s] (apply + s))
- (= (__ [1 2 3]) 6)
- (= (__ (list 0 -2 5 5)) 8)
- (= (__ #{4 2 1}) 7)
- (= (__ '(0 0 -1)) -1)
- (= (__ '(1 10 3)) 14))
+(problem 24
+  (fn [s] (apply + s))
+  (= (__ [1 2 3]) 6)
+  (= (__ (list 0 -2 5 5)) 8)
+  (= (__ #{4 2 1}) 7)
+  (= (__ '(0 0 -1)) -1)
+  (= (__ '(1 10 3)) 14))
 
 
-;; ### Problem 25:
-(solves #(filter odd? %)
- (= (__ #{1 2 3 4 5}) '(1 3 5))
- (= (__ [4 2 1 6]) '(1))
- (= (__ [2 2 4 6]) '())
- (= (__ [1 1 1 3]) '(1 1 1 3)))
+(problem 25
+  #(filter odd? %)
+  (= (__ #{1 2 3 4 5}) '(1 3 5))
+  (= (__ [4 2 1 6]) '(1))
+  (= (__ [2 2 4 6]) '())
+  (= (__ [1 1 1 3]) '(1 1 1 3)))
 
 
-;; ### Problem 26:
-(solves (fn [n]
-          (take n (map first (iterate (fn [[a b]] [b (+ a b)]) [1 1]))))
- (= (__ 3) '(1 1 2))
- (= (__ 6) '(1 1 2 3 5 8))
- (= (__ 8) '(1 1 2 3 5 8 13 21)))
+(problem 26
+  (fn [n]
+    (take n (map first (iterate (fn [[a b]] [b (+ a b)]) [1 1]))))
+  (= (__ 3) '(1 1 2))
+  (= (__ 6) '(1 1 2 3 5 8))
+  (= (__ 8) '(1 1 2 3 5 8 13 21)))
 
 
-;; ### Problem 27:
-(solves (fn [s]
-          (let [pivot (-> s count (#(/ % 2)) int)
-                rhs (take pivot s)
-                lhs (take pivot (reverse s))]
-            (= rhs lhs)))
- (false? (__ '(1 2 3 4 5)))
- (true? (__ "racecar"))
- (true? (__ [:foo :bar :foo]))
- (true? (__ '(1 1 3 3 1 1)))
- (false? (__ '(:a :b :c))))
+(problem 27
+  (fn [s]
+    (let [pivot (-> s count (#(/ % 2)) int)
+          rhs (take pivot s)
+          lhs (take pivot (reverse s))]
+      (= rhs lhs)))
+  (false? (__ '(1 2 3 4 5)))
+  (true? (__ "racecar"))
+  (true? (__ [:foo :bar :foo]))
+  (true? (__ '(1 1 3 3 1 1)))
+  (false? (__ '(:a :b :c))))
 
 
-;; ### Problem 28:
-(solves (fn flat [[h & t :as l]]
-          (when (seq l)
-            (if (coll? h)
-              (concat (flat h)
-                      (flat t))
-              (cons h (flat t)))))
- (= (__ '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6))
- (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
- (= (__ '((((:a))))) '(:a)))
+(problem 28
+  (fn flat [[h & t :as l]]
+    (when (seq l)
+      (if (coll? h)
+        (concat (flat h)
+                (flat t))
+        (cons h (flat t)))))
+  (= (__ '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6))
+  (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
+  (= (__ '((((:a))))) '(:a)))
 
 
-;; ### Problem 29:
-(solves (fn [s] (apply str (filter #(. Character isUpperCase %) s)))
- (= (__ "HeLlO, WoRlD!") "HLOWRD")
- (empty? (__ "nothing"))
- (= (__ "$#A(*&987Zf") "AZ"))
+(problem 29
+  (fn [s] (apply str (filter #(. Character isUpperCase %) s)))
+  (= (__ "HeLlO, WoRlD!") "HLOWRD")
+  (empty? (__ "nothing"))
+  (= (__ "$#A(*&987Zf") "AZ"))
 
 
-;; ### Problem 30:
-(solves #(->> %
-              (partition-by identity)
-              (map first))
- (= (apply str (__ "Leeeeeerrroyyy")) "Leroy")
- (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
- (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2])))
+(problem 30
+  #(->> %
+        (partition-by identity)
+        (map first))
+  (= (apply str (__ "Leeeeeerrroyyy")) "Leroy")
+  (= (__ [1 1 2 3 3 2 2 3]) '(1 2 3 2 3))
+  (= (__ [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2])))
 
 
-;; ### Problem 31:
-(solves (partial partition-by identity)
- (= (__ [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3)))
- (= (__ [:a :a :b :b :c]) '((:a :a) (:b :b) (:c)))
- (= (__ [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))
+(problem 31
+  (partial partition-by identity)
+  (= (__ [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3)))
+  (= (__ [:a :a :b :b :c]) '((:a :a) (:b :b) (:c)))
+  (= (__ [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))
 
 
-;; ### Problem 32:
-(solves (partial mapcat (fn [x] [x x]))
- (= (__ [1 2 3]) '(1 1 2 2 3 3))
- (= (__ [:a :a :b :b]) '(:a :a :a :a :b :b :b :b))
- (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4]))
- (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
+(problem 32
+  (partial mapcat (fn [x] [x x]))
+  (= (__ [1 2 3]) '(1 1 2 2 3 3))
+  (= (__ [:a :a :b :b]) '(:a :a :a :a :b :b :b :b))
+  (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4]))
+  (= (__ [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
 
 
-;; ### Problem 33:
-(solves (fn [s n] (mapcat #(repeat n %) s))
- (= (__ [1 2 3] 2) '(1 1 2 2 3 3))
- (= (__ [:a :b] 4) '(:a :a :a :a :b :b :b :b))
- (= (__ [4 5 6] 1) '(4 5 6))
- (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4]))
- (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4])))
+(problem 33
+  (fn [s n] (mapcat #(repeat n %) s))
+  (= (__ [1 2 3] 2) '(1 1 2 2 3 3))
+  (= (__ [:a :b] 4) '(:a :a :a :a :b :b :b :b))
+  (= (__ [4 5 6] 1) '(4 5 6))
+  (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4]))
+  (= (__ [[1 2] [3 4]] 2) '([1 2] [1 2] [3 4] [3 4])))
 
 
-;; ### Problem 34:
-(solves (fn [s e] (take (- e s) (iterate inc s)))
- (= (__ 1 4) '(1 2 3))
- (= (__ -2 2) '(-2 -1 0 1))
- (= (__ 5 8) '(5 6 7)))
+(problem 34
+  (fn [s e] (take (- e s) (iterate inc s)))
+  (= (__ 1 4) '(1 2 3))
+  (= (__ -2 2) '(-2 -1 0 1))
+  (= (__ 5 8) '(5 6 7)))
 
 
-;; ### Problem 35:
-(solves 7
- (= __ (let [x 5] (+ 2 x)))
- (= __ (let [x 3, y 10] (- y x)))
- (= __ (let [x 21] (let [y 3] (/ x y)))))
+(problem 35
+  7
+  (= __ (let [x 5] (+ 2 x)))
+  (= __ (let [x 3, y 10] (- y x)))
+  (= __ (let [x 21] (let [y 3] (/ x y)))))
 
 
 ;; ### Problem 36:
