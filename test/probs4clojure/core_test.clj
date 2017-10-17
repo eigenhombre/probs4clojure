@@ -1455,6 +1455,66 @@
                                         #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
 
 
+;; ### Problem 104: <a href="http://www.4clojure.com/problem/104">Write Roman Numerals</a>
+(problem 104
+  (fn R [i]
+    (let [romans (into (sorted-map-by >)
+                       {1000 "M"
+                        900  "CM"
+                        500  "D"
+                        400  "CD"
+                        100  "C"
+                        90   "XC"
+                        50   "L"
+                        40   "XL"
+                        10   "X"
+                        9    "IX"
+                        5    "V"
+                        4    "IV"
+                        1    "I"})
+          allchars (loop [remain i, charlist [], romans romans, ret []]
+                     (let [[n char] (first romans)
+                           x (quot remain n)
+                           nx-chars (concat charlist (repeat x char))]
+                       (if (seq (rest romans))
+                         (recur (- remain (* x n))
+                                nx-chars
+                                (rest romans)
+                                (concat ret nx-chars))
+                         nx-chars)))]
+      (apply str (concat allchars))))
+  (= "I" (__ 1))
+  (= "I" (__ 1))
+  (= "XXX" (__ 30))
+  (= "IV" (__ 4))
+  (= "CXL" (__ 140))
+  (= "DCCCXXVII" (__ 827))
+  (= "MMMCMXCIX" (__ 3999))
+  (= "XLVIII" (__ 48)))
+
+
+;; ### Problem 105: <a href="http://www.4clojure.com/problem/105">Identify keys and values</a>
+(problem 105
+  (fn unflatten-map [s]
+    (loop [ret {}
+           prev-kw []
+           s s]
+      (let [f (first s)
+            kw? (keyword? f)
+            num? (not kw?)
+            this-kw (if kw? f prev-kw)
+            prev-list (vec (ret this-kw))
+            next-value (vec (concat (ret this-kw) (if num? [f] [])))
+            next-map (assoc ret this-kw (if num? next-value []))]
+        (if (seq s)
+          (recur next-map this-kw (rest s))
+          ret))))
+  (= {} (__ []))
+  (= {:a [1]} (__ [:a 1]))
+  (= {:a [1], :b [2]} (__ [:a 1, :b 2]))
+  (= {:a [1 2 3], :b [], :c [4]} (__ [:a 1 2 3 :b :c 4])))
+
+
 ;; ### Problem 106: <a href="http://www.4clojure.com/problem/106">Number Maze</a>
 ;;
 ;; This problem is similar to searching for the shortest path through
@@ -1465,7 +1525,7 @@
 ;; the values in the current layer.  The layers can grow large
 ;; relatively quickly, but converting the sequence to a set on each
 ;; iteration reduces the size substantially for large layers.
-(solves
+(problem 106
   (fn [n0 n1]
     (letfn [(apply-ops [ns]
               (mapcat ops-on-num ns))
@@ -1489,22 +1549,32 @@
   (= 5 (__ 9 12))) ; 9 11 22 24 12
 
 
-;; ### Problem 108:
-(solves
- (fn c [& seqs]
-   (let [firsts (map first seqs)
-         biggest (apply max firsts)
-         trim #(if (> biggest (first %)) (rest %) %)]
-     (if (apply = firsts)
-       (first firsts)
-       (recur (map trim seqs)))))
+;; ### Problem 107: <a href="http://www.4clojure.com/problem/107">Simple closures</a>
+(problem 107
+  (fn [n]
+    (fn [x]
+      (apply * (repeat n x))))
+  (= 256 ((__ 2) 16) ((__ 8) 2))
+  (= [1 8 27 64] (map (__ 3) [1 2 3 4]))
+  (= [1 2 4 8 16] (map #((__ %) 2) [0 1 2 3 4])))
 
- (= 3 (__ [3 4 5]))
- (= 4 (__ [1 2 3 4 5 6 7] [0.5 3/2 4 19]))
- (= 7 (__ (range) (range 0 100 7/6) [2 3 5 7 11 13]))
- (= 64 (__ (map #(* % % %) (range))
-           (filter #(zero? (bit-and % (dec %))) (range))
-           (iterate inc 20))))
+
+;; ### Problem 108: <a href="http://www.4clojure.com/problem/108">Lazy Searching</a>
+(problem 108
+  (fn [& seqs]
+    (let [firsts (map first seqs)
+          biggest (apply max firsts)
+          trim #(if (> biggest (first %)) (rest %) %)]
+      (if (apply = firsts)
+        (first firsts)
+        (recur (map trim seqs)))))
+
+  (= 3 (__ [3 4 5]))
+  (= 4 (__ [1 2 3 4 5 6 7] [0.5 3/2 4 19]))
+  (= 7 (__ (range) (range 0 100 7/6) [2 3 5 7 11 13]))
+  (= 64 (__ (map #(* % % %) (range))
+            (filter #(zero? (bit-and % (dec %))) (range))
+            (iterate inc 20))))
 
 
 ;; ### Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a>
