@@ -264,302 +264,300 @@
   (= __ (let [x 21] (let [y 3] (/ x y)))))
 
 
-;; ### Problem 36:
-(solves [x 7, y 3, z 1]
- (= 10 (let __ (+ x y)))
- (= 4 (let __ (+ y z)))
- (= 1 (let __ z)))
+(problem 36
+  [x 7, y 3, z 1]
+  (= 10 (let __ (+ x y)))
+  (= 4 (let __ (+ y z)))
+  (= 1 (let __ z)))
 
 
-;; ### Problem 37:
-(solves "ABC"
- (= __ (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))
+(problem 37
+  "ABC"
+  (= __ (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))
 
 
-;; ### Problem 38:
-(solves (fn [& s] (reduce (fn [a b] (if (> a b) a b)) s))
- (= (__ 1 8 3 4) 8)
- (= (__ 30 20) 30)
- (= (__ 45 67 11) 67))
+(problem 38
+  (fn [& s] (reduce (fn [a b] (if (> a b) a b)) s))
+  (= (__ 1 8 3 4) 8)
+  (= (__ 30 20) 30)
+  (= (__ 45 67 11) 67))
 
 
-;; ### Problem 39:
-(solves (partial mapcat vector)
- (= (__ [1 2 3] [:a :b :c]) '(1 :a 2 :b 3 :c))
- (= (__ [1 2] [3 4 5 6]) '(1 3 2 4))
- (= (__ [1 2 3 4] [5]) [1 5])
- (= (__ [30 20] [25 15]) [30 25 20 15]))
+(problem 39
+  (partial mapcat vector)
+  (= (__ [1 2 3] [:a :b :c]) '(1 :a 2 :b 3 :c))
+  (= (__ [1 2] [3 4 5 6]) '(1 3 2 4))
+  (= (__ [1 2 3 4] [5]) [1 5])
+  (= (__ [30 20] [25 15]) [30 25 20 15]))
 
 
-;; ### Problem 40:
-(solves (fn [d x] (rest (mapcat (fn [xx] [d xx]) x)))
- (= (__ 0 [1 2 3]) [1 0 2 0 3])
- (= (apply str (__ ", " ["one" "two" "three"])) "one, two, three")
- (= (__ :z [:a :b :c :d]) [:a :z :b :z :c :z :d]))
+(problem 40
+  (fn [d x] (rest (mapcat (fn [xx] [d xx]) x)))
+  (= (__ 0 [1 2 3]) [1 0 2 0 3])
+  (= (apply str (__ ", " ["one" "two" "three"])) "one, two, three")
+  (= (__ :z [:a :b :c :d]) [:a :z :b :z :c :z :d]))
 
 
-;; ### Problem 41:
-(solves (fn [s n] (mapcat #(if (= (count %) n) (drop-last %) %)
-                         (partition-all n s)))
- (= (__ [1 2 3 4 5 6 7 8] 3) [1 2 4 5 7 8])
- (= (__ [:a :b :c :d :e :f] 2) [:a :c :e])
- (= (__ [1 2 3 4 5 6] 4) [1 2 3 5 6]))
+(problem 41
+  (fn [s n] (mapcat #(if (= (count %) n) (drop-last %) %)
+                    (partition-all n s)))
+  (= (__ [1 2 3 4 5 6 7 8] 3) [1 2 4 5 7 8])
+  (= (__ [:a :b :c :d :e :f] 2) [:a :c :e])
+  (= (__ [1 2 3 4 5 6] 4) [1 2 3 5 6]))
 
 
-;; ### Problem 42:
-(solves #(apply *' (range 1 (inc %)))
- (= (__ 1) 1)
- (= (__ 3) 6)
- (= (__ 5) 120)
- (= (__ 8) 40320))
+(problem 42
+  #(apply *' (range 1 (inc %)))
+  (= (__ 1) 1)
+  (= (__ 3) 6)
+  (= (__ 5) 120)
+  (= (__ 8) 40320))
 
 
-;; ### Problem 43:
-(solves (fn [s n]
-          (map (fn [i]
-                 (map (fn [ss] (nth ss i))
-                      (partition n s)))
-               (range n)))
- (= (__ [1 2 3 4 5 6] 2) '((1 3 5) (2 4 6)))
- (= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
- (= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9))))
+(problem 43
+  (fn [s n]
+    (map (fn [i]
+           (map (fn [ss] (nth ss i))
+                (partition n s)))
+         (range n)))
+  (= (__ [1 2 3 4 5 6] 2) '((1 3 5) (2 4 6)))
+  (= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
+  (= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9))))
 
 
-;; ### Problem 44:
-(solves (fn [pos s]
-          (map (fn [i] (nth s (mod (+ pos i) (count s))))
-               (range (count s))))
- (= (__ 2 [1 2 3 4 5]) '(3 4 5 1 2))
- (= (__ -2 [1 2 3 4 5]) '(4 5 1 2 3))
- (= (__ 6 [1 2 3 4 5]) '(2 3 4 5 1))
- (= (__ 1 '(:a :b :c)) '(:b :c :a))
- (= (__ -4 '(:a :b :c)) '(:c :a :b)))
+(problem 44
+  (fn [pos s]
+    (map (fn [i] (nth s (mod (+ pos i) (count s))))
+         (range (count s))))
+  (= (__ 2 [1 2 3 4 5]) '(3 4 5 1 2))
+  (= (__ -2 [1 2 3 4 5]) '(4 5 1 2 3))
+  (= (__ 6 [1 2 3 4 5]) '(2 3 4 5 1))
+  (= (__ 1 '(:a :b :c)) '(:b :c :a))
+  (= (__ -4 '(:a :b :c)) '(:c :a :b)))
 
 
-;; ### Problem 45:
-(solves [1 4 7 10 13]
- (= __ (take 5 (iterate #(+ 3 %) 1))))
+(problem 45
+  [1 4 7 10 13]
+  (= __ (take 5 (iterate #(+ 3 %) 1))))
 
 
-;; ### Problem 46:
-(solves (fn [f] (fn [& args] (apply f (reverse args))))
- (= 3 ((__ nth) 2 [1 2 3 4 5]))
- (= true ((__ >) 7 8))
- (= 4 ((__ quot) 2 8))
- (= [1 2 3] ((__ take) [1 2 3 4 5] 3)))
+(problem 46
+  (fn [f] (fn [& args] (apply f (reverse args))))
+  (= 3 ((__ nth) 2 [1 2 3 4 5]))
+  (= true ((__ >) 7 8))
+  (= 4 ((__ quot) 2 8))
+  (= [1 2 3] ((__ take) [1 2 3 4 5] 3)))
 
 
-;; ### Problem 47:
-(solves 4
- (contains? #{4 5 6} __)
- (contains? [1 1 1 1 1] __)
- (contains? {4 :a 2 :b} __)
- #_(not (contains? '(1 2 4) __)))  ;; Lists not supported in 1.6.
-
-;; ### Problem 48:
-(solves 6
- (= __ (some #{2 7 6} [5 6 7 8]))
- (= __ (some #(when (even? %) %) [5 6 7 8])))
+(problem 47
+  4
+  (contains? #{4 5 6} __)
+  (contains? [1 1 1 1 1] __)
+  (contains? {4 :a 2 :b} __)
+  #_(not (contains? '(1 2 4) __)))  ;; Lists not supported in 1.6.
 
 
-;; ### Problem 49:
-(solves (fn [n s] (list (take n s) (drop n s)))
- (= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
- (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
- (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))
+(problem 48
+  6
+  (= __ (some #{2 7 6} [5 6 7 8]))
+  (= __ (some #(when (even? %) %) [5 6 7 8])))
 
 
-;; ### Problem 50:
-(solves #(->> %
-              (group-by type)
-              vals)
- (= (set (__ [1 :a 2 :b 3 :c])) #{[1 2 3] [:a :b :c]})
- (= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
- (= (set (__ [[1 2] :a [3 4] 5 6 :b])) #{[[1 2] [3 4]] [:a :b] [5 6]}))
+(problem 49
+  (fn [n s] (list (take n s) (drop n s)))
+  (= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
+  (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
+  (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))
 
 
-;; ### Problem 51:
-(solves [1 2 3 4 5]
-        (= [1 2 [3 4 5] [1 2 3 4 5]] (let [[a b & c :as d] __] [a b c d])))
+(problem 50
+  #(->> %
+        (group-by type)
+        vals)
+  (= (set (__ [1 :a 2 :b 3 :c])) #{[1 2 3] [:a :b :c]})
+  (= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
+  (= (set (__ [[1 2] :a [3 4] 5 6 :b])) #{[[1 2] [3 4]] [:a :b] [5 6]}))
 
 
-;; ### Problem 52:
-(solves [c e]
-        (= [2 4] (let [[a b c d e f g] (range)] __)))
+(problem 51
+  [1 2 3 4 5]
+  (= [1 2 [3 4 5] [1 2 3 4 5]] (let [[a b & c :as d] __] [a b c d])))
 
 
-;; ### Problem 53:
-(solves (fn [s] (let [deltas (map (fn [[a b]] [(- b a) a b]) (partition 2 1 s))
-                     series (partition-by first deltas)
-                     longest-length (->> series
-                                         (group-by count)
-                                         keys
-                                         (apply max))
-                     desired-sequence (->> series
-                                           (filter #(= (count %)
-                                                       longest-length))
-                                           first)
-                     start (second (first desired-sequence))
-                     end (int (nth (last desired-sequence) 2))]
-                 (range start (inc end))))
- (= (__ [1 0 1 2 3 0 4 5]) [0 1 2 3])
- (= (__ [5 6 1 3 2 7]) [5 6])
- (= (__ [2 3 3 4 5]) [3 4 5])
- (= (__ [7 6 5 4]) []))
+(problem 52
+  [c e]
+  (= [2 4] (let [[a b c d e f g] (range)] __)))
 
 
-;; ### Problem 54:
-(solves (fn f [c s]
-          (lazy-seq
-           (let [nxt (take c s)]
-             (when (and (seq s) (= (count nxt) c))
-               (cons (take c s) (f c (drop c s)))))))
- (= (__ 3 (range 9)) '((0 1 2) (3 4 5) (6 7 8)))
- (= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
- (= (__ 3 (range 8)) '((0 1 2) (3 4 5))))
+(problem 53
+  (fn [s] (let [deltas (map (fn [[a b]] [(- b a) a b]) (partition 2 1 s))
+                series (partition-by first deltas)
+                longest-length (->> series
+                                    (group-by count)
+                                    keys
+                                    (apply max))
+                desired-sequence (->> series
+                                      (filter #(= (count %)
+                                                  longest-length))
+                                      first)
+                start (second (first desired-sequence))
+                end (int (nth (last desired-sequence) 2))]
+            (range start (inc end))))
+  (= (__ [1 0 1 2 3 0 4 5]) [0 1 2 3])
+  (= (__ [5 6 1 3 2 7]) [5 6])
+  (= (__ [2 3 3 4 5]) [3 4 5])
+  (= (__ [7 6 5 4]) []))
 
 
-;; ### Problem 55:
-(solves #(->> %
-              (group-by identity)
-              (map (fn [[k v]] [k (count v)]))
-              (into {}))
- (= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
- (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
- (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2}))
+(problem 54
+  (fn f [c s]
+    (lazy-seq
+     (let [nxt (take c s)]
+       (when (and (seq s) (= (count nxt) c))
+         (cons (take c s) (f c (drop c s)))))))
+  (= (__ 3 (range 9)) '((0 1 2) (3 4 5) (6 7 8)))
+  (= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
+  (= (__ 3 (range 8)) '((0 1 2) (3 4 5))))
 
 
-;; ### Problem 56:
-(solves (fn [s]
-          (loop [ret []
-                 s s
-                 seen #{}]
-            (if-not (seq s)
-              ret
-              (recur (if-not (seen (first s)) (conj ret (first s)) ret)
-                     (rest s)
-                     (conj seen (first s))))))
- (= (__ [1 2 1 3 1 2 4]) [1 2 3 4])
- (= (__ [:a :a :b :b :c :c]) [:a :b :c])
- (= (__ '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3]))
- (= (__ (range 50)) (range 50)))
+(problem 55
+  #(->> %
+        (group-by identity)
+        (map (fn [[k v]] [k (count v)]))
+        (into {}))
+  (= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
+  (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
+  (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2}))
 
 
-;; ### Problem 57:
-(solves [5 4 3 2 1]
-        (= __ ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))
+(problem 56
+  (fn [s]
+    (loop [ret []
+           s s
+           seen #{}]
+      (if-not (seq s)
+        ret
+        (recur (if-not (seen (first s)) (conj ret (first s)) ret)
+               (rest s)
+               (conj seen (first s))))))
+  (= (__ [1 2 1 3 1 2 4]) [1 2 3 4])
+  (= (__ [:a :a :b :b :c :c]) [:a :b :c])
+  (= (__ '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3]))
+  (= (__ (range 50)) (range 50)))
 
 
-;; ### Problem 58:
-(solves (fn outer [f & fs]
-          (if fs
-            (fn [& x] (f (apply (apply outer fs) x)))
-            (fn [& xs] (apply f xs))))
- (= [3 2 1] ((__ rest reverse) [1 2 3 4]))
- (= 5 ((__ (partial + 3) second) [1 2 3 4]))
- (= true ((__ zero? #(mod % 8) +) 3 5 7 9))
- (= "HELLO" ((__ #(.toUpperCase %) #(apply str %) take) 5 "hello world")))
+(problem 57 [5 4 3 2 1]
+         (= __ ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))
 
 
-;; ### Problem 59:
-(solves (fn [& fns]
-          (fn [& xs]
-            (for [f fns] (apply f xs))))
- (= [21 6 1] ((__ + max min) 2 3 5 1 6 4))
- (= ["HELLO" 5] ((__ #(.toUpperCase %) count) "hello"))
- (= [2 6 4] ((__ :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))
+(problem 58
+  (fn outer [f & fs]
+    (if fs
+      (fn [& x] (f (apply (apply outer fs) x)))
+      (fn [& xs] (apply f xs))))
+  (= [3 2 1] ((__ rest reverse) [1 2 3 4]))
+  (= 5 ((__ (partial + 3) second) [1 2 3 4]))
+  (= true ((__ zero? #(mod % 8) +) 3 5 7 9))
+  (= "HELLO" ((__ #(.toUpperCase %) #(apply str %) take) 5 "hello world")))
 
 
-;; ### Problem 60:
-(solves (fn reduxions
-          ([op prev s]
-             (lazy-seq
-              (if (seq s)
-                (cons prev (reduxions op (op prev (first s)) (rest s)))
-                [prev])))
-          ([op s]
-             (reduxions op (op (first s)) (rest s))))
- (= (take 5 (__ + (range))) [0 1 3 6 10])
- (= (__ conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]])
- (= (last (__ * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120))
+(problem 59
+  (fn [& fns]
+    (fn [& xs]
+      (for [f fns] (apply f xs))))
+  (= [21 6 1] ((__ + max min) 2 3 5 1 6 4))
+  (= ["HELLO" 5] ((__ #(.toUpperCase %) count) "hello"))
+  (= [2 6 4] ((__ :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))
 
 
-;; ### Problem 61:
-(solves #(into {} (map vector %1 %2))
- (= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
- (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
- (= (__ [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))
+(problem 60
+  (fn reduxions
+    ([op prev s]
+     (lazy-seq
+      (if (seq s)
+        (cons prev (reduxions op (op prev (first s)) (rest s)))
+        [prev])))
+    ([op s]
+     (reduxions op (op (first s)) (rest s))))
+  (= (take 5 (__ + (range))) [0 1 3 6 10])
+  (= (__ conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]])
+  (= (last (__ * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120))
 
 
-;; ### Problem 62:
-(solves (fn itr [f x]
-          (lazy-seq
-           (cons x (itr f (f x)))))
- (= (take 5 (__ #(* 2 %) 1)) [1 2 4 8 16])
- (= (take 100 (__ inc 0)) (take 100 (range)))
- (= (take 9 (__ #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3]))))
+(problem 61
+  #(into {} (map vector %1 %2))
+  (= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
+  (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
+  (= (__ [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))
 
 
-;; ### Problem 63:
-(solves (fn [pred s]
-          (->> s
-               (map (fn [x] {(pred x) [x]}))
-               (apply (partial merge-with concat))))
- (= (__ #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]})
- (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
-    {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
- (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
-    {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
+(problem 62
+  (fn itr [f x]
+    (lazy-seq
+     (cons x (itr f (f x)))))
+  (= (take 5 (__ #(* 2 %) 1)) [1 2 4 8 16])
+  (= (take 100 (__ inc 0)) (take 100 (range)))
+  (= (take 9 (__ #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3]))))
 
 
-;; ### Problem 64:
-(solves +
+(problem 63
+  (fn [pred s]
+    (->> s
+         (map (fn [x] {(pred x) [x]}))
+         (apply (partial merge-with concat))))
+  (= (__ #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]})
+  (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+     {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
+  (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
+     {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))
+
+
+(problem 64
+  +
   (= 15 (reduce __ [1 2 3 4 5]))
   (=  0 (reduce __ []))
   (=  6 (reduce __ 1 [2 3])))
 
 
-;; ### Problem 65:
-(solves (fn [s]
-          (let [e (empty s)]
-            (if (identical? '() e)
-              :list
-              ({#{} :set, {} :map, [] :vector} e))))
-        (= :map (__ {:a 1, :b 2}))
-        (= :list (__ (range (rand-int 20))))
-        (= :vector (__ [1 2 3 4 5 6]))
-        (= :set (__ #{10 (rand-int 5)}))
-        (= [:map :set :vector :list] (map __ [{} #{} [] ()])))
+(problem 65
+  (fn [s]
+    (let [e (empty s)]
+      (if (identical? '() e)
+        :list
+        ({#{} :set, {} :map, [] :vector} e))))
+  (= :map (__ {:a 1, :b 2}))
+  (= :list (__ (range (rand-int 20))))
+  (= :vector (__ [1 2 3 4 5 6]))
+  (= :set (__ #{10 (rand-int 5)}))
+  (= [:map :set :vector :list] (map __ [{} #{} [] ()])))
 
 
-;; ### Problem 66:
-(solves (fn [a b]
-          (loop [a a, b b]
-            (cond
-             (= a b) a
-             (> a b) (recur (- a b) b)
-             :else (recur a (- b a)))))
-        (= (__ 2 4) 2)
-        (= (__ 10 5) 5)
-        (= (__ 5 7) 1)
-        (= (__ 1023 858) 33))
+(problem 66
+  (fn [a b]
+    (loop [a a, b b]
+      (cond
+        (= a b) a
+        (> a b) (recur (- a b) b)
+        :else (recur a (- b a)))))
+  (= (__ 2 4) 2)
+  (= (__ 10 5) 5)
+  (= (__ 5 7) 1)
+  (= (__ 1023 858) 33))
 
 
-;; ### Problem 67:
-(solves
+(problem 67
   #(take %
          (remove
           (fn [n]
             (some (fn [x] (= (rem n x) 0))
                   (range 2 n)))
           (drop 2 (range))))
- (= (__ 2) [2 3])
- (= (__ 5) [2 3 5 7 11])
- (= (last (__ 100)) 541))
+  (= (__ 2) [2 3])
+  (= (__ 5) [2 3 5 7 11])
+  (= (last (__ 100)) 541))
 
 
-;; ### Problem 68:
-(solves
+(problem 68
   [7 6 5 4 3]
   (= __
      (loop [x 5
@@ -569,24 +567,7 @@
          result))))
 
 
-;; ### Problem 69:
-;; Old solution:
-(comment (fn [fun & maps]
-           (let [pairs (apply concat
-                              (for [mm maps]
-                                (for [[k, v] mm] [k v])))]
-             (loop [p pairs, ret {}]
-               (if (seq p)
-                 (let [[k, v] (first p),
-                       lookup (ret k)
-                       insert (if lookup (fun lookup v) v)]
-                   (recur (rest p)
-                          (conj ret (assoc {} k insert))))
-                 ret)))))
-
-
-;; New solution:
-(solves
+(problem 69
   (fn [op & maps]
     (letfn [(f [op, m, o]
               (let [km (set (keys m))
@@ -607,39 +588,35 @@
      {:a [3 4 5], :b [6 7], :c [8 9]}))
 
 
-;; ### Problem 70:
-(solves
- (fn [s]
-   (-> s
-       (clojure.string/replace #"[\.\!\,\-\_]" "")
-       (clojure.string/split #"\s+")
-       (->> (sort #(.compareToIgnoreCase %1 %2)))))
- (= (__  "Have a nice day.")
-    ["a" "day" "Have" "nice"])
- (= (__  "Clojure is a fun language!")
-    ["a" "Clojure" "fun" "is" "language"])
- (= (__  "Fools fall for foolish follies.")
-    ["fall" "follies" "foolish" "Fools" "for"]))
+(problem 70
+  (fn [s]
+    (-> s
+        (clojure.string/replace #"[\.\!\,\-\_]" "")
+        (clojure.string/split #"\s+")
+        (->> (sort #(.compareToIgnoreCase %1 %2)))))
+  (= (__  "Have a nice day.")
+     ["a" "day" "Have" "nice"])
+  (= (__  "Clojure is a fun language!")
+     ["a" "Clojure" "fun" "is" "language"])
+  (= (__  "Fools fall for foolish follies.")
+     ["fall" "follies" "foolish" "Fools" "for"]))
 
 
-;; ### Problem 71:
-(solves
+(problem 71
   last
   (= (__ (sort (rest (reverse [2 5 4 1 3 6]))))
      (-> [2 5 4 1 3 6] (reverse) (rest) (sort) (__))
      5))
 
 
-;; ### Problem 72:
-(solves
+(problem 72
   (partial reduce +)
   (= (__ (map inc (take 3 (drop 2 [2 5 4 1 3 6]))))
      (->> [2 5 4 1 3 6] (drop 2) (take 3) (map inc) (__))
      11))
 
 
-;; ### Problem 73:
-(solves
+(problem 73
   (fn [b]
     (some (fn [p]
             (if (or
@@ -654,7 +631,7 @@
                  ;; across:
                  (some (fn [i]
                          (every? #{p} (for [j (range 3)] ((b i) j))))
-                     (range 3))
+                       (range 3))
                  ;; down:
                  (some (fn [i]
                          (every? #{p} (for [j (range 3)] ((b j) i))))
@@ -685,8 +662,7 @@
               [:o :x :o]])))
 
 
-;; ### Problem 74:
-(solves
+(problem 74
   (fn [s]
     (letfn [(is-square [n]
               (let [r (Math/sqrt n)
@@ -702,17 +678,16 @@
   (= (__ "15,16,25,36,37") "16,25,36"))
 
 
-;; ### Problem 75:
-(solves
+(problem 75
   (fn [n]
     (if (= 1 n)
       1
       (letfn [(gcd [a b]
                 (loop [a a, b b]
                   (cond
-                   (= a b) a
-                   (> a b) (recur (- a b) b)
-                   :else (recur a (- b a)))))]
+                    (= a b) a
+                    (> a b) (recur (- a b) b)
+                    :else (recur a (- b a)))))]
         (->> n
              (range 1)
              (map (partial gcd n))
@@ -724,8 +699,7 @@
   (= (__ 99) 60))
 
 
-;; ### Problem 76:
-(solves
+(problem 76
   (= [1 3 5 7 9 11]
      (letfn
          [(foo [x y] #(bar (conj x y) y))
@@ -735,21 +709,19 @@
        (trampoline foo [] 1))))
 
 
-;; ### Problem 77:
-(solves
+(problem 77
   (fn [words]
     (->>
-      (map (fn [w] (set (filter #(= (sort w) (sort %)) words))) words)
-      (remove #(= (count %) 1))
-      set))
+     (map (fn [w] (set (filter #(= (sort w) (sort %)) words))) words)
+     (remove #(= (count %) 1))
+     set))
   (= (__ ["meat" "mat" "team" "mate" "eat"])
      #{#{"meat" "team" "mate"}})
   (= (__ ["veer" "lake" "item" "kale" "mite" "ever"])
      #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}}))
 
 
-;; ### Problem 78:
-(solves
+(problem 78
   (fn [f & rest]
     (if (fn? f)
       (recur (apply f rest) nil)
@@ -765,8 +737,7 @@
      [true false true false true false]))
 
 
-;; ### Problem 79:
-(solves
+(problem 79
   (fn [s]
     (let [nested-paths (loop [[r & rs] (reverse s)
                               ret []]
@@ -781,8 +752,8 @@
           f (fn f [[r l & a]]
               [(concat r a) (concat l a)])
           g (fn g [x] (if-not (coll? (ffirst x))
-                      x
-                      (g (mapcat f x))))]
+                        x
+                        (g (mapcat f x))))]
       (->> nested-paths
            g
            (group-by (partial apply +))
@@ -800,21 +771,19 @@
               [5 7 3 5 1 4])))) ; 3->4->3->2->7->1
 
 
-;; ### Problem 80:
-(solves
+(problem 80
   (fn [n]
     (let [subs (filter #(zero? (rem n %)) (range 1 n))
           sum (apply + subs)]
       (= sum n)))
- (= (__ 6) true)
- (= (__ 7) false)
- (= (__ 496) true)
- (= (__ 500) false)
- (= (__ 8128) true))
+  (= (__ 6) true)
+  (= (__ 7) false)
+  (= (__ 496) true)
+  (= (__ 500) false)
+  (= (__ 8128) true))
 
 
-;; ### Problem 81:
-(solves
+(problem 81
   (fn [a b]
     (set (filter #(and (a %) (b %)) (set (concat a b)))))
   (= (__ #{0 1 2 3} #{2 3 4 5}) #{2 3})
@@ -822,8 +791,7 @@
   (= (__ #{:a :b :c :d} #{:c :e :a :f :d}) #{:a :c :d}))
 
 
-;; ### Problem 82:
-(solves
+(problem 82
   (fn [s]
     (letfn [(perms [s]  ;; Find all permutations of a sequence
               (if (= (count s) 1)
@@ -860,8 +828,7 @@
   (= false (__ #{"share" "hares" "hare" "are"})))
 
 
-;; ### Problem 83:
-(solves
+(problem 83
   (fn [& bs]
     (boolean (and (some true? bs)
                   (not (every? true? bs)))))
@@ -888,7 +855,7 @@
 ;;
 ;; `grow` iterates on `grow-1` until no change is found; i.e., the
 ;; resulting set is maximal.
-(solves
+(problem 84
   (fn [s]
     (letfn [(grow-1 [pairs]
               (let [pairs (vec pairs)
@@ -926,7 +893,7 @@
 ;; \\(x\\) is removed, and \\(Q' = \\{\\{x\\} \cup q\\)
 ;; for all \\(q \in Q\\}\\), then \\(P\\), the power set of \\(S\\), is
 ;; \\(Q \cup Q'\\).
-(solves
+(problem 85
   (fn pwr [xs]
     (let [[x & more :as xs] (vec xs)]
       (if-not (seq xs)
@@ -948,7 +915,7 @@
 ;; problem text; we iterate until the result is either 1 (happy), or a
 ;; repeated value is found again (sad).  To check the latter we
 ;; maintain a dictionary `seen` of previous values.
-(solves
+(problem 86
   (fn [n]
     (let [f (fn [x]
               (->> x
@@ -969,8 +936,8 @@
   (= (__ 3) false))
 
 
-;; ### Problem 87:
-;; Doesn't exist!
+(problem 87
+  'does-not-exist)
 
 
 ;; ### Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a>
@@ -978,7 +945,7 @@
 ;; The problem is simple if you use the `clojure.set` library and the
 ;; `remove` function to eliminate the intersection elements from both
 ;; sets before combining them.
-(solves
+(problem 88
   (fn [s1 s2]
     (let [both (clojure.set/intersection s1 s2)]
       (set (clojure.set/union (remove both s1)
@@ -1003,7 +970,7 @@
 ;; the graph (in this case, depth-first) and tracking whether each
 ;; node was visited.  The degree of the vertices can be obtained that
 ;; way as well by tracking which vertices have which neighbor.
-(solves
+(problem 89
   (fn [pairs]
     (letfn [(pairs-to-neighbor-list-map [pairs]
               (loop [[[k v] & pairs] pairs
@@ -1060,7 +1027,7 @@
 ;; ### Problem 90: <a href="http://www.4clojure.com/problem/90">Cartesian Product</a>
 ;;
 ;; `for` gives us the needed functionality very easily.
-(solves
+(problem 90
  (fn [sa sb]
    (set (for [a sa, b sb] [a b])))
 
@@ -1079,7 +1046,7 @@
 ;; We already determined connectedness in Problem 89.  The only
 ;; required variation is to coerce the input set to a vector so the
 ;; initial loop destructuring form works.
-(solves
+(problem 91
   (fn [pairs]
     (letfn [(pairs-to-neighbor-list-map [pairs]
               (loop [[[k v] & pairs] pairs
@@ -1137,7 +1104,7 @@
 ;; distinct from the non-subptractive ones (e.g. VII).  We thread the
 ;; current string and an accumulator value through each of the
 ;; possible patterns, taking the final accumulator value at the end.
-(solves
+(problem 92
   (fn [s]
     (let [pn
           (fn [[s acc] pat incr]
@@ -1171,7 +1138,7 @@
 ;;
 ;; I solved this by writing a simple, recursive `flatten` first, and
 ;; then adding the extra check `(coll? (first x))`.
-(solves
+(problem 93
   (fn flat [s]
     (if-not (coll? s)
       s
@@ -1201,7 +1168,7 @@
 ;; neighbor values by looking at the character at +/- one x or y
 ;; value, except for the position in question.  Then the rule for
 ;; whether the cell should live or die is trivial to apply.
-(solves
+(problem 94
   (fn [b]
     (for [j (range (count (first b)))]
       (let [row-chars (for [i (range (count b))]
@@ -1257,7 +1224,7 @@
 ;;
 ;; Solve recursively, with base cases to catch the wrong shape at any
 ;; given node.
-(solves
+(problem 95
   (fn treep [s]
     (or (nil? s)
         (and (coll? s)
@@ -1285,7 +1252,7 @@
 ;;
 ;; The solution is to make a transpose function which recursively
 ;; swaps the left and right parts of the tree.
-(solves
+(problem 96
   (fn [[v l r :as t]]
     (let [trans (fn tr [[v l r :as tt]]
                   (when tt
@@ -1319,7 +1286,7 @@
 ;; The application of the transformations gets us to the next "level"
 ;; of the problem.  The code reflects this exactly, by iterating the
 ;; transformations on the base case, `[1]`.
-(solves
+(problem 97
  (fn [n]
    (nth (iterate (fn [s]
                    (let [p (partition 2 1 s)
@@ -1337,6 +1304,58 @@
      [1 4 6 4 1]])
  (= (__ 11)
     [1 10 45 120 210 252 210 120 45 10 1]))
+
+
+;; ### Problem 98: <a href="http://www.4clojure.com/problem/98">Equivalence Classes</a>
+(problem 98
+  (fn equiv
+    [f D]
+    (set
+     (for [a D]
+       (set
+        (for [b D :when (= (f a) (f b))]
+          b)))))
+  (= (__ #(* % %) #{-2 -1 0 1 2})
+     #{#{0} #{1 -1} #{2 -2}})
+  (= (__ #(rem % 3) #{0 1 2 3 4 5 })
+     #{#{0 3} #{1 4} #{2 5}})
+  (= (__ identity #{0 1 2 3 4})
+     #{#{0} #{1} #{2} #{3} #{4}})
+  (= (__ (constantly true) #{0 1 2 3 4})
+     #{#{0 1 2 3 4}}))
+
+
+;; ### Problem 99: <a href="http://www.4clojure.com/problem/99">Product Digits</a>
+(problem 99
+  (fn [a b]
+    (->> a
+         (* b)
+         str
+         (map (comp #(Integer. %) str))))
+  (= (__ 1 1) [1])
+  (= (__ 1 1) [1])
+  (= (__ 99 9) [8 9 1])
+  (= (__ 999 99) [9 8 9 0 1]))
+
+
+;; ### Problem 100: <a href="http://www.4clojure.com/problem/100">Least Common Multiple</a>
+(problem 100
+  (fn dolcm [& r]
+    (letfn [(lcm [a & rst]
+              (/ (apply * a rst)
+                 (reduce gcd1 a rst)))
+            (gcd1 [a b]
+              (let [aa (max a b)
+                    bb (min a b)]
+                (if (zero? b)
+                  a
+                  (recur b (mod a b)))))]
+      (apply lcm r)))
+  (== (__ 2 3) 6)
+  (== (__ 5 3 7) 105)
+  (== (__ 1/3 2/5) 2)
+  (== (__ 3/4 1/6) 3/2)
+  (== (__ 7 5/7 2 3/5) 210))
 
 
 ;; ### Problem 101: <a href="http://www.4clojure.com/problem/101">Levenshtein Distance</a>
@@ -1358,16 +1377,16 @@
 ;; for memoizing without `def`.  Memoizing this way speeds up the test
 ;; suite from several minutes or more (I didn't bother waiting for it
 ;; to finish) to about 25 msec on my laptop.
-(solves
+(problem 101
   (let [ldist
         (fn [mem-ldist a b]
           (cond
-           (empty? a) (count b)
-           (empty? b) (count a)
-           :else (min (inc (mem-ldist mem-ldist (butlast a) b))
-                      (inc (mem-ldist mem-ldist a (butlast b)))
-                      (+ (mem-ldist mem-ldist (butlast a) (butlast b))
-                         (if (= (last a) (last b)) 0 1)))))
+            (empty? a) (count b)
+            (empty? b) (count a)
+            :else (min (inc (mem-ldist mem-ldist (butlast a) b))
+                       (inc (mem-ldist mem-ldist a (butlast b)))
+                       (+ (mem-ldist mem-ldist (butlast a) (butlast b))
+                          (if (= (last a) (last b)) 0 1)))))
         mem-ldist (memoize ldist)]
     (partial mem-ldist mem-ldist))
 
@@ -1380,6 +1399,15 @@
   (= (__ '(:a :b :c :d) '(:a :d)) 2)
   (= (__ "ttttattttctg" "tcaaccctaccat") 10)
   (= (__ "gaattctaatctc" "caaacaaaaaattt") 9))
+
+
+;; ### Problem 102: <a href="http://www.4clojure.com/problem/102">102intoCamelCase</a>
+(problem 102
+  #(let [[f & rst] (clojure.string/split % #"-")]
+     (apply str f (map clojure.string/capitalize rst)))
+  (= (__ "something") "something")
+  (= (__ "multi-word-key") "multiWordKey")
+  (= (__ "leaveMeAlone") "leaveMeAlone"))
 
 
 ;; ### Problem 103: <a href="http://www.4clojure.com/problem/103">Generating k-combinations</a>
@@ -1407,7 +1435,7 @@
 ;; implementation](https://github.com/clojure/math.combinatorics/blob/master/src/main/clojure/clojure/math/combinatorics.clj)
 ;; relies heavily on Knuth, and is less straightforward, but has much
 ;; better time complexity than my solution.
-(solves
+(problem 103
   (fn [k s]
     (set
      (loop [k k, ss (map hash-set s)]
