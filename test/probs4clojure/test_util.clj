@@ -35,10 +35,18 @@
   [problem-number expr & tests]
   (let [replacef# (fn [t] (postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
-    `(deftest ~(symbol (str "problem-" problem-number))
-       (println (str "problem " ~problem-number))
-       ~@(for [t# newtests#
-               :let [should# `(is ~t#)
-                     shouldstr# (str t#)]]
-           `(testing ~(str shouldstr#)
-              ~should#)))))
+    `(when (= ~problem-number 195)
+       (deftest ~(symbol (str "problem-" problem-number))
+         (print (str "problem " ~problem-number "..."))
+         (flush)
+         (let [t0# (System/currentTimeMillis)
+               result#
+               (do
+                 ~@(for [t# newtests#
+                         :let [should# `(is ~t#)
+                               shouldstr# (str t#)]]
+                     `(testing ~(str shouldstr#)
+                        ~should#)))
+               t1# (System/currentTimeMillis)]
+           (println (- t1# t0#))
+           result#)))))
