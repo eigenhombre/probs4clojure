@@ -1,5 +1,5 @@
 (ns probs4clojure.core-test
-  (:require [probs4clojure.test-util :refer [solves problem]]))
+  (:require [probs4clojure.test-util :refer [problem]]))
 
 ;; ### Solutions to 4clojure.com problems
 ;;
@@ -1597,7 +1597,7 @@
 ;;    underscores, or when characters are equal (`match-char?` and
 ;;    `match?`);
 ;; 1. Convert truthiness to true/false.
-(solves
+(problem 111
   (fn [word rows]
     (let [vert-rows (if (empty? (rest rows))               ;; 1
                       (map vector (first rows))
@@ -2333,7 +2333,7 @@
 ;;
 ;; The `cycle` function (1), applied to the list of given functions, makes
 ;; this straightforward.
-(solves
+(problem 144
   (fn f [x & s]
     (letfn [(g [x s]
               (lazy-seq
@@ -2551,6 +2551,24 @@
          (= res (distinct res)))))
 
 
+;; ### Problem 165 does not exist
+
+;; ### Problem 166: <a href="http://www.4clojure.com/problem/166">Comparisons</a>
+(problem 166
+ (fn [f a b]
+   (cond
+     (f a b) :lt
+     (f b a) :gt
+     (and (not (f a b)) (not (f b a))) :eq))
+  (= :gt (__ < 5 1))
+  (= :eq (__ (fn [x y] (< (count x) (count y))) "pear" "plum"))
+  (= :lt (__ (fn [x y] (< (mod x 5) (mod y 5))) 21 3))
+  (= :gt (__ > 0 2)))
+
+
+;; ### Problem 167 does not exist
+
+
 ;; ### Problem 168: <a href="http://www.4clojure.com/problem/168">Infinite Matrix</a>
 ;;
 ;; This problem is all about `lazy-seq` and would probably be hard to
@@ -2616,6 +2634,52 @@
            (check #(= %2 [(+ m %) n]) column)
            (check #(= %2 [(+ m %) (+ n %)]) diagonal)))
     true))
+
+
+;; ### Problems 169-170 do not exist
+
+;; ### Problem 171: <a href="http://www.4clojure.com/problem/171">Intervals</a>
+(problem 171
+  (fn [l]
+    (if-not (seq l)
+      []
+      (let [sorted (distinct (sort l))]
+        (loop [s sorted, ret [], a (first s), b a]
+          (if (seq s)
+            (if (> (first s) (inc b))
+              (recur (rest s)
+                     (conj ret [a b])
+                     (first s)
+                     (first s))
+              (recur (rest s)
+                     ret
+                     a
+                     (first s)))
+            (conj ret [a b]))))))
+  (= (__ [1 2 3]) [[1 3]])
+  (= (__ [1 2 3]) [[1 3]])
+  (= (__ [10 9 8 1 2 3]) [[1 3] [8 10]])
+  (= (__ [1 1 1 1 1 1 1]) [[1 1]])
+  (= (__ []) [])
+  (= (__ [19 4 17 1 3 10 2 13 13 2 16 4 2 15 13 9 6 14 2 11])
+     [[1 4] [6 6] [9 11] [13 17] [19 19]]))
+
+
+;; ### Problem 172 does not exist
+
+
+;; ### Problem 173: <a href="http://www.4clojure.com/problem/173">Intro to Destructuring 2</a>
+;; Also not amenable to the "problem" macro; I have just added the
+;; solution, commented out, and the test cases:
+(problem 173
+  ;; f x   <--- solution
+  (= 3
+     (let [[__] [+ (range 3)]] (apply __))
+     (let [[[__] b] [[+ 1] 2]] (__ b))
+     (let [[__] [inc 2]] (__))))
+
+
+;; ### Problems 174-176 don't exist
 
 
 ;; ### Problem 177: <a href="http://www.4clojure.com/problem/177">Balancing Brackets</a>
@@ -2725,6 +2789,9 @@
   (= :full-house (__ ["HA" "DA" "CA" "HJ" "DJ"]))
   (= :four-of-a-kind (__ ["HA" "DA" "CA" "SA" "DJ"]))
   (= :straight-flush (__ ["HA" "HK" "HQ" "HJ" "HT"])))
+
+
+;; ### Problems 179-194 don't exist
 
 
 ;; ### Problem 195: <a href="http://www.4clojure.com/problem/195">Parentheses... Again</a>
