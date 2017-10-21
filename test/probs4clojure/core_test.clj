@@ -1484,7 +1484,6 @@
                          nx-chars)))]
       (apply str (concat allchars))))
   (= "I" (__ 1))
-  (= "I" (__ 1))
   (= "XXX" (__ 30))
   (= "IV" (__ 4))
   (= "CXL" (__ 140))
@@ -1576,6 +1575,10 @@
             (iterate inc 20))))
 
 
+(problem 109
+  'does-not-exist)
+
+
 ;; ### Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a>
 ;;
 ;; The approach taken here is a relatively straightforward functional
@@ -1596,21 +1599,21 @@
 ;; 1. Convert truthiness to true/false.
 (solves
   (fn [word rows]
-     (let [vert-rows (if (empty? (rest rows))               ;; 1
-                       (map vector (first rows))
-                       (->> rows
-                            (apply interleave)
-                            (partition (count rows))))
-           all-rows (concat rows vert-rows)                 ;; 1
-           match-char? #(or (= %1 \_) (= %1 %2))            ;; 6
-           match? #(every? true? (map match-char? %1 %2))]  ;; 6
-       (->> all-rows
-            (mapcat (partial partition-by #(= % \#)))       ;; 2
-            (remove #{[\#]})                                ;; 3
-            (map (partial remove #{\space}))                ;; 4
-            (filter #(= (count %) (count word)))            ;; 5
-            (some #(match? % word))                         ;; 6
-            true?)))                                        ;; 7
+    (let [vert-rows (if (empty? (rest rows))               ;; 1
+                      (map vector (first rows))
+                      (->> rows
+                           (apply interleave)
+                           (partition (count rows))))
+          all-rows (concat rows vert-rows)                 ;; 1
+          match-char? #(or (= %1 \_) (= %1 %2))            ;; 6
+          match? #(every? true? (map match-char? %1 %2))]  ;; 6
+      (->> all-rows
+           (mapcat (partial partition-by #(= % \#)))       ;; 2
+           (remove #{[\#]})                                ;; 3
+           (map (partial remove #{\space}))                ;; 4
+           (filter #(= (count %) (count word)))            ;; 5
+           (some #(match? % word))                         ;; 6
+           true?)))                                        ;; 7
 
   (= true  (__ "the" ["_ # _ _ e"]))
   (= false (__ "the" ["c _ _ _"
@@ -1633,7 +1636,7 @@
 ;; `reify`, since `proxy` and `reify` are often discussed together.  A
 ;; bit of research and REPL experimentation showed how to get `reify`
 ;; to implement the given interface.
-(solves
+(problem 113
   (fn [& args]
     (reify clojure.lang.ISeq
       (toString [this] (clojure.string/join ", " (sort args)))
@@ -1678,73 +1681,73 @@
 ;; (`(set-cheese bp p)`), it is somewhat inefficient in that it loops
 ;; through the visited locations again at the end.  It does, however,
 ;; only visit "connected" parts of the maze.
-(solves
- (fn [board]
-   (let [bm (into {} (for [r (range (count board))
-                           c (range (count (get board r)))]
-                       (let [val (get-in board [r c])]
-                         [[r c] {:val val
-                                 :explored (= val \#)}])))
-         mouse (some (fn [[k v]] (when (= (:val v) \M) k)) bm)]
-     (letfn [(explored [bm pos] (get-in bm [pos :explored]))
-             (set-explored [bm pos] (assoc-in bm [pos :explored] true))
-             (set-cheese [bm pos] (assoc-in bm [pos :cheese] true))
-             (is-valid [bm pos] (not (nil? (get-in bm [pos :val]))))
-             (is-wall [bm pos] (= (get-in bm [pos :val]) \#))
-             (get-neighbors [[r c]]
-               [[(dec r) c], [r (dec c)], [(inc r) c], [r (inc c)]])
-             (dfs [bm pos]
-               (let [bm (set-explored bm pos)
-                     neighbors (->> pos
-                                    get-neighbors
-                                    (filter (partial is-valid bm))
-                                    (remove (partial explored bm))
-                                    (remove (partial is-wall bm)))]
-                 (loop [bm bm, [p & ps] neighbors]
-                   (cond
-                    (not p) bm
-                    (= (get-in bm [p :val]) \C) (set-cheese bm p)
-                    (or (explored bm p)
-                        (= (get-in bm [p :val]) \#)) (recur bm ps)
-                        :else (recur (dfs bm p) ps)))))]
-       (true? (some (fn [[_ {cheese :cheese}]] cheese)
-                    (dfs bm mouse))))))
+(problem 117
+  (fn [board]
+    (let [bm (into {} (for [r (range (count board))
+                            c (range (count (get board r)))]
+                        (let [val (get-in board [r c])]
+                          [[r c] {:val val
+                                  :explored (= val \#)}])))
+          mouse (some (fn [[k v]] (when (= (:val v) \M) k)) bm)]
+      (letfn [(explored [bm pos] (get-in bm [pos :explored]))
+              (set-explored [bm pos] (assoc-in bm [pos :explored] true))
+              (set-cheese [bm pos] (assoc-in bm [pos :cheese] true))
+              (is-valid [bm pos] (not (nil? (get-in bm [pos :val]))))
+              (is-wall [bm pos] (= (get-in bm [pos :val]) \#))
+              (get-neighbors [[r c]]
+                [[(dec r) c], [r (dec c)], [(inc r) c], [r (inc c)]])
+              (dfs [bm pos]
+                (let [bm (set-explored bm pos)
+                      neighbors (->> pos
+                                     get-neighbors
+                                     (filter (partial is-valid bm))
+                                     (remove (partial explored bm))
+                                     (remove (partial is-wall bm)))]
+                  (loop [bm bm, [p & ps] neighbors]
+                    (cond
+                      (not p) bm
+                      (= (get-in bm [p :val]) \C) (set-cheese bm p)
+                      (or (explored bm p)
+                          (= (get-in bm [p :val]) \#)) (recur bm ps)
+                      :else (recur (dfs bm p) ps)))))]
+        (true? (some (fn [[_ {cheese :cheese}]] cheese)
+                     (dfs bm mouse))))))
 
- (= true  (__ ["M   C"]))
- (= false (__ ["M # C"]))
- (= true  (__ ["#######"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]))
- (= false (__ ["########"
-               "#M  #  #"
-               "#   #  #"
-               "# # #  #"
-               "#   #  #"
-               "#  #   #"
-               "#  # # #"
-               "#  #   #"
-               "#  #  C#"
-               "########"]))
- (= false (__ ["M     "
-               "      "
-               "      "
-               "      "
-               "    ##"
-               "    #C"]))
- (= true  (__ ["C######"
-               " #     "
-               " #   # "
-               " #   #M"
-               "     # "]))
- (= true  (__ ["C# # # #"
-               "        "
-               "# # # # "
-               "        "
-               " # # # #"
-               "        "
-               "# # # #M"])))
+  (= true  (__ ["M   C"]))
+  (= false (__ ["M # C"]))
+  (= true  (__ ["#######"
+                "#     #"
+                "#  #  #"
+                "#M # C#"
+                "#######"]))
+  (= false (__ ["########"
+                "#M  #  #"
+                "#   #  #"
+                "# # #  #"
+                "#   #  #"
+                "#  #   #"
+                "#  # # #"
+                "#  #   #"
+                "#  #  C#"
+                "########"]))
+  (= false (__ ["M     "
+                "      "
+                "      "
+                "      "
+                "    ##"
+                "    #C"]))
+  (= true  (__ ["C######"
+                " #     "
+                " #   # "
+                " #   #M"
+                "     # "]))
+  (= true  (__ ["C# # # #"
+                "        "
+                "# # # # "
+                "        "
+                " # # # #"
+                "        "
+                "# # # #M"])))
 
 
 ;; ### Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a>
@@ -1757,7 +1760,7 @@
 ;; combination, placing the desired piece (`:x` or `:o`) in the spot
 ;; if it's currently empty, and returning the pair only if it makes
 ;; three-in-a-row.
-(solves
+(problem 119
   (fn [ox current-board]
     (set
      (for [y (range 3)
@@ -1815,19 +1818,19 @@
 ;; integer (`square`); pull out the squares of digits of a number
 ;; (`sq-digs-fn`); and apply the comparison of the sum of squares to
 ;; the original number (`compare-fn`).
-(solves
- (fn [s]
-   (let [char-to-int #(-> % str Integer/parseInt)
-         square #(* % %)
-         sq-digs-fn (fn [n] (map #(->> % char-to-int square)
-                                 (str n)))
-         compare-fn #(< % (apply + (sq-digs-fn %)))]
-     (count (filter compare-fn s))))
+(problem 120
+  (fn [s]
+    (let [char-to-int #(-> % str Integer/parseInt)
+          square #(* % %)
+          sq-digs-fn (fn [n] (map #(->> % char-to-int square)
+                                  (str n)))
+          compare-fn #(< % (apply + (sq-digs-fn %)))]
+      (count (filter compare-fn s))))
 
- (= 8 (__ (range 10)))
- (= 19 (__ (range 30)))
- (= 50 (__ (range 100)))
- (= 50 (__ (range 1000))))
+  (= 8 (__ (range 10)))
+  (= 19 (__ (range 30)))
+  (= 50 (__ (range 100)))
+  (= 50 (__ (range 1000))))
 
 
 ;; ### Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a>
@@ -1844,7 +1847,7 @@
 ;; empties) (6); `flips` returns a truthy val iff the last color
 ;; sequence is the played color, and the closest color sequence is the
 ;; opposite color (7).
-(solves
+(problem 124
   (fn [board player]
     (let [n (count board) ;; assume square board
           ;; 8 directions:
@@ -1912,9 +1915,9 @@
 ;; I saw a talk at, I think, Clojure/West a few years back, where Dan
 ;; Friedman and William Byrd generated an infinite lazy sequence of
 ;; progressively more complex quines -- very impressive!
-(solves
- (fn [] (let [e \\ q \" s "(fn [] (let [e %c%c q %c%c s %c%s%c] (format s e e e q q s q)))"] (format s e e e q q s q)))
- (= (str '__) (__)))
+(problem 125
+  (fn [] (let [e \\ q \" s "(fn [] (let [e %c%c q %c%c s %c%s%c] (format s e e e q q s q)))"] (format s e e e q q s q)))
+  (= (str '__) (__)))
 
 
 ;; ### Problem 126: <a href="http://www.4clojure.com/problem/126">Through the Looking Class</a>
@@ -1922,7 +1925,7 @@
 ;; I found the answer to this one just by iterating `class` at the
 ;; REPL, calling it successively on its own output.  The final `x` in
 ;; the `and` form excludes `nil`, whose class is also itself.
-(solves
+(problem 126
   java.lang.Class
   (let [x __]
     (and (= (class x) x) x)))
@@ -1950,130 +1953,130 @@
 ;; Unlike many of my solutions to other problems, I find this solution
 ;; much easier to read and understand than it was to come up with in
 ;; the first place!
-(solves
- (fn f [input-vec]
-   (let [to-bin-str (fn [n] (Integer/toBinaryString n))
+(problem 127
+  (fn f [input-vec]
+    (let [to-bin-str (fn [n] (Integer/toBinaryString n))
 
-         max-bits-in-coll
-         (fn [coll]
-           (->> coll (map (comp count to-bin-str)) (apply max)))
+          max-bits-in-coll
+          (fn [coll]
+            (->> coll (map (comp count to-bin-str)) (apply max)))
 
-         board-size (fn [strings]
-                      [(count strings), (-> strings first count)])
+          board-size (fn [strings]
+                       [(count strings), (-> strings first count)])
 
-         as-bit-strings
-         (fn [coll]
-           (let [mb (max-bits-in-coll coll)]
-             (->> coll
-                  (mapv (fn [n]
-                          (let [as-bin (to-bin-str n)
-                                num-zeros (- mb (count as-bin))]
-                            (apply str (concat (repeat num-zeros \0)
-                                               as-bin))))))))
-         bd (as-bit-strings input-vec)
+          as-bit-strings
+          (fn [coll]
+            (let [mb (max-bits-in-coll coll)]
+              (->> coll
+                   (mapv (fn [n]
+                           (let [as-bin (to-bin-str n)
+                                 num-zeros (- mb (count as-bin))]
+                             (apply str (concat (repeat num-zeros \0)
+                                                as-bin))))))))
+          bd (as-bit-strings input-vec)
 
-         [nr nc] (board-size bd)
+          [nr nc] (board-size bd)
 
-         top-left-triangle-edge (fn [[r c] delta]
-                                  (for [cursor (range 0 (inc delta))]
-                                    [(- (+ cursor r) delta)
-                                     (+ c cursor)]))
-         bottom-left-triangle-edge (fn [[r c] delta]
-                                     (for [cursor (range 0 (inc delta))]
-                                       [(- (+ delta r) cursor)
-                                        (+ c cursor)]))
-         top-right-triangle-edge (fn [[r c] delta]
+          top-left-triangle-edge (fn [[r c] delta]
                                    (for [cursor (range 0 (inc delta))]
                                      [(- (+ cursor r) delta)
-                                      (- c cursor)]))
-         bottom-right-triangle-edge (fn [[r c] delta]
+                                      (+ c cursor)]))
+          bottom-left-triangle-edge (fn [[r c] delta]
                                       (for [cursor (range 0 (inc delta))]
                                         [(- (+ delta r) cursor)
-                                         (- c cursor)]))
-         east-double-triangle-edge (fn [[r c] delta]
-                                     (for [cursor (range (- delta)
-                                                         (inc delta))]
-                                       [(+ r cursor)
-                                        (+ c delta)]))
-         west-double-triangle-edge (fn [[r c] delta]
-                                     (for [cursor (range (- delta)
-                                                         (inc delta))]
-                                       [(+ r cursor)
-                                        (- c delta)]))
-         north-double-triangle-edge (fn [[r c] delta]
+                                         (+ c cursor)]))
+          top-right-triangle-edge (fn [[r c] delta]
+                                    (for [cursor (range 0 (inc delta))]
+                                      [(- (+ cursor r) delta)
+                                       (- c cursor)]))
+          bottom-right-triangle-edge (fn [[r c] delta]
+                                       (for [cursor (range 0 (inc delta))]
+                                         [(- (+ delta r) cursor)
+                                          (- c cursor)]))
+          east-double-triangle-edge (fn [[r c] delta]
                                       (for [cursor (range (- delta)
                                                           (inc delta))]
-                                        [(- r delta)
-                                         (+ c cursor)]))
-         south-double-triangle-edge (fn [[r c] delta]
+                                        [(+ r cursor)
+                                         (+ c delta)]))
+          west-double-triangle-edge (fn [[r c] delta]
                                       (for [cursor (range (- delta)
                                                           (inc delta))]
-                                        [(+ r delta)
-                                         (+ c cursor)]))
+                                        [(+ r cursor)
+                                         (- c delta)]))
+          north-double-triangle-edge (fn [[r c] delta]
+                                       (for [cursor (range (- delta)
+                                                           (inc delta))]
+                                         [(- r delta)
+                                          (+ c cursor)]))
+          south-double-triangle-edge (fn [[r c] delta]
+                                       (for [cursor (range (- delta)
+                                                           (inc delta))]
+                                         [(+ r delta)
+                                          (+ c cursor)]))
 
-         good-edge (fn [edge-points]
-                     (every? #(= \1 (get-in bd %)) edge-points))
+          good-edge (fn [edge-points]
+                      (every? #(= \1 (get-in bd %)) edge-points))
 
-         best-score-for-triangles-at-point
-         (fn [[r c]]
-           (reduce max
-                   (for [f [top-left-triangle-edge
-                            bottom-left-triangle-edge
-                            top-right-triangle-edge
-                            bottom-right-triangle-edge
-                            east-double-triangle-edge
-                            west-double-triangle-edge
-                            north-double-triangle-edge
-                            south-double-triangle-edge]]
-                     (->> (range)
-                          (map (partial f [r c]))
-                          (take-while good-edge)
-                          (map count)
-                          (reduce +)))))]
-     (let [ans
-           (reduce max
-                   (for [r (range nr)
-                         c (range nc)]
-                     (best-score-for-triangles-at-point [r c])))]
-       (when (>= ans 3) ans))))
+          best-score-for-triangles-at-point
+          (fn [[r c]]
+            (reduce max
+                    (for [f [top-left-triangle-edge
+                             bottom-left-triangle-edge
+                             top-right-triangle-edge
+                             bottom-right-triangle-edge
+                             east-double-triangle-edge
+                             west-double-triangle-edge
+                             north-double-triangle-edge
+                             south-double-triangle-edge]]
+                      (->> (range)
+                           (map (partial f [r c]))
+                           (take-while good-edge)
+                           (map count)
+                           (reduce +)))))]
+      (let [ans
+            (reduce max
+                    (for [r (range nr)
+                          c (range nc)]
+                      (best-score-for-triangles-at-point [r c])))]
+        (when (>= ans 3) ans))))
 
- (= 10 (__ [15 15 15 15 15]))
+  (= 10 (__ [15 15 15 15 15]))
                                         ; 1111      1111
                                         ; 1111      *111
                                         ; 1111  ->  **11
                                         ; 1111      ***1
                                         ; 1111      ****
- (= 15 (__ [1 3 7 15 31]))
+  (= 15 (__ [1 3 7 15 31]))
                                         ; 00001      0000*
                                         ; 00011      000**
                                         ; 00111  ->  00***
                                         ; 01111      0****
                                         ; 11111      *****
- (= 3 (__ [3 3]))
+  (= 3 (__ [3 3]))
                                         ; 11      *1
                                         ; 11  ->  **
- (= 4 (__ [7 3]))
+  (= 4 (__ [7 3]))
                                         ; 111      ***
                                         ; 011  ->  0*1
- (= 6 (__ [17 22 6 14 22]))
+  (= 6 (__ [17 22 6 14 22]))
                                         ; 10001      10001
                                         ; 10110      101*0
                                         ; 00110  ->  00**0
                                         ; 01110      0***0
                                         ; 10110      10110
- (= 9 (__ [18 7 14 14 6 3]))
+  (= 9 (__ [18 7 14 14 6 3]))
                                         ; 10010      10010
                                         ; 00111      001*0
                                         ; 01110      01**0
                                         ; 01110  ->  0***0
                                         ; 00110      00**0
                                         ; 00011      000*1
- (= nil (__ [21 10 21 10]))
+  (= nil (__ [21 10 21 10]))
                                         ; 10101      10101
                                         ; 01010      01010
                                         ; 10101  ->  10101
                                         ; 01010      01010
- (= nil (__ [0 31 0 31 0])))
+  (= nil (__ [0 31 0 31 0])))
                                         ; 00000      00000
                                         ; 11111      11111
                                         ; 00000  ->  00000
@@ -2095,7 +2098,7 @@
 ;; various helper functions, e.g. to find the appropriate child node
 ;; (`find-kid`), remove a child node (`remove-kid`), etc. as I went,
 ;; and staring at lots of drawings of tree graphs.
-(solves
+(problem 130
   (fn [lift-el T]
     (let [kids (fn [[_ & ks]] ks)
           tree (fn [eln kids] (list* eln kids))
@@ -2176,15 +2179,16 @@
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
 ;; out low-order digits.  Alternatively, could do as a lazy seq.
-(solves (fn [n base]
-          (loop [n n, ret []]
-            (if (zero? n)
-              (if (empty? ret) [0] ret)
-              (recur (quot n base) (cons (mod n base) ret)))))
+(problem 137
+  (fn [n base]
+    (loop [n n, ret []]
+      (if (zero? n)
+        (if (empty? ret) [0] ret)
+        (recur (quot n base) (cons (mod n base) ret)))))
   (= [1 2 3 4 5 0 1] (__ 1234501 10))
   (= [0] (__ 0 11))
   (= [1 0 0 1] (__ 9 2))
-  (= [1 0] (let [n (rand-int 100000)](__ n n)))
+  (= [1 0] (let [n (rand-int 100000)](__ n n))) 
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
 
 
@@ -2196,7 +2200,7 @@
 ;; this up into several functions and documented them individually for
 ;; the sake of clarity.  Instead, comments are salted throughout the
 ;; code, which is longer than I'd like.
-(solves
+(problem 138
   (fn [n0 n1]
     (let [turn-right {[ 1  1] [ 1 -1], [ 1 -1] [-1 -1],
                       [-1 -1] [-1  1], [-1  1] [ 1  1]}
@@ -2298,7 +2302,7 @@
 ;; followed by low cards in the leading suit.  While `trump-cards`
 ;; will be empty when nothing is trump, `suit-led-cards` cannot be,
 ;; since, by assumption, at least one card was played.
-(solves
+(problem 141
   (fn [trump]
     (fn [cards]
       (let [suit-led (->> cards first :suit)
@@ -2360,8 +2364,7 @@
 ;; reflected and concatenated onto itself using `recombine` (e.g.,
 ;; 1234 -> 1221).  The twist in `next-palindrome` is to increment the
 ;; left half of the number before recombining.
-(solves
-
+(problem 150
   (fn [n]
     (letfn [(rl-pair [n]
               [(quot (inc n) 2), (quot n 2)])
@@ -2426,7 +2429,7 @@
 ;; function in the first slot has been replaced by the final value.
 ;; Though almost point-free, it isn't quite... nor is it any clearer
 ;; than my original, IMO.
-(solves
+(problem 158
  (fn [f]
    (fn [& args]
      (->> [f args]
@@ -2473,7 +2476,7 @@
 ;;
 ;; The inputs are overdetermined; `:states` and `:alphabet` are
 ;; redundant and not used.
-(solves
+(problem 164
   (fn [m]
     (letfn [(stateseq [chains]
               (lazy-seq
@@ -2558,7 +2561,7 @@
 ;; implementation of the 1d case: `maprange2` slightly modifies
 ;; `maprange1` by adding a second argument to the mapping function
 ;; `f`.
-(solves
+(problem 168
  (fn mapmap
    ([f] (mapmap f 0 0))
    ([f s1 s2]
@@ -2620,23 +2623,24 @@
 ;; After a couple of tries on this I realized that stripping out
 ;; non-parenthetic characters and then successively eliminating empty,
 ;; balanced pairs of parens/braces/brackets would do the trick.
-(solves (fn [s]
-          (empty?
-           (loop [s (clojure.string/replace s #"[^\(\)\{\}\[\]]" "")]
-             (let [r (clojure.string/replace s #"\(\)|\{\}|\[\]" "")]
-               (if (= r s) s (recur r))))))
-        (__ "This string has no brackets.")
-        (__ "class Test {
+(problem 177
+  (fn [s]
+    (empty?
+     (loop [s (clojure.string/replace s #"[^\(\)\{\}\[\]]" "")]
+       (let [r (clojure.string/replace s #"\(\)|\{\}|\[\]" "")]
+         (if (= r s) s (recur r))))))
+  (__ "This string has no brackets.")
+  (__ "class Test {
       public static void main(String[] args) {
         System.out.println(\"Hello world.\");
       }
     }")
-        (not (__ "(start, end]"))
-        (not (__ "())"))
-        (not (__ "[ { ] } "))
-        (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
-        (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
-        (not (__ "[")))
+  (not (__ "(start, end]"))
+  (not (__ "())"))
+  (not (__ "[ { ] } "))
+  (__ "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
+  (not (__ "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
+  (not (__ "[")))
 
 
 ;; ### Problem 178: <a href="http://www.4clojure.com/problem/178">Best Hand</a>
@@ -2709,7 +2713,7 @@
           :else                :high-card)))
 
 
-(solves
+(problem 178
   best-hand
   (= :high-card (__ ["HA" "D2" "H3" "C9" "DJ"]))
   (= :pair (__ ["HA" "HQ" "SJ" "DA" "HT"]))
@@ -2742,7 +2746,7 @@
 ;; position 1), and again `()()` (inserting in position 2).  The given
 ;; solution just encodes that, building the collections up over a sequence of
 ;; iterations.
-(solves
+(problem 195
  (fn [n]
    (letfn [(splice-parens-in [s n]
              (str (subs s 0 n)
