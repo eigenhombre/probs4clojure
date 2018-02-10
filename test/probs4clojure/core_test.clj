@@ -446,8 +446,9 @@
   (= (__ (range 50)) (range 50)))
 
 
-(problem 57 [5 4 3 2 1]
-         (= __ ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))
+(problem 57
+  [5 4 3 2 1]
+  (= __ ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))
 
 
 (problem 58
@@ -1451,8 +1452,11 @@
   (= (__ 3 #{0 1 2 3 4}) #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
                            #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
   (= (__ 4 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a "abc" "efg"}})
-  (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
-                                        #{:a "abc"} #{:a "efg"} #{"abc" "efg"}}))
+  (= (__ 2 #{[1 2 3] :a "abc" "efg"}) #{#{[1 2 3] :a}
+                                        #{[1 2 3] "abc"}
+                                        #{[1 2 3] "efg"}
+                                        #{:a "abc"} #{:a "efg"}
+                                        #{"abc" "efg"}}))
 
 
 ;; ### Problem 104: <a href="http://www.4clojure.com/problem/104">Write Roman Numerals</a>
