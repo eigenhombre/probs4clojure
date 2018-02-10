@@ -1583,6 +1583,25 @@
   'does-not-exist)
 
 
+;; ### Problem 111: <a href="http://www.4clojure.com/problem/110">Sequence of pronunciations</a>
+;;
+;; Classic case for `iterate`.  The trick here is to split the
+;; sequence whenever the value changes (`partition-by identity`).
+;; Every item in each subsequence is identical, and `first` gives the
+;; value, while `count` gives the number of occurrences.  The last
+;; tricky bit is you have to use `rest` since `iterate` gives the
+;; original input value, which is not needed.
+(problem 110
+  (fn [s]
+    (rest (iterate #(mapcat (juxt count first)
+                            (partition-by identity %))
+                   s)))
+  (= [[1 1] [2 1] [1 2 1 1]] (take 3 (__ [1])))
+  (= [3 1 2 4] (first (__ [1 1 1 4 4])))
+  (= [1 1 1 3 2 1 3 2 1 1] (nth (__ [1]) 6))
+  (= 338 (count (nth (__ [3 2]) 15))))
+
+
 ;; ### Problem 111: <a href="http://www.4clojure.com/problem/111">Crossword Puzzle</a>
 ;;
 ;; The approach taken here is a relatively straightforward functional
