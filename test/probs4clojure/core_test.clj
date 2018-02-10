@@ -1583,7 +1583,7 @@
   'does-not-exist)
 
 
-;; ### Problem 111: <a href="http://www.4clojure.com/problem/110">Sequence of pronunciations</a>
+;; ### Problem 110: <a href="http://www.4clojure.com/problem/110">Sequence of pronunciations</a>
 ;;
 ;; Classic case for `iterate`.  The trick here is to split the
 ;; sequence whenever the value changes (`partition-by identity`).
