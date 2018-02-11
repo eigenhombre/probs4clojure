@@ -1653,24 +1653,26 @@
                           "_ _ f _ # _ _"])))
 
 
+;; ### Problem 112: <a href="http://www.4clojure.com/problem/112">Sequs Horribilis</a>
+;; Though I suspect one could solve this more elegantly with Clojure's
+;; built-in tree functions, I solved this by traversing the input and
+;; building the output tree recursively depth-first, summing elements
+;; and only adding them to the output tree so long as the sum was less
+;; than or equal to the target value.
 (problem 112
   (fn [max s]
     (let [f (fn f [n [el & more]]
-;;              (println n el (take 20 more))
               (cond
                 (integer? el) (if (> (+ n el) max)
                                 [(+ n el) ()]
                                 (let [[n1 ret] (f (+ n el) more)]
                                   [n1 (cons el ret)]))
                 (not el) [n ()]
-                :else (let [[n1 ret] (f n el)]
-                        (if (>= n1 max)
-                          [n1 (cons ret nil)]
-                          (let [[n2 ret2] (f n1 more)]
-                            (if (>= n2 max)
-                              [n2 (cons ret2 nil)]
-                              [n2 (cons ret ret2)]
-                              ))))))]
+                :else (let [[n1 left] (f n el)
+                            [n2 right] (f n1 more)]
+                        [n2 (if (> n2 max)
+                              (list left)
+                              (cons left right))])))]
       (second (f 0 s))))
 
   (=  (__ 10 [1 2 [3 [4 5] 6] 7])
@@ -1689,14 +1691,17 @@
       '(-10 (1 (2 3 (4)))))
   (=  (__ 1 [-10 [1 [2 3 [4 5 [6 7 [8]]]]]])
       '(-10 (1 (2 3 (4)))))
-  ;; Extra tests for edge cases:
+  ;; Bonus, extra tests for edge cases:
   (=  (__ 36 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
       '(1 2 (3 (4 (5 (6 (7 8)))))))
-  ;; (=  (__ 37 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
-  ;;     '(1 2 (3 (4 (5 (6 (7 8)))))))
-  ;; (=  (__ 45 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
-  ;;     '(1 2 (3 (4 (5 (6 (7 8 9)))))))
-  )
+  (=  (__ 37 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
+      '(1 2 (3 (4 (5 (6 (7 8)))))))
+  (=  (__ 44 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
+      '(1 2 (3 (4 (5 (6 (7 8)))))))
+  (=  (__ 45 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
+      '(1 2 (3 (4 (5 (6 (7 8)) 9)))))
+  (=  (__ 46 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
+      '(1 2 (3 (4 (5 (6 (7 8)) 9))))))
 
 
 ;; ### Problem 113: <a href="http://www.4clojure.com/problem/113">Making Data Dance</a>
