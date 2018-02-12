@@ -186,11 +186,9 @@
 
 
 (problem 27
-  (fn [s]
-    (let [pivot (-> s count (#(/ % 2)) int)
-          rhs (take pivot s)
-          lhs (take pivot (reverse s))]
-      (= rhs lhs)))
+  (fn [coll]
+    (= (seq coll)
+       (reverse coll)))
   (false? (__ '(1 2 3 4 5)))
   (true? (__ "racecar"))
   (true? (__ [:foo :bar :foo]))
