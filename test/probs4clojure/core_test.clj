@@ -1735,6 +1735,42 @@
                   (recur xs (if ((set ret) x) ret (conj ret x)))))))
 
 
+;; ### Problem 114: <a href="http://www.4clojure.com/problem/114">Global Take-While</a>
+;; Since no solution that composes the core sequence functions was
+;; obvious to me, the fact that the result is stipulated to be lazy
+;; (though there are no unit tests for that), would suggest using
+;; `lazy-seq`.  Call a helper function recursively to keep track of
+;; the number of times the test predicate `pred` is true. The edge
+;; cases are tricky to get right without writing a few simpler tests
+;; first, so I include those.
+(problem 114
+  (fn [maxnum pred coll]
+    (let [nth-take (fn nth-take [hits maxnum [x & more :as coll]]
+                     (lazy-seq
+                      (when (seq coll)
+                        (if-not (pred x)
+                          (cons x (nth-take hits maxnum more))
+                          (if (< hits (dec maxnum))
+                            (cons x (nth-take (inc hits) maxnum more))
+                            ;; We're done; don't add this element
+                            ())))))]
+      (nth-take 0 maxnum coll)))
+  ;; A couple of simpler test cases:
+  (= (__ 1 identity [false true]) [false])
+  (= (__ 1 identity [false false true]) [false false])
+  (= (__ 2 identity [true]) [true])
+  ;; Supplied test cases:
+  (= [2 3 5 7 11 13]
+     (__ 4 #(= 2 (mod % 3))
+         [2 3 5 7 11 13 17 19 23]))
+  (= ["this" "is" "a" "sentence"]
+     (__ 3 #(some #{\i} %)
+         ["this" "is" "a" "sentence" "i" "wrote"]))
+  (= ["this" "is"]
+     (__ 1 #{"a"}
+         ["this" "is" "a" "sentence" "i" "wrote"])))
+
+
 ;; ### Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a>
 ;;
 ;; I treat this as another graph search problem, where connections
