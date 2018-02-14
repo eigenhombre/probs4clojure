@@ -1774,7 +1774,7 @@
 ;; ### Problem 115: <a href="http://www.4clojure.com/problem/115">The Balance of N</a>
 ;; The cheap and dirty trick here is to use the string representation
 ;; of the number to get the digits; after that, it's a matter of
-;; chopping the sequence in half and adding the digits in each half.
+;; chopping the sequence in half and adding up the digits in each half.
 (problem 115
   (fn [x]
     (let [digits (map #(Integer. (str %)) (str x))
@@ -1796,10 +1796,10 @@
 
 ;; ### Problem 116: <a href="http://www.4clojure.com/problem/116">Prime Sandwich</a>
 ;; Not a super efficient solution, but simple enough; determine
-;; primality of \\(n\\)) by checking all divisors from 2 up
-;; (\\(O(n)\\)) and then, because we need to find previous and next
+;; primality of \\(n\\) by checking all divisors from 2 on up
+;; (\\(O(n)\\)), and then, because we need to find previous and next
 ;; primes, we get a list of all primes and partition them in groups of
-;; three so that, when the middle of the group is equal to \\(\n\)),
+;; three so that, when the middle of the group is equal to \\(n\\),
 ;; the first and third values are the previous and next primes,
 ;; respectively; overall, \\(O(n^2)\\).
 (problem 116
