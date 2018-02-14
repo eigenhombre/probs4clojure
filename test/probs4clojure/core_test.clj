@@ -1796,7 +1796,7 @@
 
 ;; ### Problem 116: <a href="http://www.4clojure.com/problem/116">Prime Sandwich</a>
 ;; Not a super efficient solution, but simple enough; determine
-;; primality of \\(n\)) by checking all divisors from 2 up
+;; primality of \\(n\\)) by checking all divisors from 2 up
 ;; (\\(O(n)\\)) and then, because we need to find previous and next
 ;; primes, we get a list of all primes and partition them in groups of
 ;; three so that, when the middle of the group is equal to \\(\n\)),
