@@ -297,42 +297,6 @@
 
 
 
-;; ;; Prime Sandwich
-;; ;;
-;; ;; Difficulty:Medium
-;; ;; Topics:math
-;; ;;
-;; ;; A balanced prime is a prime number which is also the mean of the
-;; ;; primes directly before and after it in the sequence of valid
-;; ;; primes. Create a function which takes an integer n, and returns
-;; ;; true iff it is a balanced prime.
-;; ;;
-;; ;; (= false (__ 4))
-;; ;;
-;; ;; (= true (__ 563))
-;; ;;
-;; ;; (= 1103 (nth (filter __ (range)) 15))
-
-;; (defn is-balanced-prime [x]
-;;   (letfn [(is-prime [x]
-;;             (not (some #(= (rem x %) 0) (range 2 x))))
-;;           (next-prime [x]
-;;             (first (filter is-prime (drop (inc x) (range)))))
-;;           (prev-prime [x]
-;;             (first (filter is-prime (range (dec x) 0 -1))))]
-;;     (and (> x 2)
-;;          (is-prime x)
-;;          (let [prev-prime (prev-prime x)
-;;                next-prime (next-prime x)]
-;;            (= x (/ (+ prev-prime next-prime) 2))))))
-
-;; (expect false (is-balanced-prime 4))
-
-;; (expect true (is-balanced-prime 563))
-
-;; (expect (nth (filter is-balanced-prime (range)) 15)
-;;         1103)
-
 
 
 ;; ;; Oscilrate

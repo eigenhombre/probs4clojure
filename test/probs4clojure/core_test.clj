@@ -1794,6 +1794,35 @@
      [0 1 2 3 4 5 6 7 8 9 11 22 33 44 55 66 77 88 99 101]))
 
 
+;; ### Problem 116: <a href="http://www.4clojure.com/problem/116">Prime Sandwich</a>
+;; Not a super efficient solution, but simple enough; determine
+;; primality of \\(n\)) by checking all divisors from 2 up
+;; (\\(O(n)\\)) and then, because we need to find previous and next
+;; primes, we get a list of all primes and partition them in groups of
+;; three so that, when the middle of the group is equal to \\(\n\)),
+;; the first and third values are the previous and next primes,
+;; respectively; overall, \\(O(n^2)\\).
+(problem 116
+  (fn [n]
+    (let [isprime (fn [x]
+                    (and (not (#{1 4} x))
+                         (->> (range 2 (quot x 2))
+                              (some #(zero? (rem x %)))
+                              not)))
+          [lo self hi] (->> (range)
+                            rest
+                            (filter isprime)
+                            (partition 3 1)
+                            (take-while (comp (partial >= n) second))
+                            last)]
+      (and (isprime n)
+           (= n self)
+           (= self (/ (+ lo hi) 2)))))
+  (= false (__ 4))
+  (= true (__ 563))
+  (= 1103 (nth (filter __ (range)) 15)))
+
+
 ;; ### Problem 117: <a href="http://www.4clojure.com/problem/117">For Science!</a>
 ;;
 ;; I treat this as another graph search problem, where connections
