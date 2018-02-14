@@ -1910,6 +1910,31 @@
                 "# # # #M"])))
 
 
+
+;; ### Problem 118: <a href="http://www.4clojure.com/problem/118">Re-implement Map</a>
+;; Classic, straightforward recursion problem whose lazy version is
+;; provided by `lazy-seq`.
+(problem 118
+  (fn mymap [f s]
+    (lazy-seq
+     (when (seq s)
+       (cons (f (first s)) (mymap f (rest s))))))
+  (= [3 4 5 6 7]
+     (__ inc [2 3 4 5 6]))
+  (= [3 4 5 6 7]
+     (__ inc [2 3 4 5 6]))
+  (= (repeat 10 nil)
+     (__ (fn [_] nil) (range 10)))
+  (= [1000000 1000001]
+     (->> (__ inc (range))
+          (drop (dec 1000000))
+          (take 2)))
+  (= [1000000 1000001]
+     (->> (__ inc (range))
+          (drop (dec 1000000))
+          (take 2))))
+
+
 ;; ### Problem 119: <a href="http://www.4clojure.com/problem/119">Win at Tic Tac Toe</a>
 ;;
 ;; The solution is quite similar to that for [Problem
