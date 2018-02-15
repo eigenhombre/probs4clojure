@@ -935,8 +935,7 @@
   (= (__ 3) false))
 
 
-(problem 87
-  'does-not-exist)
+;; ### Problem 87 does not exist
 
 
 ;; ### Problem 88: <a href="http://www.4clojure.com/problem/88">Symmetric Difference</a>
@@ -1577,8 +1576,7 @@
             (iterate inc 20))))
 
 
-(problem 109
-  'does-not-exist)
+;; ### Problem 109 doesn't exist
 
 
 ;; ### Problem 110: <a href="http://www.4clojure.com/problem/110">Sequence of pronunciations</a>
@@ -2031,6 +2029,7 @@
                    (list? x) (apply (m (first x)) (map f (rest x)))
                    :else x))]
          (f expr))))
+
   (= 2 ((__ '(/ a b))
         '{b 8 a 16}))
   (= 8 ((__ '(+ a b 2))
@@ -2044,6 +2043,32 @@
   (= 1 ((__ '(/ (+ x 2)
                 (* 3 (+ y 1))))
         '{x 4 y 1})))
+
+
+
+;; ### Problem 122: <a href="http://www.4clojure.com/problem/122">Read a binary number</a>
+;; When the digits are reversed, a recursive solution is
+;; straightforward: each call shifts the previous result left and adds
+;; the new term.  Assumes the number length is less than the max call
+;; stack, which is usually the case.  Otherwise for large numbers, use
+;; `loop`..`recur` and the promoting `+` operator, `+'`.
+(problem 122
+  (comp (fn f [[el & more]]
+          (if el
+            (+ ({\1 1 \0 0} el) (bit-shift-left (f more) 1))
+            0))
+        reverse)
+
+  (= 0     (__ "0"))
+  (= 7     (__ "111"))
+  (= 8     (__ "1000"))
+  (= 9     (__ "1001"))
+  (= 255   (__ "11111111"))
+  (= 1365  (__ "10101010101"))
+  (= 65535 (__ "1111111111111111")))
+
+
+;; ### Problem 123 doesn't exist
 
 
 ;; ### Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a>
@@ -2765,6 +2790,7 @@
 
 
 ;; ### Problem 165 does not exist
+
 
 ;; ### Problem 166: <a href="http://www.4clojure.com/problem/166">Comparisons</a>
 (problem 166

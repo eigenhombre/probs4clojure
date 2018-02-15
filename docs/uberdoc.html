@@ -4607,7 +4607,54 @@ the original number (<code>compare-fn</code>).</p>
   (= 8 (__ (range 10)))
   (= 19 (__ (range 30)))
   (= 50 (__ (range 100)))
-  (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a></h3>
+  (= 50 (__ (range 1000))))</pre></td></tr><tr><td class="docs"><h3>Problem 121: <a href="http://www.4clojure.com/problem/121">Universal Computation Engine</a></h3>
+
+<p>Straighforward tree traversal, where literal symbols are replaced
+with the functions or values they represent.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 121
+  (fn [expr]
+     (fn [syms]
+       (let [m (merge syms {'+ +, '- -, '/ /, '* *})
+             f (fn f [x]
+                 (cond
+                   (symbol? x) (m x)
+                   (list? x) (apply (m (first x)) (map f (rest x)))
+                   :else x))]
+         (f expr))))
+
+  (= 2 ((__ '(/ a b))
+        '{b 8 a 16}))
+  (= 8 ((__ '(+ a b 2))
+        '{a 2 b 4}))
+  (= [6 0 -4]
+     (map (__ '(* (+ 2 a)
+                  (- 10 b)))
+          '[{a 1 b 8}
+            {b 5 a -2}
+            {a 2 b 11}]))
+  (= 1 ((__ '(/ (+ x 2)
+                (* 3 (+ y 1))))
+        '{x 4 y 1})))</pre></td></tr><tr><td class="docs"><h3>Problem 122: <a href="http://www.4clojure.com/problem/122">Read a binary number</a></h3>
+
+<p>When the digits are reversed, a recursive solution is
+straightforward: each call shifts the previous result left and adds
+the new term.  Assumes the number length is less than the max call
+stack, which is usually the case.  Otherwise for large numbers, use
+<code>loop</code>..<code>recur</code> and the promoting <code>+</code> operator, <code>+'</code>.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 122
+  (comp (fn f [[el &amp; more]]
+          (if el
+            (+ ({\1 1 \0 0} el) (bit-shift-left (f more) 1))
+            0))
+        reverse)
+
+  (= 0     (__ &quot;0&quot;))
+  (= 7     (__ &quot;111&quot;))
+  (= 8     (__ &quot;1000&quot;))
+  (= 9     (__ &quot;1001&quot;))
+  (= 255   (__ &quot;11111111&quot;))
+  (= 1365  (__ &quot;10101010101&quot;))
+  (= 65535 (__ &quot;1111111111111111&quot;)))</pre></td></tr><tr><td class="docs"><h3>Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a></h3>
 
 <p>To solve this, we check every non-empty starting position (1)
 which causes one or more "flips" (2), as determined by the <code>flips</code>
