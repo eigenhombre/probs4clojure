@@ -2018,6 +2018,34 @@
   (= 50 (__ (range 1000))))
 
 
+;; ### Problem 121: <a href="http://www.4clojure.com/problem/121">Universal Computation Engine</a>
+;; Straighforward tree traversal, where literal symbols are replaced
+;; with the functions or values they represent.
+(problem 121
+  (fn [expr]
+     (fn [syms]
+       (let [m (merge syms {'+ +, '- -, '/ /, '* *})
+             f (fn f [x]
+                 (cond
+                   (symbol? x) (m x)
+                   (list? x) (apply (m (first x)) (map f (rest x)))
+                   :else x))]
+         (f expr))))
+  (= 2 ((__ '(/ a b))
+        '{b 8 a 16}))
+  (= 8 ((__ '(+ a b 2))
+        '{a 2 b 4}))
+  (= [6 0 -4]
+     (map (__ '(* (+ 2 a)
+                  (- 10 b)))
+          '[{a 1 b 8}
+            {b 5 a -2}
+            {a 2 b 11}]))
+  (= 1 ((__ '(/ (+ x 2)
+                (* 3 (+ y 1))))
+        '{x 4 y 1})))
+
+
 ;; ### Problem 124: <a href="http://www.4clojure.com/problem/124">Analyze Reversi</a>
 ;;
 ;; To solve this, we check every non-empty starting position (1)
