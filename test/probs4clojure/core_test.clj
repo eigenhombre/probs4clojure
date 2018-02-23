@@ -2322,6 +2322,21 @@
                                         ; 00000      00000
 
 
+;; ### Problem 128: <a href="http://www.4clojure.com/problem/128">Recognize Playing Cards</a>
+(problem 128
+  (fn [[s v]]
+    {:suit ({\S :spade, \C :club, \D :diamond, \H :heart} s)
+     :rank (get {\T 8, \J 9, \Q 10, \K 11, \A 12}
+                v
+                (- (int v) (int \0) 2))})
+
+  (= {:suit :diamond :rank 10} (__ "DQ"))
+  (= {:suit :heart :rank 3} (__ "H5"))
+  (= {:suit :club :rank 12} (__ "CA"))
+  (= (range 13) (map (comp :rank __ str)
+                     '[S2 S3 S4 S5 S6 S7
+                       S8 S9 ST SJ SQ SK SA])))
+
 
 ;; ### Problem 130: <a href="http://www.4clojure.com/problem/130">Tree Reparenting</a>
 ;;
