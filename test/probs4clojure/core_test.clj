@@ -2454,6 +2454,7 @@
            (apply clojure.set/intersection)
            empty?
            not)))
+
   (= true  (__ #{-1 1 99}
                #{-2 2 888}
                #{-3 3 7777})) ; ex. all sets have a subset which sums to zero
@@ -2499,6 +2500,7 @@
                      (if (pred a b)
                        [token b]
                        [b]))))))
+
   (= '(1 :less 6 :less 7 4 3) (__ < :less [1 6 7 4 3]))
   (= '(2) (__ > :more [2]))
   (= [0 1 :x 2 :x 3 :x 4]  (__ #(and (pos? %) (< % %2)) :x (range 5)))
