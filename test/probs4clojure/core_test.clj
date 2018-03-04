@@ -2482,6 +2482,35 @@
                #{10 -9 8 -7 6 -5 4 -3 2 -1})))
 
 
+;; ### Problem 132: <a href="http://www.4clojure.com/problem/132">Insert between two items</a>
+;; As is so often the case, the problem is amenable either to a
+;; low-level solution with `loop` / `recur`, or a higher-level, more
+;; functional solution. We choose the latter: take all pairs `a`-`b`
+;; and convert them into vectors of either `[b]` or `[token b]`,
+;; depending on `(pred a b)`.  Concatenate these together, and attach
+;; the first `a` to the front, and this gives the desired answer with
+;; no unwanted duplication of items.
+(problem 132
+  (fn [pred token s]
+    (when (seq s)
+      (cons (first s)
+            (apply concat
+                   (for [[a b] (partition 2 1 s)]
+                     (if (pred a b)
+                       [token b]
+                       [b]))))))
+  (= '(1 :less 6 :less 7 4 3) (__ < :less [1 6 7 4 3]))
+  (= '(2) (__ > :more [2]))
+  (= [0 1 :x 2 :x 3 :x 4]  (__ #(and (pos? %) (< % %2)) :x (range 5)))
+  (empty? (__ > :more ()))
+  (= [0 1 :same 1 2 3 :same 5 8 13 :same 21]
+     (take 12 (->> [0 1]
+                   (iterate (fn [[a b]] [b (+ a b)]))
+                   (map first)          ; fibonacci numbers
+                   (__ (fn [a b]        ; both even or both odd
+                         (= (mod a 2) (mod b 2)))
+                       :same)))))
+
 
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;

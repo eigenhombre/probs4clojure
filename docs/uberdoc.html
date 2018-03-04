@@ -5039,7 +5039,35 @@ non-empty if and only if all the sets have one sum in common.</p>
   (= true  (__ #{-10 9 -8 7 -6 5 -4 3 -2 1}
                #{10 -9 8 -7 6 -5 4 -3 2 -1}))
   (= true  (__ #{-10 9 -8 7 -6 5 -4 3 -2 1}
-               #{10 -9 8 -7 6 -5 4 -3 2 -1})))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+               #{10 -9 8 -7 6 -5 4 -3 2 -1})))</pre></td></tr><tr><td class="docs"><h3>Problem 132: <a href="http://www.4clojure.com/problem/132">Insert between two items</a></h3>
+
+<p>As is so often the case, the problem is amenable either to a
+low-level solution with <code>loop</code> / <code>recur</code>, or a higher-level, more
+functional solution. We choose the latter: take all pairs <code>a</code>-<code>b</code>
+and convert them into vectors of either <code>[b]</code> or <code>[token b]</code>,
+depending on <code>(pred a b)</code>.  Concatenate these together, and attach
+the first <code>a</code> to the front, and this gives the desired answer with
+no unwanted duplication of items.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 132
+  (fn [pred token s]
+    (when (seq s)
+      (cons (first s)
+            (apply concat
+                   (for [[a b] (partition 2 1 s)]
+                     (if (pred a b)
+                       [token b]
+                       [b]))))))
+  (= '(1 :less 6 :less 7 4 3) (__ &lt; :less [1 6 7 4 3]))
+  (= '(2) (__ &gt; :more [2]))
+  (= [0 1 :x 2 :x 3 :x 4]  (__ #(and (pos? %) (&lt; % %2)) :x (range 5)))
+  (empty? (__ &gt; :more ()))
+  (= [0 1 :same 1 2 3 :same 5 8 13 :same 21]
+     (take 12 (-&gt;&gt; [0 1]
+                   (iterate (fn [[a b]] [b (+ a b)]))
+                   (map first)          ; fibonacci numbers
+                   (__ (fn [a b]        ; both even or both odd
+                         (= (mod a 2) (mod b 2)))
+                       :same)))))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
 
 <p>This is a simple matter of dividing modulo the base and shifting
 out low-order digits.  Alternatively, could do as a lazy seq.</p>
