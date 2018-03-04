@@ -14,4 +14,3 @@
                    :plugins [[michaelblume/lein-marginalia "0.9.0"]
                              [com.jakemccrary/lein-test-refresh "0.21.1"]]}
              :uberjar {:aot :all}})
-

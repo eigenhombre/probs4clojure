@@ -5014,6 +5014,7 @@ non-empty if and only if all the sets have one sum in common.</p>
            (apply clojure.set/intersection)
            empty?
            not)))
+
   (= true  (__ #{-1 1 99}
                #{-2 2 888}
                #{-3 3 7777})) ; ex. all sets have a subset which sums to zero
@@ -5043,7 +5044,7 @@ non-empty if and only if all the sets have one sum in common.</p>
 
 <p>As is so often the case, the problem is amenable either to a
 low-level solution with <code>loop</code> / <code>recur</code>, or a higher-level, more
-functional solution. We choose the latter: take all pairs <code>a</code>-<code>b</code>
+functional solution. We choose the latter: take all pairs <code>a</code>, <code>b</code>
 and convert them into vectors of either <code>[b]</code> or <code>[token b]</code>,
 depending on <code>(pred a b)</code>.  Concatenate these together, and attach
 the first <code>a</code> to the front, and this gives the desired answer with
@@ -5057,6 +5058,7 @@ no unwanted duplication of items.</p>
                      (if (pred a b)
                        [token b]
                        [b]))))))
+
   (= '(1 :less 6 :less 7 4 3) (__ &lt; :less [1 6 7 4 3]))
   (= '(2) (__ &gt; :more [2]))
   (= [0 1 :x 2 :x 3 :x 4]  (__ #(and (pos? %) (&lt; % %2)) :x (range 5)))

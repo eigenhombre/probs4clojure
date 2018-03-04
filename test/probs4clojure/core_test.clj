@@ -2486,7 +2486,7 @@
 ;; ### Problem 132: <a href="http://www.4clojure.com/problem/132">Insert between two items</a>
 ;; As is so often the case, the problem is amenable either to a
 ;; low-level solution with `loop` / `recur`, or a higher-level, more
-;; functional solution. We choose the latter: take all pairs `a`-`b`
+;; functional solution. We choose the latter: take all pairs `a`, `b`
 ;; and convert them into vectors of either `[b]` or `[token b]`,
 ;; depending on `(pred a b)`.  Concatenate these together, and attach
 ;; the first `a` to the front, and this gives the desired answer with
