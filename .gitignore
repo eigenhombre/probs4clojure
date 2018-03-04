@@ -8,7 +8,6 @@
 .nrepl-*
 .project
 .settings/
-bin/
 checkouts
 classes
 lib
