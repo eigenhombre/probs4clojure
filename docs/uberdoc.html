@@ -5069,7 +5069,42 @@ no unwanted duplication of items.</p>
                    (map first)          ; fibonacci numbers
                    (__ (fn [a b]        ; both even or both odd
                          (= (mod a 2) (mod b 2)))
-                       :same)))))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+                       :same)))))</pre></td></tr><tr><td class="docs"><h3>Problem 133 does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 134: <a href="http://www.4clojure.com/problem/134">A Nil Key</a></h3>
+
+<p>You can't simply use a lookup and test (<code>(nil? (m k))</code>) because a
+missing key will also be <code>nil</code>; the somewhat-poorly-named
+<code>contains?</code> gives the extra context.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 134
+  (fn [k m] (and (contains? m k) (nil? (m k))))
+
+  (true?  (__ :a {:a nil :b 2}))
+  (false? (__ :b {:a nil :b 2}))
+  (false? (__ :c {:a nil :b 2})))</pre></td></tr><tr><td class="docs"><h3>Problem 135: <a href="http://www.4clojure.com/problem/135">Infix Calculator</a></h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>I quite like the following variant:</p>
+</td><td class="codes"><pre class="brush: clojure">(fn [&amp; [x &amp; xs]]
+  (eval
+   (list* '-&gt; x (partition 2 xs))))</pre></td></tr><tr><td class="docs"><p>which is disallowed because it uses <code>eval</code>.</p>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>The following is less elegant but does not risk a stack overflow:</p>
+</td><td class="codes"><pre class="brush: clojure">(fn [&amp; args]
+  (loop [[a op b &amp; more] args]
+    (if-not more
+      (op a b)
+      (recur (cons (op a b) more)))))</pre></td></tr><tr><td class="docs"><p>Recursive solution: here we take the base case to be when there is
+only one operand, though a slightly more general version would
+accept just the initial number with no operands or arguments.  The
+reducing case applies the first operation and calls itself to
+recur.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 135
+  (fn f
+    ([a op b] (op a b))
+    ([a op b &amp; rst]
+     (apply f (op a b) rst)))
+
+  (= 7  (__ 2 + 5))
+  (= 42 (__ 38 + 48 - 2 / 2))
+  (= 8  (__ 10 / 2 - 1 * 2))
+  (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
 
 <p>This is a simple matter of dividing modulo the base and shifting
 out low-order digits.  Alternatively, could do as a lazy seq.</p>
@@ -5082,7 +5117,7 @@ out low-order digits.  Alternatively, could do as a lazy seq.</p>
   (= [1 2 3 4 5 0 1] (__ 1234501 10))
   (= [0] (__ 0 11))
   (= [1 0 0 1] (__ 9 2))
-  (= [1 0] (let [n (rand-int 100000)](__ n n))) 
+  (= [1 0] (let [n (rand-int 100000)](__ n n)))
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))</pre></td></tr><tr><td class="docs"><h3>Problem 138: <a href="http://www.4clojure.com/problem/138">Squares Squared</a></h3>
 
 <p>I'm probably less proud of this one than most of the others.  In
@@ -5684,10 +5719,10 @@ iterations.</p>
   [problem-number expr &amp; tests]
   (let [replacef# (fn [t] (postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
-    `(do ;; when (= ~problem-number 195)  &lt;- use when debugging specific problem
-       (deftest ~(symbol (str &quot;problem-&quot; problem-number))
-         (print (str &quot;problem &quot; ~problem-number &quot;...&quot;))
-         (flush)
+    `(deftest ~(symbol (str &quot;problem-&quot; problem-number))
+       (print (str &quot;problem &quot; ~problem-number &quot;...&quot;))
+       (flush)
+       (do ;; when (= ~problem-number 134)  ;&lt;- use when debugging specific problem)
          (let [t0# (System/currentTimeMillis)
                result#
                (do

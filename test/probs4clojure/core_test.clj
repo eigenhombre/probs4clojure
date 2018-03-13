@@ -2518,12 +2518,47 @@
 
 
 ;; ### Problem 134: <a href="http://www.4clojure.com/problem/134">A Nil Key</a>
+;; You can't simply use a lookup and test (`(nil? (m k))`) because a
+;; missing key will also be `nil`; the somewhat-poorly-named
+;; `contains?` gives the extra context.
 (problem 134
   (fn [k m] (and (contains? m k) (nil? (m k))))
 
   (true?  (__ :a {:a nil :b 2}))
   (false? (__ :b {:a nil :b 2}))
   (false? (__ :c {:a nil :b 2})))
+
+
+;; ### Problem 135: <a href="http://www.4clojure.com/problem/135">Infix Calculator</a>
+
+;; I quite like the following variant:
+(fn [& [x & xs]]
+  (eval
+   (list* '-> x (partition 2 xs))))
+;; which is disallowed because it uses `eval`.
+
+;; The following is less elegant but does not risk a stack overflow:
+(fn [& args]
+  (loop [[a op b & more] args]
+    (if-not more
+      (op a b)
+      (recur (cons (op a b) more)))))
+
+;; Recursive solution: here we take the base case to be when there is
+;; only one operand, though a slightly more general version would
+;; accept just the initial number with no operands or arguments.  The
+;; reducing case applies the first operation and calls itself to
+;; proceed with the remaining arguments.
+(problem 135
+  (fn f
+    ([a op b] (op a b))
+    ([a op b & rst]
+     (apply f (op a b) rst)))
+
+  (= 7  (__ 2 + 5))
+  (= 42 (__ 38 + 48 - 2 / 2))
+  (= 8  (__ 10 / 2 - 1 * 2))
+  (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))
 
 
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
