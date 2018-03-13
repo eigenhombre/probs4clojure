@@ -2561,6 +2561,8 @@
   (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))
 
 
+;; ### Problem 136 does not exist.
+
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
