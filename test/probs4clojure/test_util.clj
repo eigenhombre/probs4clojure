@@ -15,10 +15,10 @@
   [problem-number expr & tests]
   (let [replacef# (fn [t] (postwalk-replace {'__ expr} t))
         newtests# (map replacef# tests)]
-    `(do ;; when (= ~problem-number 195)  <- use when debugging specific problem
-       (deftest ~(symbol (str "problem-" problem-number))
-         (print (str "problem " ~problem-number "..."))
-         (flush)
+    `(deftest ~(symbol (str "problem-" problem-number))
+       (print (str "problem " ~problem-number "..."))
+       (flush)
+       (do ;; when (= ~problem-number 134)  ;<- use when debugging specific problem)
          (let [t0# (System/currentTimeMillis)
                result#
                (do

@@ -2514,6 +2514,18 @@
                        :same)))))
 
 
+;; ### Problem 133 does not exist.
+
+
+;; ### Problem 134: <a href="http://www.4clojure.com/problem/134">A Nil Key</a>
+(problem 134
+  (fn [k m] (and (contains? m k) (nil? (m k))))
+
+  (true?  (__ :a {:a nil :b 2}))
+  (false? (__ :b {:a nil :b 2}))
+  (false? (__ :c {:a nil :b 2})))
+
+
 ;; ### Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a>
 ;;
 ;; This is a simple matter of dividing modulo the base and shifting
@@ -2527,7 +2539,7 @@
   (= [1 2 3 4 5 0 1] (__ 1234501 10))
   (= [0] (__ 0 11))
   (= [1 0 0 1] (__ 9 2))
-  (= [1 0] (let [n (rand-int 100000)](__ n n))) 
+  (= [1 0] (let [n (rand-int 100000)](__ n n)))
   (= [16 18 5 24 15 1] (__ Integer/MAX_VALUE 42)))
 
 
