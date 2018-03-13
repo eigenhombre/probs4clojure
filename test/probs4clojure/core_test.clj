@@ -2675,6 +2675,8 @@
                     "   *   "]))
 
 
+;; ### Problem 139 does not exist.
+
 
 ;; ### Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a>
 ;;
