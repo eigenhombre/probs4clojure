@@ -2750,6 +2750,64 @@
   (= (take 12 (__ 0 inc dec inc dec inc)) [0 1 0 1 0 1 2 1 2 1 2 3]))
 
 
+;; ### Problem 145: <a href="http://www.4clojure.com/problem/145">For the win</a>
+;;
+;; Simple examples of `for` evaluating to the same result...
+(problem 145
+  [1 5 9 13 17 21 25 29 33 37]
+  (= __ (for [x (range 40)
+              :when (= 1 (rem x 4))]
+          x))
+  (= __ (for [x (iterate #(+ 4 %) 0)
+              :let [z (inc x)]
+              :while (< z 40)]
+          z))
+  (= __ (for [[x y] (partition 2 (range 20))]
+          (+ x y))))
+
+
+;; ### Problem 146: <a href="http://www.4clojure.com/problem/146">Trees into tables</a>
+;;
+;; Simple nested loop, using the `for` macro's ability to do nested
+;; iterations by adding extra pairs in the binding expression.
+(problem 146
+  (fn [m]
+    (into {}
+          (for [[k v] m
+                [kk vv] v]
+            [[k kk] vv])))
+  (= (__ '{a {p 1, q 2}
+           b {m 3, n 4}})
+     '{[a p] 1, [a q] 2
+       [b m] 3, [b n] 4})
+  (= (__ '{[1] {a b c d}
+           [2] {q r s t u v w x}})
+     '{[[1] a] b, [[1] c] d,
+       [[2] q] r, [[2] s] t,
+       [[2] u] v, [[2] w] x})
+  (= (__ '{m {1 [a b c] 3 nil}})
+     '{[m 1] [a b c], [m 3] nil}))
+
+
+;; ### Problem 147: <a href="http://www.4clojure.com/problem/147">Pascal's Trapezoid</a>
+;;
+;; For each iteration, mapping a sum operation over a partition of the
+;; collection is close to what we want, but it doesn't get the desired
+;; first and last term; to retain those, simply add zeros at the
+;; beginning and end of the collection before partitioning and
+;; summing. The backquote plus the `~@%` look scary but is just a
+;; convenient way of injecting the collection which is the argument of
+;; the anonymous function into a vector beginning and ending with 0.
+(problem 147
+  (partial iterate #(->> `[0 ~@% 0]
+                         (partition 2 1)
+                         (map (partial apply +'))))
+  (= (second (__ [2 3 2])) [2 5 5 2])
+  (= (take 5 (__ [1])) [[1] [1 1] [1 2 1] [1 3 3 1] [1 4 6 4 1]])
+  (= (take 2 (__ [3 1 2])) [[3 1 2] [3 4 3 2]])
+  (= (take 100 (__ [2 4 2])) (rest (take 101 (__ [2 2])))))
+
+
 ;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>
 ;;
 ;; My solution has three parts: (a) to calculate the
