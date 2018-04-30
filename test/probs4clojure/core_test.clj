@@ -2677,6 +2677,7 @@
 
 ;; ### Problem 139 does not exist.
 
+;; ### Problem 140 STILL NEEDS DOING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ;; ### Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a>
 ;;
@@ -2717,6 +2718,18 @@
   (= {:suit :diamond :rank 2}
      ((__ :club) [{:suit :diamond :rank 2}
                   {:suit :spade :rank 10}])))
+
+;; ### Problem 142 does not exist.
+
+
+;; ### Problem 143: <a href="https://www.4clojure.com/problem/143">dot product<a/>
+;; Simple example of composition of partial functions.
+(problem 143
+  (comp (partial apply +) (partial  map *))
+  (= 0 (__ [0 1 0] [1 0 0]))
+  (= 3 (__ [1 1 1] [1 1 1]))
+  (= 32 (__ [1 2 3] [4 5 6]))
+  (= 256 (__ [2 5 6] [100 10 1])))
 
 
 ;; ### Problem 144: <a href="https://www.4clojure.com/problem/144">Oscilrate<a/>
