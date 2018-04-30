@@ -2755,6 +2755,7 @@
 ;; Simple examples of `for` evaluating to the same result...
 (problem 145
   [1 5 9 13 17 21 25 29 33 37]
+
   (= __ (for [x (range 40)
               :when (= 1 (rem x 4))]
           x))
@@ -2776,6 +2777,7 @@
           (for [[k v] m
                 [kk vv] v]
             [[k kk] vv])))
+
   (= (__ '{a {p 1, q 2}
            b {m 3, n 4}})
      '{[a p] 1, [a q] 2
@@ -2802,10 +2804,45 @@
   (partial iterate #(->> `[0 ~@% 0]
                          (partition 2 1)
                          (map (partial apply +'))))
+
   (= (second (__ [2 3 2])) [2 5 5 2])
   (= (take 5 (__ [1])) [[1] [1 1] [1 2 1] [1 3 3 1] [1 4 6 4 1]])
   (= (take 2 (__ [3 1 2])) [[3 1 2] [3 4 3 2]])
   (= (take 100 (__ [2 4 2])) (rest (take 101 (__ [2 2])))))
+
+
+;; ### Problem 148: <a href="http://www.4clojure.com/problem/148">The Big Divide</a>
+;;
+;; Though its tempting to solve this one with iterating over
+;; collections of numbers, the problem is much more tractable
+;; (efficient) if you happen to remember that the sum of integers from
+;; 1 to \\(n\\) is \\(n(n+1)\over 2\\).  Then the sum of the numbers
+;; divisible by \\(a\\) and less than \\(n\\) is \\(a\\) times the sum
+;; of integers up to the quotient \\((n-1)/a\\), discarding the
+;; remainder.  Do that for both divisors and add them, but you must
+;; also subtract out the ones that are divisible by both numbers.
+(problem 148
+  (fn f [n a b]
+    (let [qmaxa (quot (dec n) a)
+          qmaxb (quot (dec n) b)
+          qmaxab (quot (dec n) (* a b))
+          suma (* a 1/2 qmaxa (inc qmaxa))
+          sumb (* b 1/2 qmaxb (inc qmaxb))
+          sumab (* a b 1/2 qmaxab (inc qmaxab))]
+      (+ suma
+         sumb
+         (- sumab))))
+
+  (= 0 (__ 3 17 11))
+  (= 23 (__ 10 3 5))
+  (= 233168 (__ 1000 3 5))
+  (= "2333333316666668" (str (__ 100000000 3 5)))
+  (= "110389610389889610389610"
+     (str (__ (* 10000 10000 10000) 7 11)))
+  (= "1277732511922987429116"
+     (str (__ (* 10000 10000 10000) 757 809)))
+  (= "4530161696788274281"
+     (str (__ (* 10000 10000 1000) 1597 3571))))
 
 
 ;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>

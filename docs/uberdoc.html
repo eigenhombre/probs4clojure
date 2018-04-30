@@ -5094,7 +5094,7 @@ missing key will also be <code>nil</code>; the somewhat-poorly-named
 only one operand, though a slightly more general version would
 accept just the initial number with no operands or arguments.  The
 reducing case applies the first operation and calls itself to
-recur.</p>
+proceed with the remaining arguments.</p>
 </td><td class="codes"><pre class="brush: clojure">(problem 135
   (fn f
     ([a op b] (op a b))
@@ -5104,7 +5104,8 @@ recur.</p>
   (= 7  (__ 2 + 5))
   (= 42 (__ 38 + 48 - 2 / 2))
   (= 8  (__ 10 / 2 - 1 * 2))
-  (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))</pre></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
+  (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))</pre></td></tr><tr><td class="docs"><h3>Problem 136 does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 137: <a href="http://www.4clojure.com/problem/137">Digits and Bases</a></h3>
 
 <p>This is a simple matter of dividing modulo the base and shifting
 out low-order digits.  Alternatively, could do as a lazy seq.</p>
@@ -5209,7 +5210,9 @@ code, which is longer than I'd like.</p>
                     &quot;* 0 0 0&quot;
                     &quot; * 1 * &quot;
                     &quot;  * *  &quot;
-                    &quot;   *   &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a></h3>
+                    &quot;   *   &quot;]))</pre></td></tr><tr><td class="docs"><h3>Problem 139 does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 140 STILL NEEDS DOING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 141: <a href="http://www.4clojure.com/problem/141">Tricky card games</a></h3>
 
 <p>We want to provide a function which determines the winning card of
 a sequence of plays, defined by:</p>
@@ -5249,7 +5252,16 @@ since, by assumption, at least one card was played.</p>
                    {:suit :diamond :rank 10} {:suit :heart :rank 4}]))
   (= {:suit :diamond :rank 2}
      ((__ :club) [{:suit :diamond :rank 2}
-                  {:suit :spade :rank 10}])))</pre></td></tr><tr><td class="docs"><h3>Problem 144: <a href="https://www.4clojure.com/problem/144">Oscilrate<a/></h3>
+                  {:suit :spade :rank 10}])))</pre></td></tr><tr><td class="docs"><h3>Problem 142 does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 143: <a href="https://www.4clojure.com/problem/143">dot product<a/></h3>
+
+<p>Simple example of composition of partial functions.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 143
+  (comp (partial apply +) (partial  map *))
+  (= 0 (__ [0 1 0] [1 0 0]))
+  (= 3 (__ [1 1 1] [1 1 1]))
+  (= 32 (__ [1 2 3] [4 5 6]))
+  (= 256 (__ [2 5 6] [100 10 1])))</pre></td></tr><tr><td class="docs"><h3>Problem 144: <a href="https://www.4clojure.com/problem/144">Oscilrate<a/></h3>
 
 <p>The <code>cycle</code> function (1), applied to the list of given functions, makes
 this straightforward.</p>
@@ -5264,7 +5276,90 @@ this straightforward.</p>
 
   (= (take 3 (__ 3.14 int double)) [3.14 3 3.0])
   (= (take 5 (__ 3 #(- % 3) #(+ 5 %))) [3 0 5 2 7])
-  (= (take 12 (__ 0 inc dec inc dec inc)) [0 1 0 1 0 1 2 1 2 1 2 3]))</pre></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
+  (= (take 12 (__ 0 inc dec inc dec inc)) [0 1 0 1 0 1 2 1 2 1 2 3]))</pre></td></tr><tr><td class="docs"><h3>Problem 145: <a href="http://www.4clojure.com/problem/145">For the win</a></h3>
+
+<p>Simple examples of <code>for</code> evaluating to the same result...</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 145
+  [1 5 9 13 17 21 25 29 33 37]
+
+  (= __ (for [x (range 40)
+              :when (= 1 (rem x 4))]
+          x))
+  (= __ (for [x (iterate #(+ 4 %) 0)
+              :let [z (inc x)]
+              :while (&lt; z 40)]
+          z))
+  (= __ (for [[x y] (partition 2 (range 20))]
+          (+ x y))))</pre></td></tr><tr><td class="docs"><h3>Problem 146: <a href="http://www.4clojure.com/problem/146">Trees into tables</a></h3>
+
+<p>Simple nested loop, using the <code>for</code> macro's ability to do nested
+iterations by adding extra pairs in the binding expression.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 146
+  (fn [m]
+    (into {}
+          (for [[k v] m
+                [kk vv] v]
+            [[k kk] vv])))
+
+  (= (__ '{a {p 1, q 2}
+           b {m 3, n 4}})
+     '{[a p] 1, [a q] 2
+       [b m] 3, [b n] 4})
+  (= (__ '{[1] {a b c d}
+           [2] {q r s t u v w x}})
+     '{[[1] a] b, [[1] c] d,
+       [[2] q] r, [[2] s] t,
+       [[2] u] v, [[2] w] x})
+  (= (__ '{m {1 [a b c] 3 nil}})
+     '{[m 1] [a b c], [m 3] nil}))</pre></td></tr><tr><td class="docs"><h3>Problem 147: <a href="http://www.4clojure.com/problem/147">Pascal's Trapezoid</a></h3>
+
+<p>For each iteration, mapping a sum operation over a partition of the
+collection is close to what we want, but it doesn't get the desired
+first and last term; to retain those, simply add zeros at the
+beginning and end of the collection before partitioning and
+summing. The backquote plus the <code>~@%</code> look scary but is just a
+convenient way of injecting the collection which is the argument of
+the anonymous function into a vector beginning and ending with 0.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 147
+  (partial iterate #(-&gt;&gt; `[0 ~@% 0]
+                         (partition 2 1)
+                         (map (partial apply +'))))
+
+  (= (second (__ [2 3 2])) [2 5 5 2])
+  (= (take 5 (__ [1])) [[1] [1 1] [1 2 1] [1 3 3 1] [1 4 6 4 1]])
+  (= (take 2 (__ [3 1 2])) [[3 1 2] [3 4 3 2]])
+  (= (take 100 (__ [2 4 2])) (rest (take 101 (__ [2 2])))))</pre></td></tr><tr><td class="docs"><h3>Problem 148: <a href="http://www.4clojure.com/problem/148">The Big Divide</a></h3>
+
+<p>Though its tempting to solve this one with iterating over
+collections of numbers, the problem is much more tractable
+(efficient) if you happen to remember that the sum of integers from
+1 to \(n\) is \(n(n+1)\over 2\).  Then the sum of the numbers
+divisible by \(a\) and less than \(n\) is \(a\) times the sum
+of integers up to the quotient \((n-1)/a\), discarding the
+remainder.  Do that for both divisors and add them, but you must
+also subtract out the ones that are divisible by both numbers.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 148
+  (fn f [n a b]
+    (let [qmaxa (quot (dec n) a)
+          qmaxb (quot (dec n) b)
+          qmaxab (quot (dec n) (* a b))
+          suma (* a 1/2 qmaxa (inc qmaxa))
+          sumb (* b 1/2 qmaxb (inc qmaxb))
+          sumab (* a b 1/2 qmaxab (inc qmaxab))]
+      (+ suma
+         sumb
+         (- sumab))))
+
+  (= 0 (__ 3 17 11))
+  (= 23 (__ 10 3 5))
+  (= 233168 (__ 1000 3 5))
+  (= &quot;2333333316666668&quot; (str (__ 100000000 3 5)))
+  (= &quot;110389610389889610389610&quot;
+     (str (__ (* 10000 10000 10000) 7 11)))
+  (= &quot;1277732511922987429116&quot;
+     (str (__ (* 10000 10000 10000) 757 809)))
+  (= &quot;4530161696788274281&quot;
+     (str (__ (* 10000 10000 1000) 1597 3571))))</pre></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
 
 <p>My solution has three parts: (a) to calculate the
 <code>nearest-palindrome</code> to a given number <code>x</code> (which will be <code>x</code> if it
