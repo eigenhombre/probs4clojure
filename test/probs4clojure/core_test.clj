@@ -2845,6 +2845,9 @@
      (str (__ (* 10000 10000 1000) 1597 3571))))
 
 
+;; ### Problem 149 does not exist.
+
+
 ;; ### Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a>
 ;;
 ;; My solution has three parts: (a) to calculate the
