@@ -5487,8 +5487,8 @@ combining it with <code>vector</code> gives you vector pairs with the index
 first and the value second; since we want the opposite order, we
 compose that with mapping the reverse function over the
 result. This solution is short and point-free; a simple <code>for</code>
-expression wrapping <code>map-indexed</code> is longer but may be easier to
-grok.</p>
+expression wrapping <code>map-indexed</code> is about as long, but may be
+easier to grok.</p>
 </td><td class="codes"><pre class="brush: clojure">(problem 157
   (comp (partial map reverse) (partial map-indexed vector))
 
@@ -5535,7 +5535,30 @@ than my original, IMO.</p>
  (= 25 ((__ (fn [a]
               (fn [b]
                 (* a b))))
-        5 5)))</pre></td></tr><tr><td class="docs"><h3>Problem 164: <a href="http://www.4clojure.com/problem/164">Language of a DFA</a></h3>
+        5 5)))</pre></td></tr><tr><td class="docs"><h3>Problem 159-160: do not exist</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 161: <a href="http://www.4clojure.com/problem/161">Subset and Superset</a></h3>
+
+<p>Trivial fill-in-the-blank exploration of subsets and supersets.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 161
+  #{1 2}
+
+  (clojure.set/superset? __ #{2})
+  (clojure.set/subset? #{1} __)
+  (clojure.set/superset? __ #{1 2})
+  (clojure.set/subset? #{1 2} __))</pre></td></tr><tr><td class="docs"><h3>Problem 162: <a href="http://www.4clojure.com/problem/162">Logical falsity and truth</a></h3>
+
+<p>Trivial fill-in-the-blank exploration of truthiness.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 162
+  1
+
+  (= __ (if-not false 1 0))
+  (= __ (if-not nil 1 0))
+  (= __ (if true 1 0))
+  (= __ (if [] 1 0))
+  (= __ (if [0] 1 0))
+  (= __ (if 0 1 0))
+  (= __ (if 1 1 0)))</pre></td></tr><tr><td class="docs"><h3>Problem 163: does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 164: <a href="http://www.4clojure.com/problem/164">Language of a DFA</a></h3>
 
 <p>My first attempt at this was (I realized, too late) a recursive
 depth-first search.  This doesn't work (as the warning in the

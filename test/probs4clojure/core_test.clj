@@ -2990,8 +2990,8 @@
 ;; first and the value second; since we want the opposite order, we
 ;; compose that with mapping the reverse function over the
 ;; result. This solution is short and point-free; a simple `for`
-;; expression wrapping `map-indexed` is longer but may be easier to
-;; grok.
+;; expression wrapping `map-indexed` is about as long, but may be
+;; easier to grok.
 (problem 157
   (comp (partial map reverse) (partial map-indexed vector))
 
@@ -3045,6 +3045,39 @@
               (fn [b]
                 (* a b))))
         5 5)))
+
+
+;; ### Problem 159-160: do not exist
+
+
+;; ### Problem 161: <a href="http://www.4clojure.com/problem/161">Subset and Superset</a>
+;;
+;; Trivial fill-in-the-blank exploration of subsets and supersets.
+(problem 161
+  #{1 2}
+
+  (clojure.set/superset? __ #{2})
+  (clojure.set/subset? #{1} __)
+  (clojure.set/superset? __ #{1 2})
+  (clojure.set/subset? #{1 2} __))
+
+
+;; ### Problem 162: <a href="http://www.4clojure.com/problem/162">Logical falsity and truth</a>
+;;
+;; Trivial fill-in-the-blank exploration of truthiness.
+(problem 162
+  1
+
+  (= __ (if-not false 1 0))
+  (= __ (if-not nil 1 0))
+  (= __ (if true 1 0))
+  (= __ (if [] 1 0))
+  (= __ (if [0] 1 0))
+  (= __ (if 0 1 0))
+  (= __ (if 1 1 0)))
+
+
+;; ### Problem 163: does not exist.
 
 
 ;; ### Problem 164: <a href="http://www.4clojure.com/problem/164">Language of a DFA</a>
