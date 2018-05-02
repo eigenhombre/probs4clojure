@@ -1,9 +1,11 @@
 ## 4clojure.com problems
 
-These are my (and only my) solutions to problems on 4clojure.com. They
-are still incomplete (2 remain to be solved).  See
-`test/probs4clojure`; older solutions are in `solved_to_migrate.clj`;
-**newer ones** are in `core_test.clj`; I use a macro in `test-util` to
+These are my (and only my) solutions to problems on 4clojure.com.
+Annotated (with [Marginalia](https://github.com/gdeer81/marginalia))
+solutions are available [here](http://zerolib.com/static/4clojure-problems.html).
+
+They are mostly complete (2 remain to be solved).  See
+`test/probs4clojure`.  I use a macro in `test-util` to
 present both the test cases and the solution in one expression.
 
 Feel free to learn from these, but I solved the problems on my own
