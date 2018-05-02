@@ -2910,6 +2910,64 @@
      9102019))
 
 
+;; ### Problem 151 doesn't exist
+
+
+;; ### Problem 152 ------------------------ still not done
+
+
+;; ### Problem 153: <a href="http://www.4clojure.com/problem/153">Pairwise Disjoint Sets</a>
+;;
+;; Take every pairwise combination \\\( [a, b] \\\) in the given set of sets
+;; (\\(a \ne b\\)); then the condition is satisfied if the
+;; intersection of the two sets \\(a \cap b \\) in each pair is empty.
+(problem 153
+  (fn [s]
+    (every? empty? (for [s1 s
+                         s2 s :when (not= s1 s2)]
+                     (clojure.set/intersection s1 s2))))
+  (= (__ #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}})
+     true)
+  (= (__ #{#{:a :b :c :d :e}
+           #{:a :b :c :d}
+           #{:a :b :c}
+           #{:a :b}
+           #{:a}})
+     false)
+  (= (__ #{#{[1 2 3] [4 5]}
+           #{[1 2] [3 4 5]}
+           #{[1] [2] 3 4 5}
+           #{1 2 [3 4] [5]}})
+     true)
+  (= (__ #{#{'a 'b}
+           #{'c 'd 'e}
+           #{'f 'g 'h 'i}
+           #{''a ''c ''f}})
+     true)
+  (= (__ #{#{'(:x :y :z) '(:x :y) '(:z) '()}
+           #{#{:x :y :z} #{:x :y} #{:z} #{}}
+           #{'[:x :y :z] [:x :y] [:z] [] {}}})
+     false)
+  (= (__ #{#{(= "true") false}
+           #{:yes :no}
+           #{(class 1) 0}
+           #{(symbol "true") 'false}
+           #{(keyword "yes") ::no}
+           #{(class '1) (int \0)}})
+     false)
+  (= (__ #{#{distinct?}
+           #{#(-> %) #(-> %)}
+           #{#(-> %) #(-> %) #(-> %)}
+           #{#(-> %) #(-> %) #(-> %)}})
+     true)
+  (= (__ #{#{(#(-> *)) + (quote mapcat) #_ nil}
+           #{'+ '* mapcat (comment mapcat)}
+           #{(do) set contains? nil?}
+           #{, , , #_, , empty?}})
+     false)
+
+  )
+
 ;; ### Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a>
 
 ;; Here's my original solution.  It works and probably performs OK.

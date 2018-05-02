@@ -5359,7 +5359,8 @@ also subtract out the ones that are divisible by both numbers.</p>
   (= &quot;1277732511922987429116&quot;
      (str (__ (* 10000 10000 10000) 757 809)))
   (= &quot;4530161696788274281&quot;
-     (str (__ (* 10000 10000 1000) 1597 3571))))</pre></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
+     (str (__ (* 10000 10000 1000) 1597 3571))))</pre></td></tr><tr><td class="docs"><h3>Problem 149 does not exist.</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 150: <a href="http://www.4clojure.com/problem/150">Palindromic Numbers</a></h3>
 
 <p>My solution has three parts: (a) to calculate the
 <code>nearest-palindrome</code> to a given number <code>x</code> (which will be <code>x</code> if it
@@ -5418,7 +5419,59 @@ left half of the number before recombining.</p>
   (= true
      (apply &lt; (take 6666 (__ 9999999))))
   (= (nth (__ 0) 10101)
-     9102019))</pre></td></tr><tr><td class="docs"><h3>Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a></h3>
+     9102019))</pre></td></tr><tr><td class="docs"><h3>Problem 151 doesn't exist</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 152 ------------------------ still not done</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><h3>Problem 153: <a href="http://www.4clojure.com/problem/153">Pairwise Disjoint Sets</a></h3>
+
+<p>Take every pairwise combination \( [a, b] \) in the given set of sets
+(\(a \ne b\)); then the condition is satisfied if the
+intersection of the two sets \(a \cap b \) in each pair is empty.</p>
+</td><td class="codes"><pre class="brush: clojure">(problem 153
+  (fn [s]
+    (every? empty? (for [s1 s
+                         s2 s :when (not= s1 s2)]
+                     (clojure.set/intersection s1 s2))))
+  (= (__ #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}})
+     true)
+  (= (__ #{#{:a :b :c :d :e}
+           #{:a :b :c :d}
+           #{:a :b :c}
+           #{:a :b}
+           #{:a}})
+     false)
+  (= (__ #{#{[1 2 3] [4 5]}
+           #{[1 2] [3 4 5]}
+           #{[1] [2] 3 4 5}
+           #{1 2 [3 4] [5]}})
+     true)
+  (= (__ #{#{'a 'b}
+           #{'c 'd 'e}
+           #{'f 'g 'h 'i}
+           #{''a ''c ''f}})
+     true)
+  (= (__ #{#{'(:x :y :z) '(:x :y) '(:z) '()}
+           #{#{:x :y :z} #{:x :y} #{:z} #{}}
+           #{'[:x :y :z] [:x :y] [:z] [] {}}})
+     false)
+  (= (__ #{#{(= &quot;true&quot;) false}
+           #{:yes :no}
+           #{(class 1) 0}
+           #{(symbol &quot;true&quot;) 'false}
+           #{(keyword &quot;yes&quot;) ::no}
+           #{(class '1) (int \0)}})
+     false)
+  (= (__ #{#{distinct?}
+           #{#(-&gt; %) #(-&gt; %)}
+           #{#(-&gt; %) #(-&gt; %) #(-&gt; %)}
+           #{#(-&gt; %) #(-&gt; %) #(-&gt; %)}})
+     true)
+  (= (__ #{#{(#(-&gt; *)) + (quote mapcat) #_ nil}
+           #{'+ '* mapcat (comment mapcat)}
+           #{(do) set contains? nil?}
+           #{, , , #_, , empty?}})
+     false)
+
+  )</pre></td></tr><tr><td class="docs"><h3>Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a></h3>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Here's my original solution.  It works and probably performs OK.</p>
 </td><td class="codes"><pre class="brush: clojure">(fn g [f]
   (fn l [&amp; xs]
