@@ -5469,9 +5469,7 @@ intersection of the two sets \(a \cap b \) in each pair is empty.</p>
            #{'+ '* mapcat (comment mapcat)}
            #{(do) set contains? nil?}
            #{, , , #_, , empty?}})
-     false)
-
-  )</pre></td></tr><tr><td class="docs"><h3>Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a></h3>
+     false))</pre></td></tr><tr><td class="docs"><h3>Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a></h3>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Here's my original solution.  It works and probably performs OK.</p>
 </td><td class="codes"><pre class="brush: clojure">(fn g [f]
   (fn l [&amp; xs]

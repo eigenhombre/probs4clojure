@@ -2964,9 +2964,7 @@
            #{'+ '* mapcat (comment mapcat)}
            #{(do) set contains? nil?}
            #{, , , #_, , empty?}})
-     false)
-
-  )
+     false))
 
 ;; ### Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a>
 
