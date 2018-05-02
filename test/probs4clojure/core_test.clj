@@ -2926,6 +2926,7 @@
     (every? empty? (for [s1 s
                          s2 s :when (not= s1 s2)]
                      (clojure.set/intersection s1 s2))))
+
   (= (__ #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}})
      true)
   (= (__ #{#{:a :b :c :d :e}
@@ -2965,6 +2966,39 @@
            #{(do) set contains? nil?}
            #{, , , #_, , empty?}})
      false))
+
+
+;; ### Problem 154-155: do not exist.
+
+
+;; ### Problem 156: <a href="http://www.4clojure.com/problem/156">Map Defaults</a>
+;;
+;; Simple "data massage"; interleave the keys and the default value
+;; and convert to a map.
+(problem 156
+  (fn [d v] (->> d repeat (interleave v) (apply hash-map)))
+
+  (= (__ 0 [:a :b :c]) {:a 0 :b 0 :c 0})
+  (= (__ "x" [1 2 3]) {1 "x" 2 "x" 3 "x"})
+  (= (__ [:a :b] [:foo :bar]) {:foo [:a :b] :bar [:a :b]}))
+
+
+;; ### Problem 157: <a href="http://www.4clojure.com/problem/157">Indexing Sequences</a>
+;;
+;; `map-indexed` is a version of `map` that adds an index value;
+;; combining it with `vector` gives you vector pairs with the index
+;; first and the value second; since we want the opposite order, we
+;; compose that with mapping the reverse function over the
+;; result. This solution is short and point-free; a simple `for`
+;; expression wrapping `map-indexed` is longer but may be easier to
+;; grok.
+(problem 157
+  (comp (partial map reverse) (partial map-indexed vector))
+
+  (= (__ [:a :b :c]) [[:a 0] [:b 1] [:c 2]])
+  (= (__ [0 1 3]) '((0 0) (1 1) (3 2)))
+  (= (__ [[:foo] {:bar :baz}]) [[[:foo] 0] [{:bar :baz} 1]]))
+
 
 ;; ### Problem 158: <a href="http://www.4clojure.com/problem/158">Decurry</a>
 
